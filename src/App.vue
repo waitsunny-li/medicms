@@ -14,7 +14,9 @@
       </div>
 
       <!-- 内容 -->
-      <div class="content"></div>
+      <div class="content">
+        <router-view />
+      </div>
     </div>
   </div>
 </template>
@@ -26,7 +28,13 @@ export default {
   name: "App",
   data() {
     return {
-      navList: ["人力管理", "订单管理", "售后管理", "报表管理"],
+      // navList: ["人力管理", "订单管理", "售后管理", "报表管理"],
+      navList: [
+        {navname: '人力管理', path: '/datainput'},
+        {navname: '订单管理', path: '/demand'},
+        {navname: '售后管理', path: '/feedback'},
+        {navname: '报表管理', path: '/customquery'}
+      ],
       asideNavList: [
         [
           { navname: "资料录入", path: "/datainput" },
@@ -83,12 +91,17 @@ export default {
 
 .main {
   width: 1200px;
-  height: 500px;
   display: flex;
 }
 
 .main .aside {
   width: 200px;
   height: 100%;
+}
+
+.main .content {
+  width: 1000px;
+  height: 600px;
+  background-color: royalblue;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="aside-main-nav">
-    <aside-nav :asideNavList="asideNavList">
-      <aside-item v-for="(objNav, index) in asideNavList[asideIndex]" :key="index">
+    <aside-nav>
+      <aside-item v-for="(objNav, index) in asideNavList[asideIndex]" :path="objNav.path" :key="index">
         {{objNav.navname}}
       </aside-item>
     </aside-nav>
@@ -34,7 +34,7 @@ export default {
     AsideItem
   },
   methods: {
-    
+
   }
 }
 </script>

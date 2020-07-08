@@ -1,6 +1,6 @@
 <template>
   <div class="data-input">
-    
+    资料录入
   </div>
 </template>
 

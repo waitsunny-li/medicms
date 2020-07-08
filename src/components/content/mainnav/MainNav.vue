@@ -1,7 +1,7 @@
 <template>
   <div class="main-nav">
-    <head-nav :navList="navList">
-      <nav-item v-for="(item,index) in navList" :key="index" :index="index"  @click.native="clickNav(index)">{{item}}</nav-item>
+    <head-nav>
+      <nav-item v-for="(objItem,index) in navList" :key="index" :index="index" :path="objItem.path" @click.native="clickNav(index)">{{objItem.navname}}</nav-item>
     </head-nav>
   </div>
 </template>
@@ -27,7 +27,6 @@ export default {
   },
   methods: {
     clickNav(index) {
-      // console.log(index)
       this.$store.commit('changeNavIndex', index)
     }
   }

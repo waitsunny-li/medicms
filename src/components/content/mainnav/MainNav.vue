@@ -35,4 +35,8 @@ export default {
 </script>
 
 <style scoped>
+
+.main-nav {
+  width: 500px;
+}
 </style>

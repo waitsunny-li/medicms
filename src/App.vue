@@ -2,6 +2,7 @@
   <div id="app">
     <!-- 头部导航 -->
     <div class="head_sec">
+      <div class="ip"></div>
       <main-nav :navList="navList" />
     </div>
 
@@ -68,6 +69,16 @@ export default {
 #app {
   width: 1200px;
   margin: 0 auto;
+}
+
+.head_sec {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.head_sec .ip {
+  width: 700px;
 }
 
 .main {

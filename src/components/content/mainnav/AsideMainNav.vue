@@ -40,4 +40,9 @@ export default {
 </script>
 
 <style scoped>
+.aside-main-nav {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
 </style>

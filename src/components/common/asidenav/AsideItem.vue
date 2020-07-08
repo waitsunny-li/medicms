@@ -49,7 +49,7 @@ export default {
 }
 .aside-item:hover {
   transform: translate(20px);
-  box-shadow: 0 0 3px rgba(16, 153, 245, 0.2);
+  box-shadow: 0 0 3px rgba(16, 153, 245, 1);
 }
 
 .actived {

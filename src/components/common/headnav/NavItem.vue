@@ -43,7 +43,7 @@ export default {
   transition: 0.3s;
   font-size: 15px;
   border-radius: 5px;
-  box-shadow: 0 0 3px rgba(16, 153, 245, 0.2);
+  box-shadow: 0 0 3px rgba(16, 153, 245, 1);
   user-select: none;
 }
 .actived {

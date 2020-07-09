@@ -3,6 +3,11 @@ import VueRouter from 'vue-router'
 
 Vue.use(VueRouter)
 
+// 登录界面
+const Login = () => import('../views/login/Login')
+// 主界面
+const Home = () => import('../views/Home')
+
 // 人力管理
 const DataInput = () => import('../views/humanage/DataInput')
 const Training = () => import('../views/humanage/Training')
@@ -31,152 +36,205 @@ const ComplaintQuery = () => import('../views/reportmanage/ComplaintQuery')
 
 
 
-const routes = [
-  // 人力管理
+const routes = [{
+    path: '/',
+    redirect: '/login'
+  },
   {
-    path: '/datainput',
-    component: DataInput,
+    path: '/login',
+    component: Login,
     meta: {
-      title: "资料录入"
+      title: "登录"
     }
   },
   {
-    path: '/training',
-    component: Training,
-    meta: {
-      title: "培训记录"
-    }
-  },
-  {
-    path: '/assessment',
-    component: Assessment,
-    meta: {
-      title: "考核评价"
-    }
+    path: '/home',
+    component: Home,
+    children: [
+      // 人力管理
+      {
+        path: 'datainput',
+        components: {
+          content: DataInput
+        },
+        meta: {
+          title: "资料录入"
+        }
+      },
+      {
+        path: 'training',
+        components: {
+          content: Training
+        },
+        meta: {
+          title: "培训记录"
+        }
+      },
+      {
+        path: 'assessment',
+        components: {
+          content: Assessment
+        },
+        meta: {
+          title: "考核评价"
+        }
+      },
+
+      // 订单管理
+      {
+        path: 'demand',
+        components: {
+          content: Demand
+        },
+        meta: {
+          title: "客户需求"
+        }
+      },
+      {
+        path: 'distribute',
+        components: {
+          content: Distribute
+        },
+        meta: {
+          title: "手工分配"
+        }
+      },
+      {
+        path: 'ordergenerate',
+        components: {
+          content: OrderGenerate
+        },
+        meta: {
+          title: "订单生成"
+        }
+      },
+      {
+        path: 'persondispatch',
+        components: {
+          content: PersonDispatch
+        },
+        meta: {
+          title: "人员派出"
+        }
+      },
+      {
+        path: 'salesvisit',
+        components: {
+          content: SalesVisit
+        },
+        meta: {
+          title: "销售回访"
+        }
+      },
+      {
+        path: 'orderdelay',
+        components: {
+          content: OrderDelay
+        },
+        meta: {
+          title: "订单延期"
+        }
+      },
+      {
+        path: 'orderrenewal',
+        components: {
+          content: OrderRenewal
+        },
+        meta: {
+          title: "订单续签"
+        }
+      },
+
+      // 售后管理
+      {
+        path: 'feedback',
+        components: {
+          content: Feedback
+        },
+        meta: {
+          title: "客户反馈"
+        }
+      },
+      {
+        path: 'saledistribute',
+        components: {
+          content: SaleDistribute
+        },
+        meta: {
+          title: "手工分配"
+        }
+      },
+      {
+        path: 'handle',
+        components: {
+          content: Handle
+        },
+        meta: {
+          title: "处理结果"
+        }
+      },
+      {
+        path: 'review',
+        components: {
+          content: Review
+        },
+        meta: {
+          title: "客户回访"
+        }
+      },
+
+      // 报表管理
+      {
+        path: 'customquery',
+        components: {
+          content: CustomQuery
+        },
+        meta: {
+          title: "客户查询"
+        }
+      },
+      {
+        path: 'staffquery',
+        components: {
+          content: StaffQuery
+        },
+        meta: {
+          title: "员工查询"
+        }
+      },
+      {
+        path: 'orderquery',
+        components: {
+          content: OrderQuery
+        },
+        meta: {
+          title: "订单查询"
+        }
+      },
+      {
+        path: 'complaintquery',
+        components: {
+          content: ComplaintQuery
+        },
+        meta: {
+          title: "投诉查询"
+        }
+      },
+    ]
   },
 
-  // 订单管理
-  {
-    path: '/demand',
-    component: Demand,
-    meta: {
-      title: "客户需求"
-    }
-  },
-  {
-    path: '/distribute',
-    component: Distribute,
-    meta: {
-      title: "手工分配"
-    }
-  },
-  {
-    path: '/ordergenerate',
-    component: OrderGenerate,
-    meta: {
-      title: "订单生成"
-    }
-  },
-  {
-    path: '/persondispatch',
-    component: PersonDispatch,
-    meta: {
-      title: "人员派出"
-    }
-  },
-  {
-    path: '/salesvisit',
-    component: SalesVisit,
-    meta: {
-      title: "销售回访"
-    }
-  },
-  {
-    path: '/orderdelay',
-    component: OrderDelay,
-    meta: {
-      title: "订单延期"
-    }
-  },
-  {
-    path: '/orderrenewal',
-    component: OrderRenewal,
-    meta: {
-      title: "订单续签"
-    }
-  },
-
-  // 售后管理
-  {
-    path: '/feedback',
-    component: Feedback,
-    meta: {
-      title: "客户反馈"
-    }
-  },
-  {
-    path: '/saledistribute',
-    component: SaleDistribute,
-    meta: {
-      title: "手工分配"
-    }
-  },
-  {
-    path: '/handle',
-    component: Handle,
-    meta: {
-      title: "处理结果"
-    }
-  },
-  {
-    path: '/review',
-    component: Review,
-    meta: {
-      title: "客户回访"
-    }
-  },
-
-  // 报表管理
-  {
-    path: '/customquery',
-    component: CustomQuery,
-    meta: {
-      title: "客户查询"
-    }
-  },
-  {
-    path: '/staffquery',
-    component: StaffQuery,
-    meta: {
-      title: "员工查询"
-    }
-  },
-  {
-    path: '/orderquery',
-    component: OrderQuery,
-    meta: {
-      title: "订单查询"
-    }
-  },
-  {
-    path: '/complaintquery',
-    component: ComplaintQuery,
-    meta: {
-      title: "投诉查询"
-    }
-  },
 ]
 
 const router = new VueRouter({
   routes,
-  mode: 'history'
+  // mode: 'history'
 })
 
 // 导航守卫
 router.beforeEach((to, from, next) => {
   // 从from跳转到to
-  document.title = to.matched[0].meta.title
+  document.title = to.meta.title
   next()
-}) 
+})
 
 export default router

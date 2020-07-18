@@ -81,7 +81,17 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert("submit!");
+          // alert("submit!");
+          this.$request({
+            url: "/login/",
+            method: "post",
+            data: {
+              username: "liweiong",
+              password: this.pass
+            }
+          }).then(res => {
+            console.log(res);
+          });
         } else {
           console.log("error submit!!");
           return false;
@@ -95,5 +105,6 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="less" scoped>
+
 </style>

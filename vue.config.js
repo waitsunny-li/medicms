@@ -1,5 +1,5 @@
 module.exports = {
-  publicPath:'./',
+  publicPath: './',
   configureWebpack: {
     resolve: {
       alias: {
@@ -10,6 +10,19 @@ module.exports = {
         'network': '@/network',
         'views': '@/views',
       }
+    }
+  },
+  devServer: {
+    port: 8080,
+    proxy: {
+      '/api': {
+        target: 'http://qqq.shihanphp.cn/', // target host
+        ws: true, // proxy websockets 
+        changeOrigin: true, // needed for virtual hosted sites
+        pathRewrite: {
+          '^/api': '' // rewrite path
+        }
+      },
     }
   }
 

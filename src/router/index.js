@@ -5,6 +5,8 @@ Vue.use(VueRouter)
 
 // 登录界面
 const Login = () => import('../views/login/Login')
+// 欢迎界面
+const Welcome = () => import('../views/Welcome')
 // 主界面
 const Home = () => import('../views/Home')
 
@@ -222,7 +224,13 @@ const routes = [{
       },
     ]
   },
-
+  {
+    path: '/welcome',
+    component: Welcome,
+    meta: {
+      title: "欢迎"
+    }
+  }
 ]
 
 const router = new VueRouter({

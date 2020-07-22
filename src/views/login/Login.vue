@@ -1,27 +1,57 @@
 <template>
   <div class="login">
-    <el-form
-      :model="ruleForm"
-      status-icon
-      :rules="rules"
-      ref="ruleForm"
-      label-width="100px"
-      class="demo-ruleForm"
-    >
-      <el-form-item label="密码" prop="pass">
-        <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="确认密码" prop="checkPass">
-        <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
-      </el-form-item>
-      <el-form-item label="年龄" prop="age">
-        <el-input v-model.number="ruleForm.age"></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
-        <el-button @click="resetForm('ruleForm')">重置</el-button>
-      </el-form-item>
-    </el-form>
+    <div class="login-wrap">
+      <div class="title">家政大数据管理系统</div>
+      <div class="login-content-wrap">
+        <div class="login-content">
+          <div class="head">用户登录</div>
+          <div class="input-wrap">
+            <el-form
+              :model="loginForm"
+              status-icon
+              :rules="loginRules"
+              ref="loginForm"
+              class="loginForm"
+            >
+              <!-- 用户名 -->
+              <el-form-item prop="username">
+                <el-input
+                  type="text"
+                  v-model="loginForm.username"
+                  prefix-icon="el-icon-s-custom"
+                  class="login-input"
+                ></el-input>
+              </el-form-item>
+              <!-- 密码 -->
+              <el-form-item prop="password">
+                <el-input
+                  type="password"
+                  v-model="loginForm.password"
+                  prefix-icon="el-icon-lock"
+                  show-password
+                ></el-input>
+              </el-form-item>
+            </el-form>
+          </div>
+          <div class="remember-wrap">
+            <div class="remember">
+              <el-checkbox v-model="loginForm.remember" class="remember-text">记住密码</el-checkbox>
+              <div class="forget">忘记密码?</div>
+            </div>
+          </div>
+
+          <div class="submit-wrap">
+            <el-button type="primary" @click="loginBtn" class="loginBtn">登录</el-button>
+          </div>
+
+          <!-- 角 -->
+          <img class="topleft" src="~assets/img/topleft.png" alt />
+          <img class="topright" src="~assets/img/topright.png" alt />
+          <img class="bottomleft" src="~assets/img/bottomleft.png" alt />
+          <img class="bottomright" src="~assets/img/bottomright.png" alt />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -29,82 +59,172 @@
 export default {
   name: "Login",
   data() {
-    var checkAge = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error("年龄不能为空"));
-      }
-      setTimeout(() => {
-        if (!Number.isInteger(value)) {
-          callback(new Error("请输入数字值"));
-        } else {
-          if (value < 18) {
-            callback(new Error("必须年满18岁"));
-          } else {
-            callback();
-          }
-        }
-      }, 1000);
-    };
-    var validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入密码"));
-      } else {
-        if (this.ruleForm.checkPass !== "") {
-          this.$refs.ruleForm.validateField("checkPass");
-        }
-        callback();
-      }
-    };
-    var validatePass2 = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请再次输入密码"));
-      } else if (value !== this.ruleForm.pass) {
-        callback(new Error("两次输入密码不一致!"));
-      } else {
-        callback();
-      }
-    };
     return {
-      ruleForm: {
-        pass: "",
-        checkPass: "",
-        age: ""
+      loginForm: {
+        username: "",
+        password: "",
+        remember: false
       },
-      rules: {
-        pass: [{ validator: validatePass, trigger: "blur" }],
-        checkPass: [{ validator: validatePass2, trigger: "blur" }],
-        age: [{ validator: checkAge, trigger: "blur" }]
+      // 密码验证
+      loginRules: {
+        username: [
+          { required: true, message: "请输入您的用户名", trigger: "blur" }
+        ],
+        password: [
+          { required: true, message: "请输入您的密码", trigger: "blur" },
+          { min: 3, max: 12, message: "请密码长度3~12字符", trigger: "blur" }
+        ]
       }
     };
   },
   methods: {
-    submitForm(formName) {
-      this.$refs[formName].validate(valid => {
-        if (valid) {
-          // alert("submit!");
-          this.$request({
-            url: "/login/",
-            method: "post",
-            data: {
-              username: "liweiong",
-              password: this.pass
-            }
-          }).then(res => {
-            console.log(res);
-          });
-        } else {
-          console.log("error submit!!");
-          return false;
+    loginBtn() {
+      this.$refs.loginForm.validate(valid => {
+        if(!valid) {
+          this.$message.error('出现错误了')
         }
-      });
-    },
-    resetForm(formName) {
-      this.$refs[formName].resetFields();
+        // 请求
+      })
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
+.login {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("../../assets/img/login-bg.png") no-repeat;
+  background-size: bottom center;
 
+  .login-wrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    height: 700px;
+    // background-color: red;
+
+    .title {
+      width: 100%;
+      height: 200px;
+      line-height: 200px;
+      text-align: center;
+      font-size: 45px;
+      letter-spacing: 0.2rem;
+      color: #fff;
+      font-family: SimSun;
+    }
+
+    .login-content-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      height: 430px;
+
+      .login-content {
+        position: relative;
+        width: 450px;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.2);
+
+        .head {
+          width: 100%;
+          height: 120px;
+          line-height: 110px;
+          text-align: center;
+          font-size: 30px;
+          color: #fff;
+          font-family: SimSun;
+        }
+
+        .input-wrap {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+
+          .loginForm {
+            width: 350px;
+
+            .login-input {
+              margin-bottom: 10px;
+            }
+          }
+        }
+
+        // 记住密码
+        .remember-wrap {
+          width: 100%;
+          height: 40px;
+          display: flex;
+          justify-content: center;
+          
+          .remember {
+            width: 350px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .remember-text {
+              color: #fff;
+            }
+
+            .forget {
+              cursor: pointer;
+              font-size: 14px;
+              color: #00a1f6;
+            }
+          }
+        }
+
+        // 登录
+        .submit-wrap {
+          margin-top: 30px;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+
+          .loginBtn {
+            width: 350px;
+          }
+        }
+
+        // 四个角
+        .topleft {
+          position: absolute;
+          width: 39px;
+          height: 38px;
+          top: 0;
+          left: 0;
+        }
+        .topright {
+          position: absolute;
+          width: 39px;
+          height: 38px;
+          top: 0;
+          right: 0;
+        }
+        .bottomleft {
+          position: absolute;
+          width: 39px;
+          height: 38px;
+          bottom: 0;
+          left: 0;
+        }
+        .bottomright {
+          position: absolute;
+          width: 39px;
+          height: 38px;
+          bottom: 0;
+          right: 0;
+        }
+      }
+    }
+  }
+}
 </style>

@@ -63,7 +63,7 @@ export default {
       loginForm: {
         username: "",
         password: "",
-        remember: false
+        // remember: false
       },
       // 密码验证
       loginRules: {
@@ -84,6 +84,15 @@ export default {
           this.$message.error('出现错误了')
         }
         // 请求
+        this.$request({
+          url: '/login/',
+          method: 'post',
+          data: this.loginForm
+        }).then(res => {
+          console.log(res)
+        }).catch(err => {
+          console.log(err)
+        })
       })
     }
   }

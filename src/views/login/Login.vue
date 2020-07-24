@@ -62,17 +62,18 @@ export default {
     return {
       loginForm: {
         username: "",
-        password: "",
+        password: ""
         // remember: false
       },
       // 密码验证
       loginRules: {
         username: [
-          { required: true, message: "请输入您的用户名", trigger: "blur" }
+          { required: true, message: "请输入您的用户名", trigger: "blur" },
+          { min: 5, max: 20, message: "用户名长度5~12字符", trigger: "blur" }
         ],
         password: [
           { required: true, message: "请输入您的密码", trigger: "blur" },
-          { min: 3, max: 12, message: "请密码长度3~12字符", trigger: "blur" }
+          { min: 6, max: 12, message: "密码长度3~12字符", trigger: "change" }
         ]
       }
     };
@@ -80,21 +81,34 @@ export default {
   methods: {
     loginBtn() {
       this.$refs.loginForm.validate(valid => {
-        if(!valid) {
-          this.$message.error('出现错误了')
+        if (!valid) {
+          this.$message.error("出现错误了");
         }
         // 请求
         this.$request({
-          url: '/login/',
-          method: 'post',
+          url: "/login",
+          method: "post",
           data: this.loginForm
-        }).then(res => {
-          console.log(res)
-        }).catch(err => {
-          console.log(err)
         })
-      })
-    }
+          .then(res => {
+            if (res.code === 200) {
+              // 本地存储用户的基本信息
+              this.$store.commit('saveUserInfo', {
+                "userToken": res.data.Authorization,
+                "username": res.data.username,
+                "last_login_time": res.data.last_login_time
+              })
+              this.$message.success(res.msg)
+              this.$router.replace('/welcome')
+            }else {
+              this.$message.error(res.msg)
+            }
+          })
+          .catch(err => {
+            this.$message.error(err);
+          });
+      });
+    },
   }
 };
 </script>
@@ -171,7 +185,7 @@ export default {
           height: 40px;
           display: flex;
           justify-content: center;
-          
+
           .remember {
             width: 350px;
             height: 40px;

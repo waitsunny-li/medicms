@@ -1,29 +1,58 @@
 <template>
   <div class="home">
-    <!-- 头部导航 -->
-    <div class="head_sec">
-      <div class="ip"></div>
-      <main-nav :navList="navList" />
-    </div>
-
-    <!-- 中间部分（包含侧边栏和内容） -->
-    <div class="main">
-      <!-- 功能侧边栏 -->
-      <div class="aside">
-        <aside-main-nav :asideNavList="asideNavList" />
-      </div>
-
+    <el-container>
+      <!-- 侧边栏 -->
+      <el-aside width="200px" class="aside-wrap">
+        <!-- icon -->
+        <div class="icon-wrap">
+          <div class="img-wrap">
+            <img src="~assets/img/logo.png" alt />
+          </div>
+        </div>
+        <!-- 功能栏 -->
+        <div class="aside">
+          <aside-main-nav :asideNavList="asideNavList" />
+        </div>
+      </el-aside>
       <!-- 内容 -->
-      <div class="content">
-        <router-view name="content" />
-      </div>
-    </div>
+      <el-container>
+        <!-- 头部 -->
+        <el-header class="header" height="40px">
+          <!-- 头部导航 -->
+          <div class="head_sec">
+            <div class="ip"></div>
+            <main-nav :navList="navList" />
+          </div>
+          <!-- 右侧 -->
+          <div class="right-wrap">
+            <div class="login-time">
+              <span>您上次的登录时间：{{$store.state.userInfo.last_login_time}}</span>
+            </div>
+
+            <div class="home-wrap">
+              <el-button type="text" icon="el-icon-monitor" class="home" @click="homeBtn">主页</el-button>
+
+              <el-button
+                type="text"
+                icon="el-icon-switch-button"
+                class="logout-btn"
+                @click="logoutBtn"
+              >退出</el-button>
+            </div>
+          </div>
+        </el-header>
+        <el-main>
+          <router-view name="content" />
+        </el-main>
+      </el-container>
+    </el-container>
   </div>
 </template>
 
 <script>
 import MainNav from "components/content/mainnav/MainNav";
 import AsideMainNav from "components/content/mainnav/AsideMainNav";
+
 export default {
   name: "Home",
   data() {
@@ -32,74 +61,220 @@ export default {
         { navname: "人力管理", path: "/home/datainput" },
         { navname: "订单管理", path: "/home/demand" },
         { navname: "售后管理", path: "/home/feedback" },
-        { navname: "报表管理", path: "/home/customquery" }
+        { navname: "报表管理", path: "/home/customquery" },
       ],
       asideNavList: [
         [
-          { navname: "资料录入", path: "/home/datainput" },
-          { navname: "培训记录", path: "/home/training" },
-          { navname: "考核评价", path: "/home/assessment" }
+          {
+            navname: "资料录入",
+            path: "/home/datainput",
+            icon: "icon el-icon-edit-outline",
+          },
+          {
+            navname: "培训记录",
+            path: "/home/training",
+            icon: "icon el-icon-timer",
+          },
+          {
+            navname: "考核评价",
+            path: "/home/assessment",
+            icon: "icon el-icon-notebook-2",
+          },
         ],
         [
-          { navname: "客户需求", path: "/home/demand" },
-          { navname: "手工分配", path: "/home/distribute" },
-          { navname: "订单生成", path: "/home/ordergenerate" },
-          { navname: "人员派出", path: "/home/persondispatch" },
-          { navname: "销售回访", path: "/home/salesvisit" },
-          { navname: "订单延期", path: "/home/orderdelay" },
-          { navname: "订单续签", path: "/home/orderrenewal" }
+          {
+            navname: "客户需求",
+            path: "/home/demand",
+            icon: "icon el-icon-document",
+          },
+          {
+            navname: "手工分配",
+            path: "/home/distribute",
+            icon: "icon el-icon-coin",
+          },
+          {
+            navname: "订单生成",
+            path: "/home/ordergenerate",
+            icon: "icon el-icon-s-order",
+          },
+          {
+            navname: "人员派出",
+            path: "/home/persondispatch",
+            icon: "icon el-icon-place",
+          },
+          {
+            navname: "销售回访",
+            path: "/home/salesvisit",
+            icon: "icon el-icon-refresh",
+          },
+          {
+            navname: "订单延期",
+            path: "/home/orderdelay",
+            icon: "icon el-icon-date",
+          },
+          {
+            navname: "订单续签",
+            path: "/home/orderrenewal",
+            icon: "icon el-icon-finished",
+          },
         ],
         [
-          { navname: "客户反馈", path: "/home/feedback" },
-          { navname: "手工分配", path: "/home/saledistribute" },
-          { navname: "处理结果", path: "/home/handle" },
-          { navname: "客户回访", path: "/home/review" }
+          {
+            navname: "客户反馈",
+            path: "/home/feedback",
+            icon: "icon el-icon-phone-outline",
+          },
+          {
+            navname: "手工分配",
+            path: "/home/saledistribute",
+            icon: "icon el-icon-coin",
+          },
+          {
+            navname: "处理结果",
+            path: "/home/handle",
+            icon: "icon el-icon-finished",
+          },
+          {
+            navname: "客户回访",
+            path: "/home/review",
+            icon: "icon el-icon-sort",
+          },
         ],
         [
-          { navname: "客户查询", path: "/home/customquery" },
-          { navname: "员工查询", path: "/home/staffquery" },
-          { navname: "订单查询", path: "/home/orderquery" },
-          { navname: "投诉查询", path: "/home/complaintquery" }
-        ]
-      ]
+          {
+            navname: "客户查询",
+            path: "/home/customquery",
+            icon: "icon el-icon-s-custom",
+          },
+          {
+            navname: "员工查询",
+            path: "/home/staffquery",
+            icon: "icon el-icon-s-check",
+          },
+          {
+            navname: "订单查询",
+            path: "/home/orderquery",
+            icon: "icon el-icon-tickets",
+          },
+          {
+            navname: "投诉查询",
+            path: "/home/complaintquery",
+            icon: "icon el-icon-notebook-2",
+          },
+        ],
+      ],
+      selectAsides: null,
+      windowWidth:
+        window.innerWidth ||
+        document.documentElement.clientWidth ||
+        document.body.clientWidth, // 屏幕宽度
+      windowHeight:
+        window.innerHeight ||
+        document.documentElement.clientHeight ||
+        document.body.clientHeight, // 屏幕高度
     };
   },
   components: {
     MainNav,
-    AsideMainNav
-  }
+    AsideMainNav,
+  },
+  mounted() {
+    // 初始化侧边栏高度
+    let aside = document.getElementsByClassName("aside-wrap")[0];
+    aside.style.height = this.windowHeight + "px";
+  },
+  methods: {
+    currentSelect(index) {
+      let currentIndex = parseInt(index);
+      this.selectAsides = this.asideNavList[currentIndex];
+    },
+    // 退出登录
+    logoutBtn() {
+      // token为空
+      window.sessionStorage.clear();
+      this.$router.replace("/login");
+      this.$message.success("退出成功！");
+    },
+    // 主页按钮
+    homeBtn() {
+      console.log("jj");
+      this.$router.push("/welcome");
+    },
+  },
 };
 </script>
 
-<style scoped>
+<style lang="less" scoped>
 .home {
-  width: 1200px;
-  margin: 0 auto;
+  width: 100%;
 }
 
-.head_sec {
+.aside-wrap {
+  background: #2d373f;
+  .aside {
+    background: #2d373f;
+  }
+}
+
+.header {
   width: 100%;
+  padding: 0;
+  height: 40px;
+  background: #1f272d;
   display: flex;
   justify-content: space-between;
+
+  .right-wrap {
+    width: 420px;
+    display: flex;
+    justify-content: space-between;
+
+    .login-time {
+      width: 350px;
+      height: 40px;
+      margin-right: 20px;
+      span {
+        display: block;
+        width: 100%;
+        height: 40px;
+        line-height: 40px;
+        color: #fff;
+        font-size: 14px;
+        font-family: "微软雅黑";
+      }
+    }
+
+    .home-wrap {
+      display: flex;
+      justify-content: space-around;
+      width: 180px;
+      .home {
+        color: #fff;
+      }
+      .logout-btn {
+        margin-right: 10px;
+        color: rgb(224, 14, 14);
+      }
+    }
+  }
 }
 
-.head_sec .ip {
-  width: 700px;
-}
+.icon-wrap {
+  width: 100%;
+  height: 80px;
+  background-color: #2d373f;
 
-.main {
-  width: 1200px;
-  display: flex;
-}
+  .img-wrap {
+    width: 100%;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-.main .aside {
-  width: 200px;
-  height: 100%;
-}
-
-.main .content {
-  width: 1000px;
-  height: 600px;
-  background-color: royalblue;
+    img {
+      width: 160px;
+      height: 50px;
+    }
+  }
 }
 </style>

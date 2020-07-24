@@ -2,7 +2,8 @@
   <div class="aside-main-nav">
     <aside-nav>
       <aside-item v-for="(objNav, index) in asideNavList[asideIndex]" :path="objNav.path" :key="index">
-        {{objNav.navname}}
+        <div slot="icon"><i :class="objNav.icon"></i></div>
+        <div slot="text">{{objNav.navname}}</div>
       </aside-item>
     </aside-nav>
   </div>
@@ -10,7 +11,9 @@
 
 <script>
 import AsideNav from 'components/common/asidenav/AsideNav'
+
 import AsideItem from 'components/common/asidenav/AsideItem'
+
 export default {
   name: 'AsideMainNav',
   props: {

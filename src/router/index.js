@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
+import {getItem} from '../common/utils'
 Vue.use(VueRouter)
 
 // 登录界面
@@ -235,14 +235,25 @@ const routes = [{
 
 const router = new VueRouter({
   routes,
-  mode: 'history'
+  // mode: 'history'
 })
 
 // 导航守卫
 router.beforeEach((to, from, next) => {
-  // 从from跳转到to
-  document.title = to.meta.title
-  next()
+  if (to.path === '/login') {
+    // 从from跳转到to
+    document.title = to.meta.title
+    next()
+  } else {
+    let userToken = getItem('userInfo')['userToken']
+    if (userToken == null || userToken == '') {
+      next('/login')
+    }else {
+      document.title = to.meta.title
+      next()
+    }
+  }
+
 })
 
 export default router

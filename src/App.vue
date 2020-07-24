@@ -16,9 +16,11 @@ export default {
 </script>
 
 <style lang='scss' scoped>
-@import "assets/css/normalize.css";
+@import "assets/css/init.min.css";
+// @import "assets/css/normalize.css";
+
 #app {
-  width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  background-color: #ededed;
 }
 </style>

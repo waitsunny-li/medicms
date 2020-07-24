@@ -36,18 +36,22 @@ export default {
 
 <style scoped>
 .nav-item {
-  margin: 20px 0;
-  padding: 10px 20px;
-  color: #1a1a1a;
+  height: 40px;
+  width: 130px;
+  line-height: 40px;
+  text-align: center;
+  box-sizing: border-box;
+  color: #fff;
   cursor: pointer;
   transition: 0.3s;
-  font-size: 15px;
+  font-size: 14px;
   border-radius: 5px;
-  box-shadow: 0 0 3px rgba(16, 153, 245, 1);
   user-select: none;
+  border-right: 1px solid #000;
+  font-family: '微软雅黑';
 }
 .actived {
-  background-color: rgb(16, 153, 245);
+  background-color: #000;
   color: #ffffff;
 }
 </style>

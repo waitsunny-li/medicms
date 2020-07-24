@@ -17,6 +17,6 @@ export default {
 
 <style scoped>
 .aside-nav {
-  width: 80px;
+  width: 100%;
 }
 </style>

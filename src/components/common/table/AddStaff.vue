@@ -1,17 +1,6 @@
 <template>
   <div class="add-staff">
     <el-form :inline="true" :model="addUserForm" class="add-user-form">
-      <!-- 工作经历弹框 -->
-      <!-- <el-dialog width="30%" title="内层 Dialog" :visible.sync="workDialog" append-to-body>
-        <el-row>
-          <el-colf :span=""></el-colf>
-        </el-row>
-        <div class="dialog-footer">
-          <el-button  size="mini">取 消</el-button>
-          <el-button type="primary" size="mini">保 存</el-button>
-        </div>
-      </el-dialog>-->
-
       <!-- 头部 -->
       <div class="header-wrap">
         <el-row>
@@ -65,22 +54,44 @@
           </el-col>
           <el-col :span="5">
             <el-form-item label="家用电器" prop="wiring">
-              <el-input v-model="addUserForm.wiring" size="mini"></el-input>
+              <el-select size="mini" multiple v-model="addUserForm.wiring" placeholder="请选择">
+                <el-option
+                  v-for="item in wirings"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="厨艺">
               <el-select size="mini" v-model="addUserForm.cooking" placeholder="请选择">
-                <el-option label="北方菜" value="1"></el-option>
-                <el-option label="南方菜" value="2"></el-option>
+                <el-option
+                  v-for="item in cookings"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="9">
-            <el-form-item label="户口地址" prop="registration_address" class="registration_address">
-              <el-cascader size="mini" :props="addUserForm.registration_address"></el-cascader>
-              <el-input size="mini" class="detail_address" placeholder="详细地址"></el-input>
-            </el-form-item>
+            <el-col :span="15">
+              <el-form-item label="户口地址" prop="registration_address" class="registration_address">
+                <el-cascader
+                  @active-item-change="casecaderChange"
+                  size="mini"
+                  :options="hProvenceArray"
+                  :props="census_data"
+                ></el-cascader>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item prop="census_address_desc">
+                <el-input size="mini" class="census_address_desc" placeholder="详细地址"></el-input>
+              </el-form-item>
+            </el-col>
           </el-col>
         </el-row>
 
@@ -130,16 +141,24 @@
           <el-col :span="5">
             <el-form-item label="英语水平" prop="english">
               <el-select size="mini" v-model="addUserForm.english" placeholder="请选择">
-                <el-option label="A级" value="1"></el-option>
-                <el-option label="B级" value="2"></el-option>
+                <el-option
+                  v-for="item in english"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="5">
-            <el-form-item label="婚姻状况" class="marital" prop="marital">
-              <el-select size="mini" v-model="addUserForm.marital" placeholder="请选择">
-                <el-option label="未婚" value="1"></el-option>
-                <el-option label="已婚" value="2"></el-option>
+            <el-form-item label="计算机水平" prop="computer">
+              <el-select size="mini" v-model="addUserForm.computer" placeholder="请选择">
+                <el-option
+                  v-for="item in computers"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -174,9 +193,18 @@
           </el-col>
           <el-col :span="5">
             <el-form-item label="服务技能" class="service_skills" prop="service_skills">
-              <el-select size="mini" v-model="addUserForm.service_skills" placeholder="请选择">
-                <el-option label="照顾小孩" value="1"></el-option>
-                <el-option label="照顾老人" value="2"></el-option>
+              <el-select
+                size="mini"
+                multiple
+                v-model="addUserForm.service_skills"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in skills"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -201,8 +229,12 @@
           <el-col :span="5">
             <el-form-item label="岗位" prop="station">
               <el-select size="mini" v-model="addUserForm.station" placeholder="请选择">
-                <el-option label="育婴师" value="1"></el-option>
-                <el-option label="钟点工" value="2"></el-option>
+                <el-option
+                  v-for="item in jobs"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -225,6 +257,7 @@
                 placeholder="选择月"
                 format="MM-dd"
                 value-format="MM-dd"
+                size="mini"
               ></el-date-picker>
             </el-form-item>
           </el-col>
@@ -238,10 +271,41 @@
           </el-col>
           <el-col :span="5">
             <el-form-item label="语言能力" prop="language">
-              <el-select size="mini" v-model="addUserForm.language" placeholder="请选择">
-                <el-option label="汉语" value="1"></el-option>
-                <el-option label="英语" value="2"></el-option>
+              <el-select size="mini" multiple v-model="addUserForm.language" placeholder="请选择">
+                <el-option
+                  v-for="item in languages"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                ></el-option>
               </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="紧急电话" prop="urgent_mobile" class="recruiters">
+              <el-input
+                size="mini"
+                class="telphone"
+                placeholder="手机号"
+                v-model="addUserForm.urgent_mobile"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="5">
+            <el-form-item label="婚姻状况" class="marital" prop="marital">
+              <el-select size="mini" v-model="addUserForm.marital" placeholder="请选择">
+                <el-option label="未婚" value="1"></el-option>
+                <el-option label="已婚" value="2"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <!-- 自我评价 -->
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label="自我评价" prop="self_evaluation">
+              <el-input type="textarea" autosize v-model="addUserForm.self_evaluation"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -351,6 +415,16 @@
 
 <script>
 import eventVue from "common/eventVue";
+import { getProvince, getCity } from "network/select";
+import {
+  getLanguage,
+  getEnglish,
+  getComputer,
+  getCooking,
+  getWiring,
+  getJob,
+  getKills,
+} from "network/select";
 export default {
   name: "AddStaff",
   data() {
@@ -364,6 +438,7 @@ export default {
           name: "",
           telphone: "",
         },
+        urgent_mobile: "",
         name: "",
         address: null,
         birthday: "",
@@ -378,10 +453,13 @@ export default {
         healthy: "",
         computer: "",
         census: "",
+        census_p: "",
+        census_c: "",
+        census_d: "",
         height: "",
         weight: "",
         pay: "",
-        registration_address: null,
+        census_address_desc: "",
         cooking: "",
         nation: "",
         marital: "",
@@ -393,6 +471,7 @@ export default {
         work_years: "",
         belief: "",
         language: "",
+        self_evaluation: "",
 
         // 工作经历
         workexperi: [
@@ -417,10 +496,178 @@ export default {
           },
         ],
       },
+
+      // 户口省级
+      hProvenceArray: [],
+      // 户口地址
+      // census_data: {
+      //   lazy: true,
+      //   lazyLoad(node, resolve) {
+      //     const { level } = node;
+      //     // 获取省
+      //     getProvince().then((res) => {
+      //       // console.log(res.data);
+      //       const nodes = res.data.map((item) => ({
+      //         value: item.id,
+      //         label: item.name,
+      //         leaf: level >= 2,
+      //       }));
+      //       resolve(nodes)
+
+      //     });
+      //     // setTimeout(() => {
+      //     //   const nodes = Array.from({ length: level + 1 }).map((item) => ({
+      //     //     value: 1,
+      //     //     label: "1",
+      //     //     leaf: level >= 2,
+      //     //   }));
+      //     //   // 通过调用resolve将子节点数据返回，通知组件数据加载完成
+      //     //   resolve(nodes);
+      //     // }, 1000);
+      //   },
+      // },
+      census_data: {
+        // lazy: true,
+        label: "name",
+        value: "id",
+        // children: "cities",
+      },
+
+      // 单个员工基本信息
+      oneStaffInfo: "",
+      // 语言能力
+      languages: null,
+      // 英语水平
+      english: null,
+      // 计算机水平
+      computers: null,
+      // 厨艺水平
+      cookings: null,
+      // 家用电器
+      wirings: null,
+      // 岗位
+      jobs: null,
+      // 服务技能
+      skills: null,
     };
   },
-  created() {},
+  created() {
+    // 获取省
+    getProvince().then((res) => {
+      this.hProvenceArray = (res && res.data) || [];
+      this.hProvenceArray.forEach((item, index) => {
+        this.hProvenceArray[index].children = [];
+      });
+    });
+    // 获取语言能力分组
+    getLanguage().then((res) => {
+      if (res.code === 200) {
+        this.languages = res.data;
+      } else {
+        this.$message.waraing("获取语言能力失败！");
+      }
+    });
+
+    // 英语水平
+    getEnglish().then((res) => {
+      if (res.code === 200) {
+        this.english = res.data;
+      } else {
+        this.$message.waraing("获取英语水平失败！");
+      }
+    });
+
+    // 计算机水平
+    getComputer().then((res) => {
+      if (res.code === 200) {
+        this.computers = res.data;
+      } else {
+        this.$message.waraing("获取计算机水平失败！");
+      }
+    });
+
+    // 厨艺水平
+    getCooking().then((res) => {
+      if (res.code === 200) {
+        this.cookings = res.data;
+      } else {
+        this.$message.waraing("获取厨艺水平失败！");
+      }
+    });
+
+    // 家用电器水平
+    getWiring().then((res) => {
+      if (res.code === 200) {
+        this.wirings = res.data;
+      } else {
+        this.$message.waraing("获取家用电器水平失败！");
+      }
+    });
+
+    // 岗位
+    getJob().then((res) => {
+      if (res.code === 200) {
+        this.jobs = res.data;
+      } else {
+        this.$message.waraing("获取岗位失败！");
+      }
+    });
+
+    // 服务技能
+    getKills().then((res) => {
+      if (res.code === 200) {
+        this.skills = res.data;
+      } else {
+        this.$message.waraing("获取服务技能失败！");
+      }
+    });
+
+    // 获取当前时间
+    this.addUserForm.in_time = new Date()
+      .toLocaleDateString()
+      .replace(/\//g, "-");
+
+    // 监听新增员工事件（改变入职时间）
+    // 注意该监听函数，必须是该组件已经创建过一次，才能监听到，否则，gameover
+    eventVue.$on("addstaffevent", (val) => {
+      // 获取当前时间
+      this.addUserForm.in_time = new Date()
+        .toLocaleDateString()
+        .replace(/\//g, "-");
+    });
+
+    // 监听编辑按钮发送的事件
+    eventVue.$on("editstaffevent", (id) => {
+      console.log("我已经监听到了该员工id之：" + id);
+    });
+  },
   methods: {
+    // node改变
+    casecaderChange(nodeArry) {
+      console.log(nodeArry);
+      let i = 0;
+      // 当前获取的省份的id
+      let nodeid = nodeArry[i];
+      getCity(nodeid).then((res) => {
+        let cities = (res && res.data) || [];
+        console.log(cities);
+
+        for (let i = 0; i < this.hProvenceArray.length; i++) {
+          if (this.hProvenceArray[i].id === nodeid) {
+            this.$set(this.hProvenceArray[i], 'children', cities) // right
+          }
+        }
+
+        // this.hProvenceArray.forEach((item) => {
+        //   // item["cities"] = cities;
+        //   if (item.id === nodeid) {
+        //     // item.children = cities; // 视图未更新
+        //     this.$set(item, 'children', cities)
+        //   }
+        // });
+      });
+      console.log(this.hProvenceArray);
+    },
     cancelAddStaff() {
       eventVue.$emit("canceladdstaff");
     },
@@ -621,6 +868,16 @@ export default {
         }
       }
     }
+  }
+
+  /deep/.add-user-form::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+  }
+
+  /deep/.add-user-form::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
   }
 
   // 确认按钮

@@ -192,14 +192,9 @@
         <el-table-column align="center" prop="name" label="姓名" width="180">
           <template slot-scope="scope">
             <div class="name-wrap">
-              <el-popover
-                placement="bottom-start"
-                width="600"
-                trigger="click"
-                @hide="popoverHiden"
-              >
+              <el-popover placement="bottom-start" width="600" trigger="click" @hide="popoverHiden">
                 <!-- 内容 -->
-                <el-tabs >
+                <el-tabs>
                   <el-tab-pane label="新增事件">新增事件</el-tab-pane>
                   <el-tab-pane label="面试管理">面试管理</el-tab-pane>
                   <el-tab-pane label="角色管理">角色管理</el-tab-pane>
@@ -266,10 +261,16 @@
               placement="top"
               :enterable="false"
             >
-              <el-button type="warning" size="mini" icon="el-icon-picture-outline" circle></el-button>
+              <el-button
+                @click="pictureBtn"
+                type="warning"
+                size="mini"
+                icon="el-icon-picture-outline"
+                circle
+              ></el-button>
             </el-tooltip>
             <!-- 新增事件 -->
-            <el-tooltip
+            <!-- <el-tooltip
               class="item"
               effect="dark"
               content="新增事件"
@@ -277,7 +278,7 @@
               :enterable="false"
             >
               <el-button type="warning" size="mini" icon="el-icon-data-board" circle></el-button>
-            </el-tooltip>
+            </el-tooltip>-->
           </template>
         </el-table-column>
       </el-table>
@@ -303,11 +304,69 @@
     >
       <add-staff></add-staff>
     </el-dialog>
+
+    <!-- 图片上传 -->
+    <el-dialog title="图片上传" :visible.sync="pictureDialogVisible" width="50%" center>
+      <!-- 内容区域 -->
+
+      <!-- 身份证 -->
+      <div class="box-border">
+        <p class="title-picture">
+          <span>身份证:</span>
+        </p>
+        <el-upload
+          action="https://jsonplaceholder.typicode.com/posts/"
+          list-type="picture-card"
+          :on-preview="handleIdentyPreview"
+          :on-remove="handleIdentyRemove"
+          :on-exceed="handleIdentyExceed"
+          multiple
+          :limit="2"
+          class="upload"
+        >
+          <i class="el-icon-picture"></i>
+        </el-upload>
+        <el-dialog append-to-body :visible.sync="dialogVisible">
+          <img width="100%" :src="dialogImageUrl" alt />
+        </el-dialog>
+      </div>
+      <!-- 体检证件 -->
+      <div class="box-border">
+        <p class="title-picture">
+          <span>体检证件:</span>
+        </p>
+        <el-upload
+          action="https://jsonplaceholder.typicode.com/posts/"
+          list-type="picture-card"
+          :on-preview="handleBodyPreview"
+          :on-remove="handleBodyRemove"
+          :on-exceed="handleBodyExceed"
+          multiple
+          :limit="3"
+          class="upload"
+        >
+          <i class="el-icon-picture"></i>
+        </el-upload>
+        <el-dialog append-to-body :visible.sync="dialogVisible">
+          <img width="100%" :src="dialogImageUrl" alt />
+        </el-dialog>
+      </div>
+
+      <!-- 脚部 -->
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="pictureDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="pictureDialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { requestUserListDate, deleteStaff, getOneStraffInfo } from "network/detail";
+import {
+  requestUserListDate,
+  deleteStaff,
+  getOneStraffInfo,
+} from "network/detail";
 import AddStaff from "components/common/table/AddStaff";
 import eventVue from "common/eventVue";
 
@@ -331,13 +390,20 @@ export default {
       title: "新增员工",
       // 是否显示等待加载
       loading: true,
-     
+      // 是否显示图片上传弹框
+      pictureDialogVisible: false,
+
+      /**
+       * 上传图片显示，以及链接
+       * */
+      dialogImageUrl: "",
+      dialogVisible: false,
     };
   },
   methods: {
     // 定义请求用户列表数据
     getUserData() {
-      this.loading = true
+      this.loading = true;
       requestUserListDate()
         .then((res) => {
           if (res.code === 200) {
@@ -348,7 +414,7 @@ export default {
             this.per_page = res.data.per_page;
 
             // 关闭等待
-            this.loading = false
+            this.loading = false;
           } else {
             this.$message.error(res.msg);
           }
@@ -357,9 +423,15 @@ export default {
           return;
         });
     },
-    // 
+    //
     popoverHiden() {
-      console.log('我隐藏了')
+      console.log("我隐藏了");
+    },
+
+    // 显示图片上传的弹框
+    pictureBtn() {
+      console.log("jjj");
+      this.pictureDialogVisible = true;
     },
 
     // 点击新增按钮
@@ -415,6 +487,32 @@ export default {
       // 发送员工id
       eventVue.$emit("editstaffevent", id);
     },
+
+    /**
+     * 图片上传
+     */
+    // 身份证上传
+    handleIdentyRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handleIdentyPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    handleIdentyExceed() {
+      this.$message.warning('最多上传两张！')
+    },
+    // 体检证件
+    handleBodyRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handleBodyPreview(file) {
+      this.dialogImageUrl = file.url;
+      this.dialogVisible = true;
+    },
+    handleBodyExceed() {
+      this.$message.warning('最多上传三张！')
+    }
   },
   created() {
     // 获取用户数据
@@ -492,5 +590,30 @@ export default {
 .user-table-card {
   border-top: 2px solid #75cbf4;
   box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1);
+}
+
+.box-border {
+  height: 200px;
+  border: 1px solid #cccccc;
+  border-radius: 10px;
+  padding: 10px 20px;
+  margin-bottom: 20px;
+
+  .title-picture {
+    color: #000;
+    font-size: 18px;
+    height: 30px;
+
+    span {
+      margin-left: 20px;
+    }
+  }
+
+  .upload {
+    display: flex;
+    height: 150px;
+    justify-content: center;
+    overflow-y: auto;
+  }
 }
 </style>

@@ -2,12 +2,11 @@ import {
   request
 } from './request'
 import Qs from 'qs'
-import axios from 'axios'
 
 // 请求员工列表数据
 export function requestUserListDate() {
   return request({
-    url: "/staff",
+    url: "/staff/index",
     method: "get",
   })
 }
@@ -15,7 +14,7 @@ export function requestUserListDate() {
 // 保存员工信息
 export function saveStaffInfo(data) {
   return request({
-    url: '/staff',
+    url: '/staff/save',
     method: 'post',
     data: data
   })
@@ -24,19 +23,20 @@ export function saveStaffInfo(data) {
 // 删除单个员工按钮
 export function deleteStaff(ids) {
   return request({
-    url: '/staff/1',
-    method: 'delete',
-    config: {
-      data: ids
-    }
+    url: '/staff/delete',
+    method: 'post',
+    data: ids
   })
 }
 
 // 获取单个用户的详情
 export function getOneStraffInfo(id) {
   return request({
-    url: '/staff/' + id + '/edit',
-    method: "get"
+    url: '/staff/edit',
+    method: "get",
+    params: {
+      id: id
+    }
   })
 }
 

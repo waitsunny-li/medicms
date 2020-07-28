@@ -12,18 +12,18 @@ module.exports = {
       }
     }
   },
-  // devServer: {
-  //   port: 80,
-  //   proxy: {
-  //     '/api': {
-  //       target: 'http://qqq.shihanphp.cn/', // target host
-  //       ws: true, // proxy websockets 
-  //       changeOrigin: true, // needed for virtual hosted sites
-  //       pathRewrite: {
-  //         '^/api': '' // rewrite path
-  //       }
-  //     },
-  //   }
-  // }
+  devServer: {
+    port: 80,
+    proxy: {
+      '/api': {
+        target: 'http://qqq.shihanphp.cn/', // target host
+        ws: true, // proxy websockets 
+        changeOrigin: true, // needed for virtual hosted sites
+        pathRewrite: {
+          '^/api': '' // rewrite path
+        }
+      },
+    }
+  }
 
 }

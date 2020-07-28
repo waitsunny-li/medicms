@@ -20,6 +20,18 @@ export function getCity(pid) {
   })
 }
 
+
+// 获取县
+export function getDistrict(pid) {
+  return request({
+    url: '/region/district',
+    method: 'get',
+    params: {
+      parent_id: pid
+    }
+  })
+}
+
 // 获取语言能力分组
 export function getLanguage() {
   return request({

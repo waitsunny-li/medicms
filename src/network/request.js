@@ -30,3 +30,4 @@ export function request(config) {
 
   return instance(config)
 }
+

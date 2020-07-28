@@ -18,6 +18,7 @@
         style="width: 100%"
         height="550"
         @selection-change="handleSelectionChange"
+        v-loading="loading"
       >
         <!-- 选择 -->
         <el-table-column type="selection" width="55"></el-table-column>
@@ -188,7 +189,30 @@
             </el-row>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="name" label="姓名" width="180"></el-table-column>
+        <el-table-column align="center" prop="name" label="姓名" width="180">
+          <template slot-scope="scope">
+            <div class="name-wrap">
+              <el-popover
+                placement="bottom-start"
+                width="600"
+                trigger="click"
+                @hide="popoverHiden"
+              >
+                <!-- 内容 -->
+                <el-tabs >
+                  <el-tab-pane label="新增事件">新增事件</el-tab-pane>
+                  <el-tab-pane label="面试管理">面试管理</el-tab-pane>
+                  <el-tab-pane label="角色管理">角色管理</el-tab-pane>
+                  <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
+                </el-tabs>
+                <!-- 按钮显示 -->
+                <el-button type="text" id="popoPlus" slot="reference" icon="el-icon-circle-plus"></el-button>
+              </el-popover>
+
+              <span style="margin-left: 10px">{{scope.row.name}}</span>
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column align="center" prop="sex" label="性别" width="180">
           <template slot-scope="scope">
             <span v-if="scope.row.sex == 1">男</span>
@@ -221,7 +245,7 @@
               cancelButtonText="不用了"
               icon="el-icon-info"
               iconColor="red"
-              title="这是一段内容确定删除吗？"
+              title="您确定要永久删除该员工吗？"
               @onConfirm="formDeleteBtn(scope.row.id)"
             >
               <el-button
@@ -283,7 +307,7 @@
 </template>
 
 <script>
-import { requestUserListDate } from "network/detail";
+import { requestUserListDate, deleteStaff, getOneStraffInfo } from "network/detail";
 import AddStaff from "components/common/table/AddStaff";
 import eventVue from "common/eventVue";
 
@@ -304,19 +328,27 @@ export default {
       // 已选择的的用户id
       selected: [],
       // 修改与增加title
-      title: "",
+      title: "新增员工",
+      // 是否显示等待加载
+      loading: true,
+     
     };
   },
   methods: {
     // 定义请求用户列表数据
     getUserData() {
+      this.loading = true
       requestUserListDate()
         .then((res) => {
           if (res.code === 200) {
             this.userList = res.data.data;
+            // console.log(res.data)
             this.currentPage = res.data.current_page;
             this.total = parseInt(res.data.total);
             this.per_page = res.data.per_page;
+
+            // 关闭等待
+            this.loading = false
           } else {
             this.$message.error(res.msg);
           }
@@ -324,6 +356,10 @@ export default {
         .catch((err) => {
           return;
         });
+    },
+    // 
+    popoverHiden() {
+      console.log('我隐藏了')
     },
 
     // 点击新增按钮
@@ -347,7 +383,11 @@ export default {
 
     // 点击表单中的删除按钮
     formDeleteBtn(id) {
-      console.log(id);
+      let ids = { ids: [id] };
+      deleteStaff(ids).then((res) => {
+        console.log(res);
+      });
+      console.log(ids);
     },
 
     // 选择删除按钮
@@ -423,6 +463,11 @@ export default {
 .user-table-card {
   position: relative;
   height: 700px;
+
+  .name-wrap {
+    // display: flex;
+    // justify-content: center;
+  }
 
   .pagination {
     position: absolute;

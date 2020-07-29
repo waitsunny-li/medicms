@@ -25,7 +25,9 @@ export function deleteStaff(ids) {
   return request({
     url: '/staff/delete',
     method: 'post',
-    data: ids
+    data: {
+      ids: ids
+    }
   })
 }
 

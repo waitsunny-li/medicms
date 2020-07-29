@@ -92,11 +92,13 @@ export default {
         })
           .then(res => {
             if (res.code === 200) {
+              console.log(res)
               // 本地存储用户的基本信息
               this.$store.commit('saveUserInfo', {
                 "userToken": res.data.Authorization,
                 "username": res.data.username,
-                "last_login_time": res.data.last_login_time
+                "last_login_time": res.data.last_login_time,
+                "ip": res.data.ip
               })
               this.$message.success(res.msg)
               this.$router.replace('/welcome')

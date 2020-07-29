@@ -269,16 +269,6 @@
                 circle
               ></el-button>
             </el-tooltip>
-            <!-- 新增事件 -->
-            <!-- <el-tooltip
-              class="item"
-              effect="dark"
-              content="新增事件"
-              placement="top"
-              :enterable="false"
-            >
-              <el-button type="warning" size="mini" icon="el-icon-data-board" circle></el-button>
-            </el-tooltip>-->
           </template>
         </el-table-column>
       </el-table>
@@ -306,7 +296,13 @@
     </el-dialog>
 
     <!-- 图片上传 -->
-    <el-dialog title="图片上传" :visible.sync="pictureDialogVisible" width="50%" center>
+    <el-dialog
+      title="图片上传"
+      :visible.sync="pictureDialogVisible"
+      width="50%"
+      center
+      class="picDialog"
+    >
       <!-- 内容区域 -->
 
       <!-- 身份证 -->
@@ -315,8 +311,9 @@
           <span>身份证:</span>
         </p>
         <el-upload
-          action="https://jsonplaceholder.typicode.com/posts/"
+          action="http://qqq.shihanphp.cn/api/upload"
           list-type="picture-card"
+          :headers="{Authorization: $store.state.userInfo.userToken}"
           :on-preview="handleIdentyPreview"
           :on-remove="handleIdentyRemove"
           :on-exceed="handleIdentyExceed"
@@ -326,8 +323,8 @@
         >
           <i class="el-icon-picture"></i>
         </el-upload>
-        <el-dialog append-to-body :visible.sync="dialogVisible">
-          <img width="100%" :src="dialogImageUrl" alt />
+        <el-dialog append-to-body :visible.sync="dialogIdentyVisible">
+          <img width="100%" :src="dialogIdentyImageUrl" alt />
         </el-dialog>
       </div>
       <!-- 体检证件 -->
@@ -336,8 +333,9 @@
           <span>体检证件:</span>
         </p>
         <el-upload
-          action="https://jsonplaceholder.typicode.com/posts/"
+          action="http://qqq.shihanphp.cn/api/upload"
           list-type="picture-card"
+          :headers="{Authorization: $store.state.userInfo.userToken}"
           :on-preview="handleBodyPreview"
           :on-remove="handleBodyRemove"
           :on-exceed="handleBodyExceed"
@@ -347,8 +345,31 @@
         >
           <i class="el-icon-picture"></i>
         </el-upload>
-        <el-dialog append-to-body :visible.sync="dialogVisible">
-          <img width="100%" :src="dialogImageUrl" alt />
+        <el-dialog append-to-body :visible.sync="dialogBodyVisible">
+          <img width="100%" :src="dialogBodyImageUrl" alt />
+        </el-dialog>
+      </div>
+      <!-- 生活照片 -->
+      <div class="box-border">
+        <p class="title-picture">
+          <span>生活照片:</span>
+        </p>
+        <el-upload
+          action="http://qqq.shihanphp.cn/api/upload"
+          list-type="picture-card"
+          :headers="{Authorization: $store.state.userInfo.userToken}"
+          :on-preview="handleLifePreview"
+          :on-remove="handleLifeRemove"
+          :on-success="handleLifeSuccess"
+          :on-exceed="handleLifeExceed"
+          multiple
+          :limit="2"
+          class="upload"
+        >
+          <i class="el-icon-picture"></i>
+        </el-upload>
+        <el-dialog append-to-body :visible.sync="dialogLifeVisible">
+          <img width="100%" :src="dialogLifeImageUrl" alt />
         </el-dialog>
       </div>
 
@@ -377,7 +398,7 @@ export default {
       // 用户列表数据
       userList: [],
       // 是否显示用户
-      addUserFormVisible: true,
+      addUserFormVisible: false,
       // 当前页数
       currentPage: 1,
       // 总数据条数
@@ -396,8 +417,15 @@ export default {
       /**
        * 上传图片显示，以及链接
        * */
-      dialogImageUrl: "",
-      dialogVisible: false,
+      // 身份证上传
+      dialogIdentyImageUrl: "",
+      dialogIdentyVisible: false,
+      // 体检证件
+      dialogBodyImageUrl: "",
+      dialogBodyVisible: false,
+      // 生活照片
+      dialogLifeImageUrl: "",
+      dialogLifeVisible: false,
     };
   },
   methods: {
@@ -407,6 +435,7 @@ export default {
       requestUserListDate()
         .then((res) => {
           if (res.code === 200) {
+            console.log(res.data)
             this.userList = res.data.data;
             // console.log(res.data)
             this.currentPage = res.data.current_page;
@@ -455,9 +484,16 @@ export default {
 
     // 点击表单中的删除按钮
     formDeleteBtn(id) {
-      let ids = { ids: [id] };
+      let ids = [id];
       deleteStaff(ids).then((res) => {
-        console.log(res);
+        if (res.code === 200) {
+          // 提示删除成功
+          this.$message.success(res.msg);
+          // 更新数据
+          this.getUserData();
+        } else {
+          this.$message.error(res.msg);
+        }
       });
       console.log(ids);
     },
@@ -465,6 +501,29 @@ export default {
     // 选择删除按钮
     selectDeleteBtn() {
       if (this.selected.length !== 0) {
+        this.$confirm("此操作将永久删除选中员工, 是否继续?", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning",
+        })
+          .then(() => {
+            // 确认操作
+            deleteStaff(this.selected).then((res) => {
+              console.log(res);
+              if (res.code === 200) {
+                // 提示删除成功
+                this.$message.success(res.msg);
+                // 更新数据
+                this.getUserData();
+              } else {
+                this.$message.error(res.msg);
+              }
+            });
+          })
+          .catch(() => {
+            // 取消操作
+            this.$message.info("已取消删除");
+          });
       } else {
         this.$message.warning("请选择要删除的用户！");
       }
@@ -496,23 +555,37 @@ export default {
       console.log(file, fileList);
     },
     handleIdentyPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
+      this.dialogIdentyImageUrl = file.url;
+      this.dialogIdentyVisible = true;
     },
     handleIdentyExceed() {
-      this.$message.warning('最多上传两张！')
+      this.$message.warning("最多上传两张！");
     },
     // 体检证件
     handleBodyRemove(file, fileList) {
       console.log(file, fileList);
     },
     handleBodyPreview(file) {
-      this.dialogImageUrl = file.url;
-      this.dialogVisible = true;
+      this.dialogBodyImageUrl = file.url;
+      this.dialogBodyVisible = true;
     },
     handleBodyExceed() {
-      this.$message.warning('最多上传三张！')
-    }
+      this.$message.warning("最多上传三张！");
+    },
+    // 生活照片
+    handleLifeRemove(file, fileList) {
+      console.log(file, fileList);
+    },
+    handleLifePreview(file) {
+      this.dialogLifeImageUrl = file.url;
+      this.dialogLifeVisible = true;
+    },
+    handleLifeExceed() {
+      this.$message.warning("最多上传二张！");
+    },
+    handleLifeSuccess(res, file, fileList) {
+      console.log(res, fileList);
+    },
   },
   created() {
     // 获取用户数据
@@ -522,6 +595,11 @@ export default {
     eventVue.$on("canceladdstaff", (val) => {
       this.addUserFormVisible = false;
     });
+
+    // 监听储存更新
+    eventVue.$on('saveUpdateStaff', val => {
+      this.getUserData()
+    })
   },
   components: {
     AddStaff,
@@ -614,6 +692,24 @@ export default {
     height: 150px;
     justify-content: center;
     overflow-y: auto;
+  }
+}
+
+.picDialog {
+  /deep/.el-dialog__body {
+    height: 500px;
+    // overflow: hidden;
+    overflow-y: auto;
+  }
+
+  /deep/.el-dialog__body::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+  }
+
+  /deep/.el-dialog__body::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
   }
 }
 </style>

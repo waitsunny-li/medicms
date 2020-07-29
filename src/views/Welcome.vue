@@ -17,7 +17,7 @@
       <!-- 时间-ip -->
       <div class="time-ip-wrap">
         <div class="time">您上次登录时间：{{$store.state.userInfo.last_login_time}}</div>
-        <div class="ip">IP：127.0.0.1</div>
+        <div class="ip">IP：{{$store.state.userInfo.ip}}</div>
       </div>
       <!-- 主页退出 -->
       <div class="home-logout">

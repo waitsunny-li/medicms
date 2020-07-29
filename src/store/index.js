@@ -12,7 +12,8 @@ const state = {
   userInfo: {
     userToken: getItem('userInfo')['userToken'] ? getItem('userInfo')['userToken'] : '',
     username: getItem('userInfo')['username'] ? getItem('userInfo')['username'] : '',
-    last_login_time: getItem('userInfo')['last_login_time'] ? getItem('userInfo')['last_login_time'] : ''
+    last_login_time: getItem('userInfo')['last_login_time'] ? getItem('userInfo')['last_login_time'] : '',
+    ip: getItem('userInfo')['ip'] ? getItem('userInfo')['ip'] : '',
   }
 }
 

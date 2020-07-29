@@ -32,146 +32,159 @@
               </el-col>
               <el-col :span="5">
                 <span class="label-text">工资要求</span>
-                <span class="content-text">5000~7000</span>
+                <span class="content-text">{{scope.row.salary}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">英语水平</span>
-                <span class="content-text">四级</span>
+                <span class="content-text">{{scope.row.english}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">计算机水平</span>
-                <span class="content-text">一般</span>
+                <span class="content-text">{{scope.row.computer}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">政治面貌</span>
-                <span class="content-text">公民</span>
+                <span class="content-text">{{scope.row.political_status}}</span>
               </el-col>
             </el-row>
 
             <el-row class="expand-row">
               <el-col :span="4">
                 <span class="label-text">生肖</span>
-                <span class="content-text">狗</span>
+                <span class="content-text">{{scope.row.zodiac}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">休假要求</span>
-                <span class="content-text">月休4天</span>
+                <span class="content-text">{{scope.row.salary}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">户口地址</span>
-                <span class="content-text">湖南省长沙市</span>
+                <span
+                  class="content-text"
+                >{{scope.row.census_p_text}}{{scope.row.cnnsus_c_text}}{{scope.row.cnnsus_d_text}}{{scope.row.census_address_desc}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">户口类型</span>
-                <span class="content-text">非农业户口</span>
+                <span class="content-text">{{scope.row.census_type}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">入职时间</span>
-                <span class="content-text">2020年05月20日</span>
+                <span class="content-text">{{scope.row.in_time}}</span>
               </el-col>
             </el-row>
 
             <el-row class="expand-row">
               <el-col :span="4">
                 <span class="label-text">学历</span>
-                <span class="content-text">高中</span>
+                <span class="content-text">{{scope.row.educatuin}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">现居住地</span>
-                <span class="content-text">长沙</span>
+                <span
+                  class="content-text"
+                >{{scope.row.now_p_text}}{{scope.row.now_c_text}}{{scope.row.now_d_text}}{{scope.row.now_address_desc}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">服务技能</span>
-                <span class="content-text">开车、卫生清洁</span>
+                <span class="content-text">{{scope.row.service_skills}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">家用电器</span>
-                <span class="content-text">电磁炉、电饭锅等</span>
+                <span class="content-text">{{scope.row.device}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">入职来源</span>
-                <span class="content-text">李小海：15888888888</span>
+                <span
+                  class="content-text"
+                >{{scope.row.recruiters_name}}：{{scope.row.recruiters_mobile}}</span>
               </el-col>
             </el-row>
 
             <el-row class="expand-row">
               <el-col :span="4">
                 <span class="label-text">血型</span>
-                <span class="content-text">O型</span>
+                <span class="content-text">{{scope.row.blood}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">健康状况</span>
-                <span class="content-text">良好</span>
+                <span class="content-text">{{scope.row.health}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">婚姻状况</span>
-                <span class="content-text">已婚</span>
+                <span class="content-text">{{scope.row.marital_status}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">员工状态</span>
-                <span class="content-text">待岗</span>
+                <span class="content-text">{{scope.row.person_state}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">保险</span>
-                <span class="content-text">------------</span>
+                <span class="content-text">{{scope.row.agreement_amount}}</span>
               </el-col>
             </el-row>
 
             <el-row class="expand-row">
               <el-col :span="4">
                 <span class="label-text">身高</span>
-                <span class="content-text">180cm</span>
+                <span class="content-text">{{scope.row.height}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">体重</span>
-                <span class="content-text">60kg</span>
+                <span class="content-text">{{scope.row.weight}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">籍贯</span>
-                <span class="content-text">常山</span>
+                <span class="content-text">{{scope.row.census}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">生日</span>
-                <span class="content-text">10.12</span>
+                <span class="content-text">{{scope.row.birthday}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">语言能力</span>
-                <span class="content-text">普通话、客家话</span>
+                <span class="content-text">{{scope.row.language}}</span>
               </el-col>
             </el-row>
 
             <el-row class="expand-row">
               <el-col :span="4">
                 <span class="label-text">录入人</span>
-                <span class="content-text">李万鑫</span>
+                <span class="content-text">{{scope.row.salary}}</span>
               </el-col>
               <el-col :span="5">
-                <span class="label-text">家庭紧急电话</span>
-                <span class="content-text">15888888888</span>
+                <span class="label-text">家庭紧急联系</span>
+                <span class="content-text">{{scope.row.urgent_name}}：{{scope.row.urgent_mobile}}</span>
               </el-col>
               <el-col :span="8">
                 <span class="label-text">安置协议</span>
-                <span class="content-text">于2020年5月12日在长沙市订立</span>
+                <span class="content-text">{{scope.row.agreement_amount}}</span>
               </el-col>
             </el-row>
 
             <el-row class="expand-row">
               <el-col :span="12" style="display: flex">
                 <span class="label-text">工作经历</span>
-                <div class="content-text">
-                  <el-col :span="24">育婴师</el-col>
-                  <el-col :span="24">2017年至2019年</el-col>
-                  <el-col :span="24">宝安西乡</el-col>
-                  <el-col :span="24">照顾小孩、老年人、宠物</el-col>
+                <div
+                  class="content-text"
+                  v-for="(item, index) in scope.row.work_experience"
+                  :key="index"
+                >
+                  <el-col :span="24">{{item.job}}</el-col>
+                  <el-col :span="24">{{item.time.join('~')}}</el-col>
+                  <el-col :span="24">{{item.address}}</el-col>
+                  <el-col :span="24">{{item.content}}</el-col>
                 </div>
               </el-col>
               <el-col :span="12" style="display: flex">
                 <span class="label-text">家庭成员</span>
-
-                <div class="content-text">
-                  <el-col :span="24">许承海</el-col>
-                  <el-col :span="24">1987年8月15日</el-col>
-                  <el-col :span="24">务工</el-col>
+                <div
+                  class="content-text"
+                  v-for="(item, index) in scope.row.family_member"
+                  :key="index"
+                >
+                  <el-col :span="24">{{item.name}}</el-col>
+                  <el-col :span="24">{{item.relation}}</el-col>
+                  <el-col :span="24">{{item.current_situation}}</el-col>
                 </div>
               </el-col>
             </el-row>
@@ -223,8 +236,23 @@
         ></el-table-column>
         <el-table-column align="center" prop="age" label="年龄"></el-table-column>
         <el-table-column align="center" prop="mobile" width="110px" label="手机号"></el-table-column>
-        <el-table-column align="center" prop="address" label="地址"></el-table-column>
-        <el-table-column align="center" prop="cencus" label="户籍"></el-table-column>
+        <el-table-column align="center" prop="address" label="现居住地址" :show-overflow-tooltip="true">
+          <template
+            slot-scope="scope"
+          >{{scope.row.now_p_text}}{{scope.row.now_c_text}}{{scope.row.now_d_text}}{{scope.row.now_address_desc}}</template>
+        </el-table-column>
+        <el-table-column align="center" prop="person_state" label="人员状态">
+          <template slot-scope="scope">
+            <p v-if="scope.row.person_state == 1">培训</p>
+            <p v-else-if="scope.row.person_state == 2">考核</p>
+            <p v-else-if="scope.row.person_state == 3">待岗</p>
+            <p v-else-if="scope.row.person_state == 4">离职</p>
+            <p v-else-if="scope.row.person_state == 5">黑名单</p>
+            <p v-else-if="scope.row.person_state == 6">在岗</p>
+            <p v-else-if="scope.row.person_state == 7">离职(下单)</p>
+            <p v-else>错误</p>
+          </template>
+        </el-table-column>
         <!-- 操作 -->
         <el-table-column label="操作" align="center" width="180px">
           <template slot-scope="scope">
@@ -262,7 +290,7 @@
               :enterable="false"
             >
               <el-button
-                @click="pictureBtn"
+                @click="pictureBtn(scope.row.id)"
                 type="warning"
                 size="mini"
                 icon="el-icon-picture-outline"
@@ -317,6 +345,7 @@
           :on-preview="handleIdentyPreview"
           :on-remove="handleIdentyRemove"
           :on-exceed="handleIdentyExceed"
+          :on-success="handleIdentySuccess"
           multiple
           :limit="2"
           class="upload"
@@ -339,6 +368,7 @@
           :on-preview="handleBodyPreview"
           :on-remove="handleBodyRemove"
           :on-exceed="handleBodyExceed"
+          :on-success="handleBodySuccess"
           multiple
           :limit="3"
           class="upload"
@@ -373,10 +403,106 @@
         </el-dialog>
       </div>
 
+      <!-- 技能照片 -->
+      <div class="box-border">
+        <p class="title-picture">
+          <span>技能照片:</span>
+        </p>
+        <el-upload
+          action="http://qqq.shihanphp.cn/api/upload"
+          list-type="picture-card"
+          :headers="{Authorization: $store.state.userInfo.userToken}"
+          :on-preview="handleSkillPreview"
+          :on-remove="handleSkillRemove"
+          :on-success="handleSkillSuccess"
+          :on-exceed="handleSkillExceed"
+          multiple
+          :limit="8"
+          class="upload"
+        >
+          <i class="el-icon-picture"></i>
+        </el-upload>
+        <el-dialog append-to-body :visible.sync="dialogSkillVisible">
+          <img width="100%" :src="dialogSkillImageUrl" alt />
+        </el-dialog>
+      </div>
+
+      <!-- 厨艺展示 -->
+      <div class="box-border">
+        <p class="title-picture">
+          <span>厨艺展示:</span>
+        </p>
+        <el-upload
+          action="http://qqq.shihanphp.cn/api/upload"
+          list-type="picture-card"
+          :headers="{Authorization: $store.state.userInfo.userToken}"
+          :on-preview="handleCookingPreview"
+          :on-remove="handleCookingRemove"
+          :on-success="handleCookingSuccess"
+          :on-exceed="handleCookingExceed"
+          multiple
+          :limit="5"
+          class="upload"
+        >
+          <i class="el-icon-picture"></i>
+        </el-upload>
+        <el-dialog append-to-body :visible.sync="dialogCookingVisible">
+          <img width="100%" :src="dialogCookingImageUrl" alt />
+        </el-dialog>
+      </div>
+
+      <!-- 育婴照片 -->
+      <div class="box-border">
+        <p class="title-picture">
+          <span>育婴照片:</span>
+        </p>
+        <el-upload
+          action="http://qqq.shihanphp.cn/api/upload"
+          list-type="picture-card"
+          :headers="{Authorization: $store.state.userInfo.userToken}"
+          :on-preview="handleBadyPreview"
+          :on-remove="handleBadyRemove"
+          :on-exceed="handleBadyExceed"
+          :on-success="handleBadySuccess"
+          multiple
+          :limit="4"
+          class="upload"
+        >
+          <i class="el-icon-picture"></i>
+        </el-upload>
+        <el-dialog append-to-body :visible.sync="dialogBadyVisible">
+          <img width="100%" :src="dialogBadyImageUrl" alt />
+        </el-dialog>
+      </div>
+
+      <!-- 其他照片 -->
+      <div class="box-border">
+        <p class="title-picture">
+          <span>其他照片:</span>
+        </p>
+        <el-upload
+          action="http://qqq.shihanphp.cn/api/upload"
+          list-type="picture-card"
+          :headers="{Authorization: $store.state.userInfo.userToken}"
+          :on-preview="handleOtherPreview"
+          :on-remove="handleOtherRemove"
+          :on-exceed="handleOtherExceed"
+          :on-success="handleOtherSuccess"
+          multiple
+          :limit="4"
+          class="upload"
+        >
+          <i class="el-icon-picture"></i>
+        </el-upload>
+        <el-dialog append-to-body :visible.sync="dialogOtherVisible">
+          <img width="100%" :src="dialogOtherImageUrl" alt />
+        </el-dialog>
+      </div>
+
       <!-- 脚部 -->
       <span slot="footer" class="dialog-footer">
         <el-button @click="pictureDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="pictureDialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="savePicBtn">保 存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -387,6 +513,7 @@ import {
   requestUserListDate,
   deleteStaff,
   getOneStraffInfo,
+  uploadImage,
 } from "network/detail";
 import AddStaff from "components/common/table/AddStaff";
 import eventVue from "common/eventVue";
@@ -413,6 +540,19 @@ export default {
       loading: true,
       // 是否显示图片上传弹框
       pictureDialogVisible: false,
+      // 上传图片数据
+      pictureData: {
+        staff_id: "",
+        identity: [],
+        body_check_c: [],
+        life: [],
+        skill: [],
+        cooking: [],
+        take_body: [],
+        other: [],
+      },
+      // 域名
+      baseurl: "http://qqq.shihanphp.cn/",
 
       /**
        * 上传图片显示，以及链接
@@ -426,6 +566,18 @@ export default {
       // 生活照片
       dialogLifeImageUrl: "",
       dialogLifeVisible: false,
+      // 技能照片
+      dialogSkillImageUrl: "",
+      dialogSkillVisible: false,
+      // 厨艺展示
+      dialogCookingImageUrl: "",
+      dialogCookingVisible: false,
+      // 育婴照片
+      dialogBadyImageUrl: "",
+      dialogBadyVisible: false,
+      // 其他照片
+      dialogOtherImageUrl: "",
+      dialogOtherVisible: false,
     };
   },
   methods: {
@@ -435,7 +587,7 @@ export default {
       requestUserListDate()
         .then((res) => {
           if (res.code === 200) {
-            console.log(res.data)
+            console.log(res.data);
             this.userList = res.data.data;
             // console.log(res.data)
             this.currentPage = res.data.current_page;
@@ -458,9 +610,10 @@ export default {
     },
 
     // 显示图片上传的弹框
-    pictureBtn() {
-      console.log("jjj");
+    pictureBtn(id) {
+      this.pictureData.staff_id = id;
       this.pictureDialogVisible = true;
+      console.log(this.pictureData.staff_id);
     },
 
     // 点击新增按钮
@@ -542,7 +695,6 @@ export default {
     editStaffBtn(id, name) {
       this.title = "编辑员工（" + name + "）";
       this.addUserFormVisible = true;
-      console.log(id);
       // 发送员工id
       eventVue.$emit("editstaffevent", id);
     },
@@ -550,42 +702,121 @@ export default {
     /**
      * 图片上传
      */
+    // 转变上传数据
+    transforPicData(item, fileList) {
+      this.pictureData[item] = [...fileList].map((value) => {
+        return this.baseurl + value.response.data.url;
+      });
+    },
     // 身份证上传
     handleIdentyRemove(file, fileList) {
-      console.log(file, fileList);
+      this.transforPicData("identity", fileList);
     },
     handleIdentyPreview(file) {
       this.dialogIdentyImageUrl = file.url;
       this.dialogIdentyVisible = true;
     },
     handleIdentyExceed() {
-      this.$message.warning("最多上传两张！");
+      this.$message.warning("最多上传2张！");
+    },
+    handleIdentySuccess(res, file, fileList) {
+      this.transforPicData("identity", fileList);
     },
     // 体检证件
     handleBodyRemove(file, fileList) {
-      console.log(file, fileList);
+      this.transforPicData("body_check_c", fileList);
     },
     handleBodyPreview(file) {
       this.dialogBodyImageUrl = file.url;
       this.dialogBodyVisible = true;
     },
     handleBodyExceed() {
-      this.$message.warning("最多上传三张！");
+      this.$message.warning("最多上传3张！");
+    },
+    handleBodySuccess(res, file, fileList) {
+      this.transforPicData("body_check_c", fileList);
     },
     // 生活照片
     handleLifeRemove(file, fileList) {
-      console.log(file, fileList);
+      this.transforPicData("life", fileList);
     },
     handleLifePreview(file) {
       this.dialogLifeImageUrl = file.url;
       this.dialogLifeVisible = true;
     },
     handleLifeExceed() {
-      this.$message.warning("最多上传二张！");
+      this.$message.warning("最多上传2张！");
     },
     handleLifeSuccess(res, file, fileList) {
-      console.log(res, fileList);
+      this.transforPicData("life", fileList);
     },
+    // 技能照片
+    handleSkillRemove(file, fileList) {
+      this.transforPicData("skill", fileList);
+    },
+    handleSkillPreview(file) {
+      this.dialogSkillImageUrl = file.url;
+      this.dialogSkillVisible = true;
+    },
+    handleSkillExceed() {
+      this.$message.warning("最多上传8张！");
+    },
+    handleSkillSuccess(res, file, fileList) {
+      this.transforPicData("skill", fileList);
+    },
+    // 厨艺展示
+    handleCookingRemove(file, fileList) {
+      this.transforPicData("cooking", fileList);
+    },
+    handleCookingPreview(file) {
+      this.dialogCookingImageUrl = file.url;
+      this.dialogCookingVisible = true;
+    },
+    handleCookingExceed() {
+      this.$message.warning("最多上传5张！");
+    },
+    handleCookingSuccess(res, file, fileList) {
+      this.transforPicData("cooking", fileList);
+    },
+    // 育婴照片
+    handleBadyRemove(file, fileList) {
+      this.transforPicData("take_body", fileList);
+    },
+    handleBadyPreview(file) {
+      this.dialogCookingImageUrl = file.url;
+      this.dialogCookingVisible = true;
+    },
+    handleBadyExceed() {
+      this.$message.warning("最多上传4张！");
+    },
+    handleBadySuccess(res, file, fileList) {
+      this.transforPicData("take_body", fileList);
+    },
+    // 其他照片
+    handleOtherRemove(file, fileList) {
+      this.transforPicData("other", fileList);
+    },
+    handleOtherPreview(file) {
+      this.dialogCookingImageUrl = file.url;
+      this.dialogCookingVisible = true;
+    },
+    handleOtherExceed() {
+      this.$message.warning("最多上传4张！");
+    },
+    handleOtherSuccess(res, file, fileList) {
+      this.transforPicData("other", fileList);
+    },
+
+    // 保存按钮
+    savePicBtn() {
+      uploadImage(this.pictureData).then(res => {
+        if(res.code === 200) {
+          this.$message.success(res.msg)
+        }else {
+          this.$message.error(res.msg)
+        }
+      })
+    }
   },
   created() {
     // 获取用户数据
@@ -597,9 +828,9 @@ export default {
     });
 
     // 监听储存更新
-    eventVue.$on('saveUpdateStaff', val => {
-      this.getUserData()
-    })
+    eventVue.$on("saveUpdateStaff", (val) => {
+      this.getUserData();
+    });
   },
   components: {
     AddStaff,

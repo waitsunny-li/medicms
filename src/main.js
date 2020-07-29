@@ -8,8 +8,6 @@ import { request } from 'network/request'
 
 Vue.use(ElementUI)
 
-console.log(ElementUI)
-
 Vue.prototype.$request =  request
 
 Vue.config.productionTip = false

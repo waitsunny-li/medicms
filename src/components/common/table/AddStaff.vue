@@ -5,7 +5,7 @@
         :inline="true"
         :rules="addUserRules"
         ref="addUserForm"
-        :model="addUserForm"
+        :model="staffForm"
         class="add-user-form"
       >
         <!-- 头部 -->
@@ -15,7 +15,7 @@
               <el-form-item label="入职时间" prop="in_time" class="in-time-label">
                 <el-date-picker
                   size="mini"
-                  v-model="addUserForm.in_time"
+                  v-model="staffForm.in_time"
                   type="date"
                   placeholder="选择日期"
                   format="yyyy 年 MM 月 dd 日"
@@ -26,9 +26,9 @@
             </el-col>
             <el-col :span="5">
               <el-form-item label="员工状态" prop="person_state" class="person_state">
-                <el-select size="mini" v-model="addUserForm.person_state" placeholder="员工状态">
+                <el-select size="mini" v-model="staffForm.person_state" placeholder="员工状态">
                   <el-option label="在岗" value="在岗"></el-option>
-                  <el-option label="培训" value="培训"></el-option>
+                  <el-option label="培训" value="1"></el-option>
                   <el-option label="待岗" value="待岗"></el-option>
                 </el-select>
               </el-form-item>
@@ -36,12 +36,12 @@
             <el-col :span="10">
               <el-col :span="12">
                 <el-form-item label="入职来源" prop="recruiters_name">
-                  <el-input size="mini" placeholder="姓名" v-model="addUserForm.recruiters_name"></el-input>
+                  <el-input size="mini" placeholder="姓名" v-model="staffForm.recruiters_name"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="9">
                 <el-form-item prop="recruiters_mobile">
-                  <el-input size="mini" placeholder="手机号" v-model="addUserForm.recruiters_mobile"></el-input>
+                  <el-input size="mini" placeholder="手机号" v-model="staffForm.recruiters_mobile"></el-input>
                 </el-form-item>
               </el-col>
             </el-col>
@@ -53,12 +53,12 @@
           <el-row>
             <el-col :span="4">
               <el-form-item label="姓名" prop="name">
-                <el-input size="mini" v-model="addUserForm.name"></el-input>
+                <el-input size="mini" v-model="staffForm.name"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="5">
               <el-form-item label="家用电器" prop="device">
-                <el-select size="mini" multiple v-model="addUserForm.device" placeholder="请选择">
+                <el-select size="mini" multiple v-model="staffForm.device" placeholder="请选择">
                   <el-option
                     v-for="item in wirings"
                     :key="item.id"
@@ -70,7 +70,7 @@
             </el-col>
             <el-col :span="6">
               <el-form-item label="厨艺" prop="cooking">
-                <el-select size="mini" v-model="addUserForm.cooking" placeholder="请选择" multiple>
+                <el-select size="mini" v-model="staffForm.cooking" placeholder="请选择" multiple>
                   <el-option
                     v-for="item in cookings"
                     :key="item.id"
@@ -82,11 +82,11 @@
             </el-col>
             <el-col :span="9">
               <el-col :span="15">
-                <el-form-item label="户口地址" class="registration_address" prop="census_p">
+                <el-form-item label="户口地址" class="registration_address" prop="census_id">
                   <el-cascader
-                    v-model="hpaddress"
+                    v-model="staffForm.census_id"
                     size="mini"
-                    placeholder="请输入省市县区"
+                    :placeholder="census_text"
                     :props="census_data"
                   ></el-cascader>
                 </el-form-item>
@@ -96,7 +96,7 @@
                   <el-input
                     size="mini"
                     class="census_address_desc"
-                    v-model="addUserForm.census_address_desc"
+                    v-model="staffForm.census_address_desc"
                     placeholder="详细地址"
                   ></el-input>
                 </el-form-item>
@@ -107,17 +107,17 @@
           <el-row>
             <el-col :span="4">
               <el-form-item label="籍贯" prop="census">
-                <el-input size="mini" v-model="addUserForm.census"></el-input>
+                <el-input size="mini" v-model="staffForm.census"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="5">
               <el-form-item label="体重" prop="weight">
-                <el-input v-model="addUserForm.weight" size="mini"></el-input>
+                <el-input v-model="staffForm.weight" size="mini"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="工资要求" prop="salary">
-                <el-select size="mini" v-model="addUserForm.salary" placeholder="请选择">
+                <el-select size="mini" v-model="staffForm.salary" placeholder="请选择">
                   <el-option label="3000~5000" value="3000~5000"></el-option>
                   <el-option label="5000~8000" value="5000~8000"></el-option>
                   <el-option label="8000~10000" value="8000~10000"></el-option>
@@ -127,11 +127,11 @@
             </el-col>
             <el-col :span="9">
               <el-col :span="15">
-                <el-form-item label="现居地址" class="registration_address" prop="now_p">
+                <el-form-item label="现居地址" class="registration_address" prop="now_id">
                   <el-cascader
-                    placeholder="请输入省市县区"
+                    :placeholder="now_text"
                     size="mini"
-                    v-model="nowaddress"
+                    v-model="staffForm.now_id"
                     :props="census_data"
                   ></el-cascader>
                 </el-form-item>
@@ -141,7 +141,7 @@
                   <el-input
                     size="mini"
                     class="detail_address"
-                    v-model="addUserForm.now_address_desc"
+                    v-model="staffForm.now_address_desc"
                     placeholder="详细地址"
                   ></el-input>
                 </el-form-item>
@@ -152,15 +152,15 @@
           <el-row>
             <el-col :span="4">
               <el-form-item label="性别" prop="sex">
-                <el-select size="mini" v-model="addUserForm.sex">
-                  <el-option label="男" value="1"></el-option>
-                  <el-option label="女" value="2"></el-option>
+                <el-select size="mini" v-model="staffForm.sex">
+                  <el-option label="男" :value="1"></el-option>
+                  <el-option label="女" :value="2"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="5">
               <el-form-item label="学历" prop="educatuin" class="education">
-                <el-select size="mini" v-model="addUserForm.educatuin" placeholder="学历">
+                <el-select size="mini" v-model="staffForm.educatuin" placeholder="学历">
                   <el-option label="小学" value="小学"></el-option>
                   <el-option label="初中" value="初中"></el-option>
                   <el-option label="高中" value="高中"></el-option>
@@ -171,7 +171,7 @@
             </el-col>
             <el-col :span="5">
               <el-form-item label="婚姻状况" class="marital" prop="marital_status">
-                <el-select size="mini" v-model="addUserForm.marital_status" placeholder="请选择">
+                <el-select size="mini" v-model="staffForm.marital_status" placeholder="请选择">
                   <el-option label="未婚" value="未婚"></el-option>
                   <el-option label="已婚" value="已婚"></el-option>
                 </el-select>
@@ -179,7 +179,7 @@
             </el-col>
             <el-col :span="5">
               <el-form-item label="英语水平" prop="english">
-                <el-select size="mini" v-model="addUserForm.english" placeholder="请选择">
+                <el-select size="mini" v-model="staffForm.english" placeholder="请选择">
                   <el-option
                     v-for="item in english"
                     :key="item.id"
@@ -191,7 +191,7 @@
             </el-col>
             <el-col :span="5">
               <el-form-item label="计算机水平" prop="computer">
-                <el-select size="mini" v-model="addUserForm.computer" placeholder="请选择">
+                <el-select size="mini" v-model="staffForm.computer" placeholder="请选择">
                   <el-option
                     v-for="item in computers"
                     :key="item.id"
@@ -206,17 +206,17 @@
           <el-row>
             <el-col :span="4">
               <el-form-item label="电话" prop="mobile">
-                <el-input size="mini" v-model="addUserForm.mobile"></el-input>
+                <el-input size="mini" v-model="staffForm.mobile"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="5">
               <el-form-item label="身高" prop="height" class="height">
-                <el-input v-model="addUserForm.height" size="mini"></el-input>
+                <el-input v-model="staffForm.height" size="mini"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="5">
               <el-form-item label="政治面貌" prop="political_status">
-                <el-select size="mini" v-model="addUserForm.political_status" placeholder="请选择">
+                <el-select size="mini" v-model="staffForm.political_status" placeholder="请选择">
                   <el-option label="群众" value="群众"></el-option>
                   <el-option label="团员" value="团员"></el-option>
                   <el-option label="党员" value="党员"></el-option>
@@ -225,7 +225,7 @@
             </el-col>
             <el-col :span="5">
               <el-form-item label="健康情况" prop="health">
-                <el-select size="mini" v-model="addUserForm.health" placeholder="请选择">
+                <el-select size="mini" v-model="staffForm.health" placeholder="请选择">
                   <el-option label="健康" value="健康"></el-option>
                   <el-option label="亚健康" value="亚健康"></el-option>
                   <el-option label="不好" value="不好"></el-option>
@@ -237,7 +237,7 @@
                 <el-select
                   size="mini"
                   multiple
-                  v-model="addUserForm.service_skills"
+                  v-model="staffForm.service_skills"
                   placeholder="请选择"
                 >
                   <el-option
@@ -254,22 +254,22 @@
           <el-row>
             <el-col :span="4">
               <el-form-item label="民族" prop="nation">
-                <el-input size="mini" v-model="addUserForm.nation"></el-input>
+                <el-input size="mini" v-model="staffForm.nation"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="5">
               <el-form-item label="身份证" prop="identity" class="identity">
-                <el-input v-model="addUserForm.identity" size="mini"></el-input>
+                <el-input v-model="staffForm.identity" size="mini"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="5">
               <el-form-item label="空余时间" prop="spare_time">
-                <el-input v-model="addUserForm.spare_time" size="mini"></el-input>
+                <el-input v-model="staffForm.spare_time" size="mini"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="5">
               <el-form-item label="岗位" prop="job">
-                <el-select size="mini" v-model="addUserForm.job" placeholder="请选择">
+                <el-select multiple size="mini" v-model="staffForm.job" placeholder="请选择">
                   <el-option
                     v-for="item in jobs"
                     :key="item.id"
@@ -281,7 +281,7 @@
             </el-col>
             <el-col :span="5">
               <el-form-item label="家政经验" class="work_years" prop="work_years">
-                <el-select size="mini" v-model="addUserForm.work_years" placeholder="请选择">
+                <el-select size="mini" v-model="staffForm.work_years" placeholder="请选择">
                   <el-option label="1~2年" value="1~2年"></el-option>
                   <el-option label="3~5年" value="3~5年"></el-option>
                   <el-option label="5~10年" value="5~10年"></el-option>
@@ -294,7 +294,7 @@
             <el-col :span="4">
               <el-form-item label="生日" prop="birthday">
                 <el-date-picker
-                  v-model="addUserForm.birthday"
+                  v-model="staffForm.birthday"
                   placeholder="出生年月"
                   format="yyyy-MM-dd"
                   value-format="yyyy-MM-dd"
@@ -304,7 +304,7 @@
             </el-col>
             <el-col :span="5">
               <el-form-item label="宗教信仰" prop="religion">
-                <el-select size="mini" v-model="addUserForm.religion" placeholder="请选择">
+                <el-select size="mini" v-model="staffForm.religion" placeholder="请选择">
                   <el-option label="佛教" value="佛教"></el-option>
                   <el-option label="基督教" value="基督教"></el-option>
                 </el-select>
@@ -312,7 +312,7 @@
             </el-col>
             <el-col :span="5">
               <el-form-item label="语言能力" prop="language">
-                <el-select size="mini" multiple v-model="addUserForm.language" placeholder="请选择">
+                <el-select size="mini" multiple v-model="staffForm.language" placeholder="请选择">
                   <el-option
                     v-for="item in languages"
                     :key="item.id"
@@ -325,7 +325,7 @@
             <el-col :span="8" style="display: flex">
               <el-col :sapn="6">
                 <el-form-item label="紧急联系人" prop="urgent_name" class="urgent-name">
-                  <el-input size="mini" v-model="addUserForm.urgent_name" placeholder="姓名"></el-input>
+                  <el-input size="mini" v-model="staffForm.urgent_name" placeholder="姓名"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="18">
@@ -333,7 +333,7 @@
                   <el-input
                     size="mini"
                     placeholder="手机号"
-                    v-model="addUserForm.urgent_mobile"
+                    v-model="staffForm.urgent_mobile"
                     style="width: 150px"
                   ></el-input>
                 </el-form-item>
@@ -342,16 +342,24 @@
           </el-row>
 
           <el-row>
-            <el-col :span="4"></el-col>
+            <el-col :span="4">
+              <el-form-item label="血型" prop="blood">
+                <el-select size="mini" v-model="staffForm.blood" placeholder="请选择">
+                  <el-option label="A型" value="A型"></el-option>
+                  <el-option label="B型" value="B型"></el-option>
+                  <el-option label="O型" value="O型"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
             <el-col :span="5">
               <el-form-item label="安置协议" prop="agreement_amount" class="identity">
-                <el-input v-model="addUserForm.agreement_amount" size="mini"></el-input>
+                <el-input v-model="staffForm.agreement_amount" size="mini"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="5"></el-col>
             <el-col :span="5">
               <el-form-item label="户口类型" prop="census_type">
-                <el-select size="mini" v-model="addUserForm.census_type" placeholder="请选择">
+                <el-select size="mini" v-model="staffForm.census_type" placeholder="请选择">
                   <el-option label="农村户口" value="非农村户口"></el-option>
                 </el-select>
               </el-form-item>
@@ -363,7 +371,7 @@
           <el-row>
             <el-col :span="8">
               <el-form-item label="自我评价" prop="self_evaluation">
-                <el-input type="textarea" autosize v-model="addUserForm.self_evaluation"></el-input>
+                <el-input type="textarea" autosize v-model="staffForm.self_evaluation"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -374,7 +382,7 @@
               <!-- 第一个 -->
               <div
                 class="work-list"
-                v-for="(item, index) in addUserForm.work_experience"
+                v-for="(item, index) in staffForm.work_experience"
                 :key="index"
               >
                 <el-row>
@@ -443,7 +451,7 @@
             </el-col>
             <!-- 家庭成员 -->
             <el-col :span="12" class="family-wrap">
-              <div class="family" v-for="(item, index) in addUserForm.family_member" :key="index">
+              <div class="family" v-for="(item, index) in staffForm.family_member" :key="index">
                 <el-row>
                   <el-col :span="7">
                     <el-form-item label="家庭成员" :prop="'family_member.' + index + '.name'">
@@ -484,17 +492,17 @@
       </el-form>
       <div class="dialog-footer">
         <el-button @click="cancelAddStaff" size="mini">取 消</el-button>
-        <el-button type="primary" @click="saveStaffBtn" size="mini">保 存</el-button>
+        <el-button v-if="isDisplaySave" type="primary" @click="saveStaffBtn" size="mini">保 存</el-button>
+        <el-button v-else type="primary" @click="editSaveStaffBtn" size="mini">保 存</el-button>
       </div>
     </div>
-
   </div>
 </template>
 
 <script>
 import eventVue from "common/eventVue";
 import { getProvince, getCity, getDistrict } from "network/select";
-import { saveStaffInfo, getOneStraffInfo } from "network/detail";
+import { saveStaffInfo, getOneStraffInfo, updateStraffInfo } from "network/detail";
 import {
   getLanguage,
   getEnglish,
@@ -533,9 +541,7 @@ export default {
         // 户籍类型
         census_type: "",
         census: "",
-        census_p: "",
-        census_c: "",
-        census_d: "",
+        census_id: [],
         census_address_desc: "",
         height: "",
         weight: "",
@@ -547,9 +553,7 @@ export default {
         // is_print: "", //
         political_status: "",
         marital_status: "",
-        now_p: "",
-        now_c: "",
-        now_d: "",
+        now_id: [],
         now_address_desc: "",
         health: "",
         english: "",
@@ -557,8 +561,7 @@ export default {
         cooking: "",
         service_skills: "",
         device: "",
-        // 在岗状态
-        job: "",
+        job: [],
 
         // 工作经历
         work_experience: [
@@ -584,9 +587,13 @@ export default {
         ],
       },
 
+      // 添加用户的
+      staffForm: null,
+
       // 验证规则
       addUserRules: {
         name: [{ required: true, message: "请输入员工姓名", trigger: "blur" }],
+        nation: [{ required: true, message: "请输入民族", trigger: "blur" }],
         sex: [{ required: true, message: "请输入员工性别", trigger: "change" }],
         mobile: [{ required: true, message: "请输入电话", trigger: "blur" }],
         identity: [
@@ -607,26 +614,23 @@ export default {
         marital_status: [
           { required: true, message: "请输入婚姻状况", trigger: "change" },
         ],
-        census_p: [
+        census_id: [
           { required: true, message: "请输入户口地址", trigger: "change" },
         ],
         census_address_desc: [
           { required: true, message: "请输入户口地址", trigger: "blur" },
         ],
-        now_p: [
+        now_id: [
           { required: true, message: "请输入现居地址", trigger: "change" },
         ],
         now_address_desc: [
           { required: true, message: "请输入现居地址", trigger: "blur" },
         ],
         job: [{ required: true, message: "请输入岗位", trigger: "change" }],
+        spare_time: [{ required: true, message: "请输入空余时间", trigger: "blur" }],
       },
 
-      // 户口省级
-      hpaddress: [],
-      // 现居地址
-      nowaddress: [],
-      // 户口地址
+      // 三级地址搜索
       census_data: {
         lazy: true,
         lazyLoad(node, resolve) {
@@ -669,53 +673,9 @@ export default {
           }
         },
       },
-      // 从事岗位地址
-      jobAdress: [],
-      jobAdress_data: {
-        lazy: true,
-        lazyLoad(node, resolve) {
-          const { level } = node;
-          if (level === 0) {
-            // 获取省
-            getProvince().then((res) => {
-              // console.log(res.data);
-              const nodes = res.data.map((item) => ({
-                value: { name: item.name, id: item.id },
-                label: item.name,
-                leaf: level >= 2,
-              }));
-              resolve(nodes);
-            });
-          }
-          // 获取市
-          if (level === 1) {
-            getCity(node.value.id).then((res) => {
-              // console.log(res.data);
-              const nodes = res.data.map((item) => ({
-                value: { name: item.name, id: item.id },
-                label: item.name,
-                leaf: level >= 2,
-              }));
-              resolve(nodes);
-            });
-          }
-          // 获取县
-          if (level === 2) {
-            getDistrict(node.value.id).then((res) => {
-              // console.log(res.data);
-              const nodes = res.data.map((item) => ({
-                value: { name: item.name, id: item.id },
-                label: item.name,
-                leaf: level >= 2,
-              }));
-              resolve(nodes);
-            });
-          }
-        },
-      },
+      // 默认显示保存按钮
+      isDisplaySave: true,
 
-      // 单个员工基本信息
-      oneStaffInfo: null,
       // 语言能力
       languages: null,
       // 英语水平
@@ -803,31 +763,40 @@ export default {
       }
     });
 
+    // 初始化赋值添加操作
+    this.staffForm = this.addUserForm
+
     // 获取当前时间
-    this.addUserForm.in_time = new Date()
+    this.staffForm.in_time = new Date()
       .toLocaleDateString()
       .replace(/\//g, "-");
 
     // 监听新增员工事件（改变入职时间）
     // 注意该监听函数，必须是该组件已经创建过一次，才能监听到，否则，gameover
     eventVue.$on("addstaffevent", (val) => {
+      // 显示保存按钮
+      this.isDisplaySave = true
+      this.$refs.addUserForm.resetFields();
+      // 改变staffForm
+      this.staffForm = this.addUserForm
       // 获取当前时间
-      this.addUserForm.in_time = new Date()
+      this.staffForm.in_time = new Date()
         .toLocaleDateString()
         .replace(/\//g, "-");
+        
     });
 
     // 监听编辑按钮发送的事件
     eventVue.$on("editstaffevent", (id) => {
+      this.isDisplaySave = false
       getOneStraffInfo(id).then((res) => {
-        console.log(res);
         if (res.code === 200) {
-          this.addUserForm = res.data;
+          console.log(res.data)
+          this.staffForm = res.data;
         } else {
           this.$message.warning(res.msg);
         }
       });
-      console.log("我已经监听到了该员工id之：" + id);
     });
   },
   methods: {
@@ -837,10 +806,10 @@ export default {
     },
     // 添加工作经历按钮
     addWorkBtn() {
-      if (this.addUserForm.work_experience.length > 3) {
+      if (this.staffForm.work_experience.length > 3) {
         return this.$message.error("不能再添加了！会爆的！");
       } else {
-        this.addUserForm.work_experience.push({
+        this.staffForm.work_experience.push({
           time: [],
           job: "",
           address: "",
@@ -851,10 +820,10 @@ export default {
 
     // 添加家庭成员
     addFamilyBtn() {
-      if (this.addUserForm.family.length > 4) {
+      if (this.staffForm.family.length > 4) {
         return this.$message.error("不能再添加了！");
       } else {
-        this.addUserForm.family.push({
+        this.staffForm.family.push({
           name: "",
           relation: "",
           current_situation: "",
@@ -862,11 +831,11 @@ export default {
       }
     },
 
-    // 添加员工
+    // 保存员工
     saveStaffBtn() {
       this.$refs.addUserForm.validate((valid) => {
         if (valid) {
-          saveStaffInfo(this.addUserForm).then((res) => {
+          saveStaffInfo(this.staffForm).then((res) => {
             if (res.code === 200) {
               this.$message.success(res.msg);
               // 更新员工数据
@@ -882,28 +851,32 @@ export default {
         }
       });
     },
+
+    // 编辑保存
+    editSaveStaffBtn() {
+      updateStraffInfo(this.staffForm).then(res => {
+        if(res.code === 200) {
+          this.$message.success(res.msg)
+          // 关闭编辑弹框
+          this.cancelAddStaff()
+          // 更新数据
+          eventVue.$emit('saveUpdateStaff')
+        }else {
+          this.$message.error(res.msg)
+        }
+      })
+    }
   },
   watch: {
-    hpaddress(value) {
-      this.addUserForm.census_p = value[0];
-      this.addUserForm.census_c = value[1];
-      this.addUserForm.census_d = value[2];
-    },
-    nowaddress(value) {
-      this.addUserForm.now_p = value[0];
-      this.addUserForm.now_c = value[1];
-      this.addUserForm.now_d = value[2];
-    },
-    // 监听jobAdress的值改变
-    jobAdress(value) {
-      let jobAdressArry = value.map((item) => {
-        return item.name;
-      });
-      this.jobAdressArry = jobAdressArry.join("");
-      console.log(this.jobAdressArry);
-    },
-    // 监听从事工作经历的address改变
   },
+  computed: {
+    census_text() {
+      return this.staffForm.census_text ? this.staffForm.census_text.join('') : '请输入省市县'
+    },
+    now_text() {
+      return this.staffForm.now_text ? this.staffForm.now_text.join('') : '请输入省市县'
+    },
+  }
 };
 </script>
 

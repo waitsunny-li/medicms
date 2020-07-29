@@ -26,7 +26,6 @@ export default {
     UserTable
   },
   created() {
-    console.log(window.baseUrl)
     eventVue.$on('searchbtn', val => {
       console.log('你点击了搜索按钮')
     })

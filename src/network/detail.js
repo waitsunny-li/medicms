@@ -42,6 +42,24 @@ export function getOneStraffInfo(id) {
   })
 }
 
+// 用户更新
+export function updateStraffInfo(data) {
+  return request({
+    url: '/staff/update',
+    method: 'post',
+    data: data
+  })
+}
+
+// 上传图片
+export function uploadImage(data) {
+  return request({
+    url: '/staff/image',
+    method: 'post',
+    data: data
+  })
+}
+
 // export function getOneStraffInfo(id) {
 //   return axios.get({
 //     url: '/staff/' + id + '/edit',

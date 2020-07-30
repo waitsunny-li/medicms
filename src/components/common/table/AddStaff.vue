@@ -27,9 +27,12 @@
             <el-col :span="5">
               <el-form-item label="员工状态" prop="person_state" class="person_state">
                 <el-select size="mini" v-model="staffForm.person_state" placeholder="员工状态">
-                  <el-option label="在岗" value="在岗"></el-option>
                   <el-option label="培训" value="1"></el-option>
-                  <el-option label="待岗" value="待岗"></el-option>
+                  <el-option label="待岗" value="3"></el-option>
+                  <el-option label="离职" value="4"></el-option>
+                  <el-option label="黑名单" value="5"></el-option>
+                  <el-option label="在岗" value="6"></el-option>
+                  <el-option label="离职（下单）" value="7"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -159,8 +162,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="5">
-              <el-form-item label="学历" prop="educatuin" class="education">
-                <el-select size="mini" v-model="staffForm.educatuin" placeholder="学历">
+              <el-form-item label="学历" prop="education" class="education">
+                <el-select size="mini" v-model="staffForm.education" placeholder="学历">
                   <el-option label="小学" value="小学"></el-option>
                   <el-option label="初中" value="初中"></el-option>
                   <el-option label="高中" value="高中"></el-option>
@@ -530,10 +533,10 @@ export default {
         // 工作年限
         work_years: "",
         salary: "",
-        educatuin: "",
+        education: "",
         blood: "",
         entry_person: "",
-        person_state: "培训",
+        person_state: "1",
         recruiters_name: "",
         recruiters_mobile: "",
         spare_time: "",

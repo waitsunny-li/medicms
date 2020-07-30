@@ -76,7 +76,7 @@
             <el-row class="expand-row">
               <el-col :span="4">
                 <span class="label-text">学历</span>
-                <span class="content-text">{{scope.row.educatuin}}</span>
+                <span class="content-text">{{scope.row.education}}</span>
               </el-col>
               <el-col :span="5">
                 <span class="label-text">现居住地</span>
@@ -202,26 +202,60 @@
             </el-row>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="name" label="姓名" width="180">
+        <el-table-column align="center" prop="name" label="姓名" width="100">
           <template slot-scope="scope">
             <div class="name-wrap">
               <el-popover placement="bottom-start" width="600" trigger="click" @hide="popoverHiden">
                 <!-- 内容 -->
                 <el-tabs>
-                  <el-tab-pane label="新增事件">新增事件</el-tab-pane>
-                  <el-tab-pane label="面试管理">面试管理</el-tab-pane>
-                  <el-tab-pane label="角色管理">角色管理</el-tab-pane>
-                  <el-tab-pane label="定时任务补偿">定时任务补偿</el-tab-pane>
+                  <el-tab-pane label="新增事件">
+                    <!-- 表单 -->
+                    <el-table :data="eventData" stripe style="width: 100%">
+                      <el-table-column prop="time" align="center" label="日期" width="180"></el-table-column>
+                      <el-table-column prop="event_type" align="center" label="事件类型" width="180"></el-table-column>
+                      <el-table-column align="center" prop="content" label="事件内容"></el-table-column>
+                      <el-table-column label="操作" align="center">
+                        <template slot-scope="scope">
+                          <!-- <el-button type="danger" size="mini" round>删除</el-button> -->
+                          <el-button type="danger" icon="el-icon-delete" size="mini" circle></el-button>
+                        </template>
+                      </el-table-column>
+                    </el-table>
+
+                    <!-- 添加事件 -->
+                    <div class="option-wrap">
+                      <i class="el-icon-folder-add"></i> 增加事件
+                    </div>
+                    <!-- 表单 -->
+                    <el-form ref="form" class="eventForm" :model="eventForm" label-width="80px">
+                      <el-form-item label="事件类型">
+                        <el-select size="mini" v-model="eventForm.event_type" placeholder="请选择事件类型">
+                          <el-option label="黑名单" value="1"></el-option>
+                          <el-option label="奖赏" value="2"></el-option>
+                          <el-option label="处罚" value="3"></el-option>
+                        </el-select>
+                      </el-form-item>
+                      <el-form-item label="事件内容">
+                        <el-input size="mini" type="textarea" :rows="3" v-model="eventForm.content"></el-input>
+                      </el-form-item>
+                    </el-form>
+                    <!-- 保存按钮 -->
+                    <el-row>
+                      <el-col :span="5" :offset="20">
+                        <el-button size="mini" type="primary" round>保存</el-button>
+                      </el-col>
+                    </el-row>
+                  </el-tab-pane>
                 </el-tabs>
                 <!-- 按钮显示 -->
-                <el-button type="text" id="popoPlus" slot="reference" icon="el-icon-circle-plus"></el-button>
+                <el-button type="text" id="popoPlus" slot="reference" icon="el-icon-s-fold"></el-button>
               </el-popover>
 
               <span style="margin-left: 10px">{{scope.row.name}}</span>
             </div>
           </template>
         </el-table-column>
-        <el-table-column align="center" prop="sex" label="性别" width="180">
+        <el-table-column align="center" prop="sex" label="性别" width="80">
           <template slot-scope="scope">
             <span v-if="scope.row.sex == 1">男</span>
             <span v-else-if="scope.row.sex == 2">女</span>
@@ -233,15 +267,16 @@
           prop="identity"
           label="身份证"
           :show-overflow-tooltip="true"
+          width="200"
         ></el-table-column>
-        <el-table-column align="center" prop="age" label="年龄"></el-table-column>
+        <el-table-column width="80" align="center" prop="age" label="年龄"></el-table-column>
         <el-table-column align="center" prop="mobile" width="110px" label="手机号"></el-table-column>
         <el-table-column align="center" prop="address" label="现居住地址" :show-overflow-tooltip="true">
           <template
             slot-scope="scope"
           >{{scope.row.now_p_text}}{{scope.row.now_c_text}}{{scope.row.now_d_text}}{{scope.row.now_address_desc}}</template>
         </el-table-column>
-        <el-table-column align="center" prop="person_state" label="人员状态">
+        <el-table-column width="80" align="center" prop="person_state" label="人员状态">
           <template slot-scope="scope">
             <p v-if="scope.row.person_state == 1">培训</p>
             <p v-else-if="scope.row.person_state == 2">考核</p>
@@ -253,6 +288,7 @@
             <p v-else>错误</p>
           </template>
         </el-table-column>
+        <el-table-column width="150" align="center" prop="in_time" label="入职时间"></el-table-column>
         <!-- 操作 -->
         <el-table-column label="操作" align="center" width="180px">
           <template slot-scope="scope">
@@ -327,6 +363,7 @@
     <el-dialog
       title="图片上传"
       :visible.sync="pictureDialogVisible"
+      @close="picDialogClose"
       width="50%"
       center
       class="picDialog"
@@ -349,6 +386,7 @@
           multiple
           :limit="2"
           class="upload"
+          :file-list="identyimg"
         >
           <i class="el-icon-picture"></i>
         </el-upload>
@@ -372,6 +410,7 @@
           multiple
           :limit="3"
           class="upload"
+          :file-list="Bodyimg"
         >
           <i class="el-icon-picture"></i>
         </el-upload>
@@ -395,6 +434,7 @@
           multiple
           :limit="2"
           class="upload"
+          :file-list="lifeimg"
         >
           <i class="el-icon-picture"></i>
         </el-upload>
@@ -419,6 +459,7 @@
           multiple
           :limit="8"
           class="upload"
+          :file-list="skillimg"
         >
           <i class="el-icon-picture"></i>
         </el-upload>
@@ -443,6 +484,7 @@
           multiple
           :limit="5"
           class="upload"
+          :file-list="cookingimg"
         >
           <i class="el-icon-picture"></i>
         </el-upload>
@@ -467,6 +509,7 @@
           multiple
           :limit="4"
           class="upload"
+          :file-list="Badyimg"
         >
           <i class="el-icon-picture"></i>
         </el-upload>
@@ -491,6 +534,7 @@
           multiple
           :limit="4"
           class="upload"
+          :file-list="otherimg"
         >
           <i class="el-icon-picture"></i>
         </el-upload>
@@ -514,6 +558,7 @@ import {
   deleteStaff,
   getOneStraffInfo,
   uploadImage,
+  getOneStaffImage,
 } from "network/detail";
 import AddStaff from "components/common/table/AddStaff";
 import eventVue from "common/eventVue";
@@ -553,6 +598,19 @@ export default {
       },
       // 域名
       baseurl: "http://qqq.shihanphp.cn/",
+      // 新增事件数据
+      eventData: [
+        {
+          time: "2012-12-02",
+          event_type: 1,
+          content: "重大拉黑事件",
+        },
+      ],
+      // 新增事件表单
+      eventForm: {
+        event_type: "",
+        content: "",
+      },
 
       /**
        * 上传图片显示，以及链接
@@ -578,6 +636,15 @@ export default {
       // 其他照片
       dialogOtherImageUrl: "",
       dialogOtherVisible: false,
+
+      // 图片展示列，只能是这个格式。
+      identyimg: [],
+      Bodyimg: [],
+      lifeimg: [],
+      skillimg: [],
+      cookingimg: [],
+      Badyimg: [],
+      otherimg: [],
     };
   },
   methods: {
@@ -609,11 +676,61 @@ export default {
       console.log("我隐藏了");
     },
 
+    // 清除原有图片操作
+    clearImg() {
+      this.identyimg = [];
+      this.Bodyimg = [];
+      this.lifeimg = [];
+      this.skillimg = [];
+      this.cookingimg = [];
+      this.Badyimg = [];
+      this.otherimg = [];
+    },
+
     // 显示图片上传的弹框
     pictureBtn(id) {
       this.pictureData.staff_id = id;
       this.pictureDialogVisible = true;
-      console.log(this.pictureData.staff_id);
+      // 获取图片
+      getOneStaffImage(id).then((res) => {
+        if (res.code === 200) {
+          console.log(res.data);
+          let data = res.data;
+          // pictureData赋值（防止保存图片错误，使数据丢失）
+          this.pictureData.staff_id = data.staff_id;
+          this.pictureData.identity = data.identity;
+          this.pictureData.body_check_c = data.body_check_c;
+          this.pictureData.life = data.life;
+          this.pictureData.skill = data.skill;
+          this.pictureData.cooking = data.cooking;
+          this.pictureData.take_body = data.take_body;
+          this.pictureData.other = data.other;
+
+          this.identyimg = data.identity.map((item) => {
+            return { name: "identity", url: item };
+          });
+          this.Bodyimg = data.body_check_c.map((item) => {
+            return { name: "body_check_c", url: item };
+          });
+          this.lifeimg = data.life.map((item) => {
+            return { name: "life", url: item };
+          });
+          this.skillimg = data.skill.map((item) => {
+            return { name: "skill", url: item };
+          });
+          this.cookingimg = data.cooking.map((item) => {
+            return { name: "cooking", url: item };
+          });
+          this.Badyimg = data.take_body.map((item) => {
+            return { name: "take_body", url: item };
+          });
+          this.otherimg = data.other.map((item) => {
+            return { name: "other", url: item };
+          });
+        } else {
+          this.$message.error(res.msg);
+        }
+      });
     },
 
     // 点击新增按钮
@@ -704,12 +821,19 @@ export default {
      */
     // 转变上传数据
     transforPicData(item, fileList) {
+      console.log(fileList);
       this.pictureData[item] = [...fileList].map((value) => {
-        return this.baseurl + value.response.data.url;
+        if (value.response !== "undefined") {
+          console.log(value.response.data.url)
+          return this.baseurl + value.response.data.url;
+        } else {
+          return this.baseurl + value.url;
+        }
       });
     },
     // 身份证上传
     handleIdentyRemove(file, fileList) {
+      console.log(file)
       this.transforPicData("identity", fileList);
     },
     handleIdentyPreview(file) {
@@ -809,14 +933,24 @@ export default {
 
     // 保存按钮
     savePicBtn() {
-      uploadImage(this.pictureData).then(res => {
-        if(res.code === 200) {
-          this.$message.success(res.msg)
-        }else {
-          this.$message.error(res.msg)
+      uploadImage(this.pictureData).then((res) => {
+        if (res.code === 200) {
+          this.$message.success(res.msg);
+          // 清除操作
+          for (let item in this.pictureData) {
+            this.pictureData[item] = null;
+          }
+        } else {
+          this.$message.error(res.msg);
         }
-      })
-    }
+      });
+    },
+
+    // 图片上传dialog关闭回调
+    picDialogClose() {
+      console.log("jjj");
+      this.clearImg();
+    },
   },
   created() {
     // 获取用户数据
@@ -867,14 +1001,20 @@ export default {
     }
   }
 }
+// 新增事件
+.option-wrap {
+  margin-top: 30px;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  border-bottom: 1px solid #ebeef5;
+}
+.eventForm {
+  margin-top: 20px;
+}
 .user-table-card {
   position: relative;
   height: 700px;
-
-  .name-wrap {
-    // display: flex;
-    // justify-content: center;
-  }
 
   .pagination {
     position: absolute;

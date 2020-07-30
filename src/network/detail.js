@@ -60,9 +60,33 @@ export function uploadImage(data) {
   })
 }
 
-// export function getOneStraffInfo(id) {
-//   return axios.get({
-//     url: '/staff/' + id + '/edit',
-//     method: "get"
-//   })
-// }
+// 获取单人图片
+export function getOneStaffImage(id) {
+  return request({
+    url: '/staff/image',
+    method: 'get',
+    params: {
+      staff_id: id
+    }
+  })
+}
+
+// 请求培训记录
+export function getTrainingsData(id) {
+  return request({
+    url: '/train/index',
+    method: 'get',
+    params: {
+      staff_id: id
+    }
+  })
+}
+
+// 保存培训记录
+export function saveTrainingsData(data) {
+  return request({
+    url: '/train/save',
+    method: 'post',
+    data: data
+  })
+}

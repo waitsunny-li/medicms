@@ -120,7 +120,7 @@ export default {
     // 登陆时间
     .time-ip-wrap {
       margin-left: 100px;
-      width: 400px;
+      width: 500px;
       height: 100%;
       color: #fff;
       display: flex;

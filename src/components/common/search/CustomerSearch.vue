@@ -1,33 +1,30 @@
 <template>
   <div class="search">
     <el-card class="search-wrap">
-      <el-form size="small" :inline="true" ref="searchForm" :model="searchForm">
+      <el-form size="small" :inline="true" ref="searchForm" :model="CustomerSearchForm">
         <el-form-item prop="name">
-          <el-input size="mini" v-model="searchForm.name" placeholder="姓名" clearable></el-input>
+          <el-input size="mini" v-model="CustomerSearchForm.name" placeholder="姓名" clearable></el-input>
         </el-form-item>
         <el-form-item prop="telphone">
-          <el-input size="mini" v-model="searchForm.telphone" placeholder="手机号" clearable></el-input>
-        </el-form-item>
-        <el-form-item prop="idcard">
-          <el-input size="mini" v-model="searchForm.idcard" placeholder="身份证号" clearable></el-input>
+          <el-input size="mini" v-model="CustomerSearchForm.telphone" placeholder="手机号" clearable></el-input>
         </el-form-item>
 
         <!-- 员工状态 -->
         <el-form-item prop="state">
-          <el-select v-model="searchForm.state" placeholder="员工状态">
-            <el-option label="培训" value="1"></el-option>
-            <el-option label="待岗" value="3"></el-option>
-            <el-option label="离职" value="4"></el-option>
-            <el-option label="黑名单" value="5"></el-option>
-            <el-option label="在岗" value="6"></el-option>
-            <el-option label="离职（下单）" value="7"></el-option>
+          <el-select v-model="CustomerSearchForm.demand_source" placeholder="需求来源">
+            <el-option label="二次开发老客户" value="1"></el-option>
+            <el-option label="二次开发失效客户" value="3"></el-option>
+            <el-option label="家政员介绍" value="4"></el-option>
+            <el-option label="家政客户转介绍" value="5"></el-option>
+            <el-option label="其他转介绍" value="6"></el-option>
+            <el-option label="公司接待" value="7"></el-option>
           </el-select>
         </el-form-item>
         <!-- 录入时间 -->
         <el-form-item prop="join_date">
           <el-date-picker
             class="select-date"
-            v-model="searchForm.join_date"
+            v-model="CustomerSearchForm.join_date"
             type="date"
             placeholder="选择日期"
           ></el-date-picker>
@@ -51,11 +48,10 @@ export default {
   name: "Search",
   data() {
     return {
-      searchForm: {
+      CustomerSearchForm: {
         name: "",
         telphone: "",
-        idcard: "",
-        state: "",
+        demand_source: "",
         join_date: "",
       },
     };
@@ -65,6 +61,7 @@ export default {
     clearBtn() {
       this.$refs.searchForm.resetFields();
     },
+
 
     // 搜索操作
     searchBtn() {

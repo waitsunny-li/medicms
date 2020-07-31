@@ -61,7 +61,7 @@
                   type="primary"
                   size="mini"
                   icon="el-icon-plus"
-                  @click="addTraningBtn(scope.row.name)"
+                  @click="addTraningBtn(scope.row.id, scope.row.name)"
                 ></el-button>
               </template>
             </el-table-column>
@@ -90,15 +90,28 @@
     >
       <!-- 表单内容 -->
       <el-table height="500" :data="trainings" class="looktraining" stripe style="width: 100%;">
-        <el-table-column prop="start_end" align="center" label="日期" width="180"></el-table-column>
-        <el-table-column prop="training_program" align="center" label="培训项目" width="180"></el-table-column>
+        <el-table-column prop="time" align="center" label="日期" width="180">
+          <template slot-scope="scope">
+            <el-tag>{{scope.row.time.join(' ~ ')}}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="project" align="center" label="培训项目" width="180">
+          <template slot-scope="scope">
+            <el-tag type="success">{{scope.row.project}}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="content" :show-overflow-tooltip="true" align="center" label="培训内容"></el-table-column>
         <el-table-column prop="address" align="center" label="地址"></el-table-column>
         <!-- 操作 -->
         <el-table-column label="操作" fixed="right" align="center" width="200">
           <template slot-scope="scope">
-            <el-button type="primary" @click="editTraningBtn" size="mini" icon="el-icon-edit"></el-button>
-            <el-popconfirm title="此经历内容确定永远删除吗？">
+            <el-button
+              type="primary"
+              @click="editTraningBtn(scope.row.id)"
+              size="mini"
+              icon="el-icon-edit"
+            ></el-button>
+            <el-popconfirm title="此经历内容确定永远删除吗？" @onConfirm="deleteTraining(scope.row.staff_id, scope.row.id)">
               <el-button
                 style="margin-left:10px"
                 type="danger"
@@ -134,9 +147,9 @@
           <el-col :span="17">
             <el-row>
               <el-col :span="24">
-                <el-form-item label="培训时间" prop="start_end">
+                <el-form-item label="培训时间" prop="time">
                   <el-date-picker
-                    v-model="addTrainingForm.start_end"
+                    v-model="addTrainingForm.time"
                     type="daterange"
                     range-separator="至"
                     start-placeholder="开始日期"
@@ -148,19 +161,12 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-form-item class="address" label="地址" prop="address">
-                <el-cascader
-                  size="mini"
-                  :props="census_data"
-                  v-model="addTrainingForm.address_p_c_d"
-                ></el-cascader>
-              </el-form-item>
-              <el-form-item prop="detail_adress">
+              <el-form-item label="地址" prop="address">
                 <el-input
                   class="detail-adress-input"
                   size="mini"
                   placeholder="详细地址"
-                  v-model="addTrainingForm.detail_address"
+                  v-model="addTrainingForm.address"
                 ></el-input>
               </el-form-item>
               <el-form-item label="培训项目" prop="project">
@@ -216,9 +222,9 @@
           <el-col :span="17">
             <el-row>
               <el-col :span="24">
-                <el-form-item label="培训时间" prop="start_end">
+                <el-form-item label="培训时间" prop="time">
                   <el-date-picker
-                    v-model="editTrainings.start_end"
+                    v-model="editTrainings.time"
                     type="daterange"
                     range-separator="至"
                     start-placeholder="开始日期"
@@ -230,20 +236,22 @@
               </el-col>
             </el-row>
             <el-row>
-              <el-form-item class="address" label="地址" prop="address">
-                <el-cascader size="mini" :props="{}" v-model="editTrainings.address"></el-cascader>
-              </el-form-item>
-              <el-form-item prop="detail_adress">
+              <el-form-item label="地址" prop="address">
                 <el-input
                   class="detail-adress-input"
                   size="mini"
                   placeholder="详细地址"
-                  v-model="editTrainings.detail_address"
+                  v-model="editTrainings.address"
                 ></el-input>
               </el-form-item>
-              <el-form-item label="培训项目" prop="training_program">
-                <el-select size="mini" v-model="editTrainings.training_program" placeholder="请选择">
-                  <el-option label="育婴师" value="1"></el-option>
+              <el-form-item label="培训项目" prop="project">
+                <el-select size="mini" v-model="editTrainings.project" placeholder="请选择">
+                  <el-option
+                    :label="item.name"
+                    :value="item.name"
+                    v-for="(item, index) in jobs"
+                    :key="index"
+                  ></el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="培训内容" prop="content">
@@ -263,7 +271,7 @@
 
       <span slot="footer" class="dialog-footer">
         <el-button @click="editTraningDialogVisible = false">取 消</el-button>
-        <el-button type="primary">确 定</el-button>
+        <el-button @click="editSaveTraining" type="primary">保 存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -272,7 +280,14 @@
 <script>
 import eventVue from "common/eventVue";
 import Search from "components/common/search/Search";
-import { requestUserListDate, getTrainingsData } from "network/detail";
+import {
+  requestUserListDate,
+  getTrainingsData,
+  saveTrainingsData,
+  getOneTrainingInfo,
+  updateTrainingInfo,
+  deleteTrainingInfo
+} from "network/detail";
 import { getProvince, getCity, getDistrict } from "network/select";
 import { getJob } from "network/select";
 export default {
@@ -301,117 +316,24 @@ export default {
       jobs: null,
 
       // 显示培训记录
-      trainings: [
-        {
-          start_end: ["2020-08-14", "2020-07-15"],
-          address: "安徽合肥市",
-          training_program: "育婴师",
-          content: "怎么照顾小孩子",
-        },
-        {
-          start_end: ["2020-08-14", "2020-07-15"],
-          address: ["d", "dd", "ddd"],
-          detail_address: "",
-          training_program: "育婴师",
-          content: "怎么照顾小孩子",
-        },
-        {
-          start_end: ["2020-08-14", "2020-07-15"],
-          address: ["d", "dd", "ddd"],
-          detail_address: "",
-          training_program: "育婴师",
-          content: "怎么照顾小孩子",
-        },
-        {
-          start_end: ["2020-08-14", "2020-07-15"],
-          address: ["d", "dd", "ddd"],
-          detail_address: "",
-          training_program: "育婴师",
-          content: "怎么照顾小孩子",
-        },
-        {
-          start_end: ["2020-08-14", "2020-07-15"],
-          address: ["d", "dd", "ddd"],
-          detail_address: "",
-          training_program: "育婴师",
-          content: "怎么照顾小孩子",
-        },
-        {
-          start_end: ["2020-08-14", "2020-07-15"],
-          address: ["d", "dd", "ddd"],
-          detail_address: "",
-          training_program: "育婴师",
-          content: "怎么照顾小孩子",
-        },
-        {
-          start_end: ["2020-08-14", "2020-07-15"],
-          address: ["d", "dd", "ddd"],
-          detail_address: "",
-          training_program: "育婴师",
-          content: "怎么照顾小孩子",
-        },
-      ],
+      trainings: [],
 
       // 添加培训记录数据
       addTrainingForm: {
         staff_id: "",
-        start_end: [],
-        address_p_c_d: [],
-        detail_address: "",
+        time: [],
+        address: "",
         project: "",
         content: "",
       },
-      // 三级地址搜索
-      census_data: {
-        lazy: true,
-        lazyLoad(node, resolve) {
-          const { level } = node;
-          if (level === 0) {
-            // 获取省
-            getProvince().then((res) => {
-              // console.log(res.data);
-              const nodes = res.data.map((item) => ({
-                value: { id: item.id, name: item.name },
-                label: item.name,
-                leaf: level >= 2,
-              }));
-              resolve(nodes);
-            });
-          }
-          // 获取市
-          if (level === 1) {
-            getCity(node.value.id).then((res) => {
-              // console.log(res.data);
-              const nodes = res.data.map((item) => ({
-                value: { id: item.id, name: item.name },
-                label: item.name,
-                leaf: level >= 2,
-              }));
-              resolve(nodes);
-            });
-          }
-          // 获取县
-          if (level === 2) {
-            getDistrict(node.value.id).then((res) => {
-              // console.log(res.data);
-              const nodes = res.data.map((item) => ({
-                value: { id: item.id, name: item.name },
-                label: item.name,
-                leaf: level >= 2,
-              }));
-              resolve(nodes);
-            });
-          }
-        },
-      },
-      address_p_c_d: "",
 
       // 修改培训记录
       editTrainings: {
-        start_end: [],
-        address: [],
-        detail_address: "",
-        training_program: "",
+        staff_id: "",
+        id: "",
+        time: [],
+        address: "",
+        project: "",
         content: "",
       },
 
@@ -419,14 +341,9 @@ export default {
        * 以下是验证规则
        */
       editTrainingRules: {
-        start_end: [{ required: true, message: "请输入日期", trigger: "blur" }],
-        address: [{ required: true, message: "请输入省市级", trigger: "blur" }],
-        detail_adress: [
-          { required: true, message: "请输详细地址", trigger: "blur" },
-        ],
-        training_program: [
-          { required: true, message: "请输入培训项", trigger: "blur" },
-        ],
+        time: [{ required: true, message: "请输入日期", trigger: "blur" }],
+        address: [{ required: true, message: "请输详细地址", trigger: "blur" }],
+        project: [{ required: true, message: "请输入培训项", trigger: "blur" }],
         content: [{ required: true, message: "请输入内容", trigger: "blur" }],
       },
     };
@@ -465,36 +382,46 @@ export default {
       // console.log(currentpage);
     },
 
+    // 获取该员工的所有培训数据
+    getOneStaffTrainingsData(staff_id) {
+      getTrainingsData(staff_id).then((res) => {
+        if (res.code === 200) {
+          this.trainings = res.data;
+        } else {
+          this.$message.error(res.msg);
+        }
+      });
+    },
+
     // 查看培训记录按钮
     lookTrainingBtn(id, name) {
       // 先请求数据
-      // getTrainingsData(id).thenl(res => {
-      //   console.log(res)
-      // })
+      this.getOneStaffTrainingsData(id)
       this.staff_tranings = name;
       this.traningDialogVisible = true;
     },
 
-    // 保存培训记录
-    saveTrainingBtn() {
-      console.log(this.value1);
-    },
-
     // 修改培训记录
-    editTraningBtn() {
+    editTraningBtn(id) {
+      // 获取单条培训记录
+      getOneTrainingInfo(id).then((res) => {
+        if (res.code === 200) {
+          for (let item in this.editTrainings) {
+            this.editTrainings[item] = res.data[item];
+          }
+        } else {
+          this.$message.error(res.msg);
+        }
+      });
       this.editTraningDialogVisible = true;
     },
 
     // 添加培训记录
-    addTraningBtn(name) {
+    addTraningBtn(id, name) {
       // 员工名改变为要添加的员工名
       this.staff_tranings = name;
       this.addTraningDialogVisible = true;
-    },
-
-    // 删除培训添加记录表单
-    deleteFormBtn(index) {
-      this.addTrainingForm.addTranings.splice(index, index + 1);
+      this.addTrainingForm.staff_id = id;
     },
 
     // 添加培训记录的表单关闭回调
@@ -503,7 +430,7 @@ export default {
       this.$refs.addTrainingForm.resetFields();
     },
 
-    // 坚挺编辑培训记录的关闭
+    // 监听编辑培训记录的关闭
     editDialogClose() {
       this.$refs.editTrainings.resetFields();
     },
@@ -512,13 +439,55 @@ export default {
     saveTrainingForm() {
       this.$refs["addTrainingForm"].validate((valid) => {
         if (valid) {
-          alert("submit!");
+          saveTrainingsData(this.addTrainingForm).then((res) => {
+            if (res.code === 200) {
+              this.$message.success(res.msg);
+              this.addTraningDialogVisible = false;
+            } else {
+              this.$message.error(res.msg);
+            }
+          });
         } else {
-          console.log("error submit!!");
-          return false;
+          // this.$message.error('验证失败')
+          return;
         }
       });
     },
+
+    // 编辑保存
+    editSaveTraining() {
+      this.$refs["editTrainings"].validate((valid) => {
+        if (valid) {
+          updateTrainingInfo(this.editTrainings).then((res) => {
+            if (res.code === 200) {
+              this.$message.success(res.msg);
+              this.editTraningDialogVisible = false;
+              // 刷新该员工的所有培训记录
+              this.getOneStaffTrainingsData(this.editTrainings.staff_id)
+            } else {
+              this.$message.error(res.msg);
+            }
+          });
+        } else {
+          // this.$message.error('验证失败')
+          return;
+        }
+      });
+    },
+
+    // 删除培训内容
+    deleteTraining(staff_id, id) {
+      let ids = [id]
+      deleteTrainingInfo(ids).then(res => {
+        if(res.code === 200) {
+          this.$message.success(res.msg)
+
+          this.getOneStaffTrainingsData(staff_id)
+        }else {
+          this.$message.error(res.msg)
+        }
+      })
+    }
   },
   components: {
     Search,
@@ -609,7 +578,7 @@ export default {
   }
 
   /deep/.el-table__body-wrapper::-webkit-scrollbar {
-    width: 8px;
+    width: 5px;
     height: 10px;
   }
 

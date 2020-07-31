@@ -19,6 +19,7 @@
         height="550"
         @selection-change="handleSelectionChange"
         v-loading="loading"
+        border
       >
         <!-- 选择 -->
         <el-table-column type="selection" width="55"></el-table-column>
@@ -216,7 +217,6 @@
                       <el-table-column align="center" prop="content" label="事件内容"></el-table-column>
                       <el-table-column label="操作" align="center">
                         <template slot-scope="scope">
-                          <!-- <el-button type="danger" size="mini" round>删除</el-button> -->
                           <el-button type="danger" icon="el-icon-delete" size="mini" circle></el-button>
                         </template>
                       </el-table-column>
@@ -271,7 +271,7 @@
         ></el-table-column>
         <el-table-column width="80" align="center" prop="age" label="年龄"></el-table-column>
         <el-table-column align="center" prop="mobile" width="110px" label="手机号"></el-table-column>
-        <el-table-column align="center" prop="address" label="现居住地址" :show-overflow-tooltip="true">
+        <el-table-column width="100" align="center" prop="address" label="现居住地址" :show-overflow-tooltip="true">
           <template
             slot-scope="scope"
           >{{scope.row.now_p_text}}{{scope.row.now_c_text}}{{scope.row.now_d_text}}{{scope.row.now_address_desc}}</template>
@@ -290,7 +290,7 @@
         </el-table-column>
         <el-table-column width="150" align="center" prop="in_time" label="入职时间"></el-table-column>
         <!-- 操作 -->
-        <el-table-column label="操作" align="center" width="180px">
+        <el-table-column label="操作" align="center" width="140px">
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -820,21 +820,17 @@ export default {
      * 图片上传
      */
     // 转变上传数据
-    transforPicData(item, fileList) {
-      console.log(fileList);
-      this.pictureData[item] = [...fileList].map((value) => {
-        if (value.response !== "undefined") {
-          console.log(value.response.data.url)
-          return this.baseurl + value.response.data.url;
-        } else {
-          return this.baseurl + value.url;
-        }
-      });
+    transforPicData(item, file) {
+      // this.pictureData[item] = [...fileList].map((value) => {
+      //   return this.baseurl + value.response.data.url;
+      // });
+      this.pictureData[item].push(this.baseurl + file.response.data.url);
     },
     // 身份证上传
     handleIdentyRemove(file, fileList) {
-      console.log(file)
-      this.transforPicData("identity", fileList);
+      console.log(file.url);
+      let index = this.pictureData.identity.indexOf(file.url);
+      this.pictureData.identity.splice(index, 1);
     },
     handleIdentyPreview(file) {
       this.dialogIdentyImageUrl = file.url;
@@ -844,11 +840,13 @@ export default {
       this.$message.warning("最多上传2张！");
     },
     handleIdentySuccess(res, file, fileList) {
-      this.transforPicData("identity", fileList);
+      console.log(file);
+      this.transforPicData("identity", file);
     },
     // 体检证件
     handleBodyRemove(file, fileList) {
-      this.transforPicData("body_check_c", fileList);
+      let index = this.pictureData.body_check_c.indexOf(file.url);
+      this.pictureData.body_check_c.splice(index, 1);
     },
     handleBodyPreview(file) {
       this.dialogBodyImageUrl = file.url;
@@ -858,11 +856,12 @@ export default {
       this.$message.warning("最多上传3张！");
     },
     handleBodySuccess(res, file, fileList) {
-      this.transforPicData("body_check_c", fileList);
+      this.transforPicData("body_check_c", file);
     },
     // 生活照片
     handleLifeRemove(file, fileList) {
-      this.transforPicData("life", fileList);
+      let index = this.pictureData.life.indexOf(file.url);
+      this.pictureData.life.splice(index, 1);
     },
     handleLifePreview(file) {
       this.dialogLifeImageUrl = file.url;
@@ -872,11 +871,12 @@ export default {
       this.$message.warning("最多上传2张！");
     },
     handleLifeSuccess(res, file, fileList) {
-      this.transforPicData("life", fileList);
+      this.transforPicData("life", file);
     },
     // 技能照片
     handleSkillRemove(file, fileList) {
-      this.transforPicData("skill", fileList);
+      let index = this.pictureData.skill.indexOf(file.url);
+      this.pictureData.skill.splice(index, 1);
     },
     handleSkillPreview(file) {
       this.dialogSkillImageUrl = file.url;
@@ -886,11 +886,12 @@ export default {
       this.$message.warning("最多上传8张！");
     },
     handleSkillSuccess(res, file, fileList) {
-      this.transforPicData("skill", fileList);
+      this.transforPicData("skill", file);
     },
     // 厨艺展示
     handleCookingRemove(file, fileList) {
-      this.transforPicData("cooking", fileList);
+      let index = this.pictureData.cooking.indexOf(file.url);
+      this.pictureData.cooking.splice(index, 1);
     },
     handleCookingPreview(file) {
       this.dialogCookingImageUrl = file.url;
@@ -900,11 +901,12 @@ export default {
       this.$message.warning("最多上传5张！");
     },
     handleCookingSuccess(res, file, fileList) {
-      this.transforPicData("cooking", fileList);
+      this.transforPicData("cooking", file);
     },
     // 育婴照片
     handleBadyRemove(file, fileList) {
-      this.transforPicData("take_body", fileList);
+      let index = this.pictureData.take_body.indexOf(file.url);
+      this.pictureData.take_body.splice(index, 1);
     },
     handleBadyPreview(file) {
       this.dialogCookingImageUrl = file.url;
@@ -914,11 +916,12 @@ export default {
       this.$message.warning("最多上传4张！");
     },
     handleBadySuccess(res, file, fileList) {
-      this.transforPicData("take_body", fileList);
+      this.transforPicData("take_body", file);
     },
     // 其他照片
     handleOtherRemove(file, fileList) {
-      this.transforPicData("other", fileList);
+      let index = this.pictureData.other.indexOf(file.url);
+      this.pictureData.other.splice(index, 1);
     },
     handleOtherPreview(file) {
       this.dialogCookingImageUrl = file.url;
@@ -928,7 +931,7 @@ export default {
       this.$message.warning("最多上传4张！");
     },
     handleOtherSuccess(res, file, fileList) {
-      this.transforPicData("other", fileList);
+      this.transforPicData("other", file);
     },
 
     // 保存按钮
@@ -940,6 +943,8 @@ export default {
           for (let item in this.pictureData) {
             this.pictureData[item] = null;
           }
+          // 关闭图片弹框
+          this.pictureDialogVisible = false;
         } else {
           this.$message.error(res.msg);
         }
@@ -948,7 +953,6 @@ export default {
 
     // 图片上传dialog关闭回调
     picDialogClose() {
-      console.log("jjj");
       this.clearImg();
     },
   },

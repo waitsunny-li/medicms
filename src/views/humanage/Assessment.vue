@@ -7,7 +7,14 @@
 
         <!-- 表单 -->
         <el-card class="table-content">
-          <el-table :data="staffList" v-loading="loading" border style="width: 100%" height="550px" class="user-table-wrap">
+          <el-table
+            :data="staffList"
+            v-loading="loading"
+            border
+            style="width: 100%"
+            height="550px"
+            class="user-table-wrap"
+          >
             <el-table-column prop="name" align="center" label="姓名"></el-table-column>
             <el-table-column align="center" prop="sex" label="性别">
               <template slot-scope="scope">
@@ -91,10 +98,25 @@
           </el-dialog>
 
           <!-- 评价操作 -->
-          <el-dialog center width="30%" title="评价" :visible.sync="evaluateVisible" append-to-body>
+          <el-dialog
+            center
+            width="30%"
+            title="评价"
+            :visible.sync="evaluateVisible"
+            append-to-body
+            @close="evaluateVisibleClose"
+          >
             <!-- 表单 -->
-            <el-form ref="evaluateForm" :model="evaluateForm" label-width="80px">
-              <el-form-item label="评价内容">
+            <el-form
+              ref="evaluateForm"
+              :rules="evaluateFormRules"
+              :model="evaluateForm"
+              label-width="80px"
+            >
+              <el-form-item label="是否通过" prop="isSuccess">
+                <el-switch v-model="evaluateForm.isSuccess" active-color="#13ce66"></el-switch>
+              </el-form-item>
+              <el-form-item label="评价内容" prop="content">
                 <el-input type="textarea" v-model="evaluateForm.content"></el-input>
               </el-form-item>
               <el-form-item label="员工状态" prop="person_state" class="person_state">
@@ -149,6 +171,7 @@ export default {
       // 评价表单
       evaluateForm: {
         train_id: "",
+        isSuccess: false,
         content: "",
         person_state: "1",
       },
@@ -211,6 +234,15 @@ export default {
           content: "怎么照顾小孩子",
         },
       ],
+
+      /**
+       * 以下是验证规则
+       */
+      evaluateFormRules: {
+        content: [
+          { required: true, message: "请输入评价内容", trigger: "blur" },
+        ],
+      },
     };
   },
   computed: {},
@@ -259,6 +291,10 @@ export default {
     assessOperation(id) {
       console.log(id);
       this.evaluateVisible = true;
+    },
+    // 评价框关闭自动回调
+    evaluateVisibleClose() {
+      this.$refs.evaluateForm.resetFields();
     },
   },
   created() {

@@ -90,3 +90,34 @@ export function saveTrainingsData(data) {
     data: data
   })
 }
+
+// 获取单条培训数据
+export function getOneTrainingInfo(id) {
+  return request({
+    url: '/train/edit',
+    method: 'get',
+    params: {
+      id: id
+    }
+  })
+}
+
+// 更新单条培训记录
+export function updateTrainingInfo(data) {
+  return request({
+    url: '/train/update',
+    method: 'post',
+    data: data
+  })
+}
+
+// 删除单条培训记录
+export function deleteTrainingInfo(ids) {
+  return request({
+    url: '/train/delete',
+    method: 'post',
+    data: {
+      ids: ids
+    }
+  })
+}

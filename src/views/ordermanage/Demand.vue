@@ -18,6 +18,7 @@
           <!-- 表单 -->
           <el-table
             :data="customers"
+            @selection-change="handleSelectionChange"
             class="user-table-wrap"
             style="width: 100%"
             height="550"
@@ -146,13 +147,20 @@
             <!-- 操作 -->
             <el-table-column label="操作" align="center" width="140px">
               <template slot-scope="scope">
-                <el-button size="mini" type="primary" icon="el-icon-edit" circle></el-button>
+                <el-button
+                  size="mini"
+                  type="primary"
+                  icon="el-icon-edit"
+                  @click="customerEditBtn"
+                  circle
+                ></el-button>
                 <el-popconfirm
                   confirmButtonText="好的"
                   cancelButtonText="不用了"
                   icon="el-icon-info"
                   iconColor="red"
-                  title="您确定要永久删除该员工吗？"
+                  title="您确定要永久删除该客户吗？"
+                  @onConfirm="DeleteFormBtn(scope.row.id)"
                 >
                   <el-button
                     type="danger"
@@ -182,11 +190,20 @@
     </el-row>
 
     <!-- 添加客户需求表单 -->
-    <el-dialog title="新增客户" :visible.sync="addCustomerDialogVisible" width="300" center>
+    <el-dialog
+      title="新增客户"
+      @close="formDialogClose"
+      :visible.sync="addCustomerDialogVisible"
+      class="addFormDialog"
+      width="850px"
+      center
+    >
       <!-- 表单内容 -->
-      <el-form ref="form" :model="form" label-width="80px">
+      <el-form ref="form" :rules="formRules" :model="form" label-width="80px">
         <el-row>
-          <el-col :span="24" class="title-home">家庭情况</el-col>
+          <el-col :span="24" class="title-home">
+            <i class="el-icon-s-home"></i> 家庭情况
+          </el-col>
         </el-row>
         <el-row>
           <el-col :span="6">
@@ -195,8 +212,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="家庭面积" prop="family_area">
-              <el-input size="mini" v-model="form.family_area"></el-input>
+            <el-form-item label="客户手机" prop="mobile">
+              <el-input size="mini" v-model="form.mobile"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -207,29 +224,247 @@
           <el-col :span="6">
             <el-form-item label="服务类型" prop="service_type">
               <el-select size="mini" v-model="form.service_type" placeholder="请选择">
-                <el-option label="长期" value="1"></el-option>
-                <el-option label="短期" value="2"></el-option>
+                <el-option label="全日住家型" value="1"></el-option>
+                <el-option label="日间照料型" value="2"></el-option>
+                <el-option label="计时收费型" value="3"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="6">
+            <el-form-item label="家庭面积" prop="family_area">
+              <el-input size="mini" v-model="form.family_area"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="7">
+            <el-form-item label="来源" prop="source">
+              <el-select size="mini" v-model="form.source" placeholder="请选择">
+                <el-option label="二次开发老客户" value="二次开发老客户"></el-option>
+                <el-option label="二次开发失效客户" value="二次开发失效客户"></el-option>
+                <el-option label="家政员介绍" value="家政员介绍"></el-option>
+                <el-option label="家政客户转介绍" value="家政客户转介绍"></el-option>
+                <el-option label="公司接待" value="公司接待"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="9" :offset="1">
+            <el-form-item
+              label-width="90"
+              label="其他服务类型"
+              prop="service_other"
+              style="display: flex"
+            >
+              <el-input size="mini" v-model="form.service_other"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12" class="family-people">
+            <el-col :span="8" style="display: flex">
+              <el-form-item label="家庭人口" prop="family_people.old">
+                <el-input size="mini" v-model="form.family_people.old" placeholder="老人几位？"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8" style="display: flex">
+              <el-form-item class="adult" prop="family_people.adlut">
+                <el-input size="mini" v-model="form.family_people.adlut" placeholder="成人几位？"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="8" style="display: flex">
+              <el-form-item class="children" prop="family_people.children">
+                <el-input size="mini" v-model="form.family_people.children" placeholder="小孩几位？"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item class="address" label="详细地址" prop="family_address">
+              <el-input size="mini" v-model="form.family_address" placeholder="请输入详细地址"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <!-- 服务内容 -->
+        <el-row v-if="isAddForm">
+          <el-col :sapn="24">
+            <el-form-item label="服务内容">
+              <el-checkbox-group @change="checkboxChange" v-model="selectSericeList">
+                <el-checkbox name="name" :label="0">
+                  做
+                  <input class="small-line-input" v-model="cookNumber" size="mini" />人饭菜
+                </el-checkbox>
+                <el-checkbox :label="1">买菜</el-checkbox>
+                <el-checkbox :label="2">
+                  手洗
+                  <input class="small-line-input" v-model="handWashing" size="mini" />人衣服
+                </el-checkbox>
+                <el-checkbox :label="3">
+                  机洗
+                  <input class="small-line-input" v-model="autoWashing" size="mini" />人衣服
+                </el-checkbox>
+                <el-checkbox :label="4">
+                  照看
+                  <input class="small-line-input" v-model="lookAfter" size="mini" />小孩
+                </el-checkbox>
+                <el-checkbox :label="5">
+                  带
+                  <input class="small-line-input" v-model="sleep" size="mini" />小孩睡觉
+                </el-checkbox>
+                <el-checkbox :label="6">
+                  接送
+                  <input class="small-line-input" v-model="goSchool" size="mini" />岁小孩上学
+                </el-checkbox>
+                <el-checkbox :label="7">
+                  其他
+                  <input class="small-line-input2" v-model="otherContent" size="mini" />
+                </el-checkbox>
+              </el-checkbox-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row v-else>
+          <el-col :span="24">
+            <el-form-item label="服务内容" prop="service_content">
+              <el-input type="textarea" size="mini" v-model="form.service_content"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <!-- 以下对家政员的需求 -->
+        <el-row>
+          <el-col :span="24" class="title-home">
+            <i class="el-icon-s-check"></i> 对家政员的需求
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <el-form-item label="年龄" prop="demand_age">
+              <el-select size="mini" v-model="form.demand_age" placeholder="请选择">
+                <el-option label="无" value="无"></el-option>
+                <el-option label="20~30" value="20~30"></el-option>
+                <el-option label="30~40" value="30~40"></el-option>
+                <el-option label="40~50" value="40~50"></el-option>
+                <el-option label="50~60" value="50~60"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="岗位" prop="demand_job">
+              <el-select multiple size="mini" v-model="form.demand_job" placeholder="请选择">
+                <el-option
+                  v-for="item in jobs"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="籍贯" prop="demand_census">
+              <el-input size="mini" v-model="form.demand_census"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="性别" prop="demand_sex">
+              <el-select size="mini" v-model="form.demand_sex" placeholder="请选择">
+                <el-option label="男" :value="1"></el-option>
+                <el-option label="女" :value="2"></el-option>
+                <el-option label="不限" :value="0"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <el-col :span="6" style="display: flex">
-              
-              <el-form-item label="家庭人口" prop="family_people">
-                <el-input size="mini" v-model="form.family_people.old">
-                  <template slot="prepend">老人</template>
-                  <template slot="append">位</template>
-                  </el-input>
-              </el-form-item>
-            </el-col>
+          <el-col :span="6">
+            <el-form-item label="学历" prop="demand_education">
+              <el-select size="mini" v-model="form.demand_education" placeholder="请选择学历">
+                <el-option label="无" value="无"></el-option>
+                <el-option label="小学" value="小学"></el-option>
+                <el-option label="初中" value="初中"></el-option>
+                <el-option label="高中" value="高中"></el-option>
+                <el-option label="本科" value="本科"></el-option>
+                <el-option label="研究生" value="研究生"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="生肖" prop="demand_zodiac">
+              <el-input size="mini" v-model="form.demand_zodiac"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="厨艺" prop="demand_cooking">
+              <el-select size="mini" v-model="form.demand_cooking" placeholder="请选择" multiple>
+                <el-option
+                  v-for="item in cookings"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="6">
+            <el-form-item label="语言" prop="demand_language">
+              <el-select size="mini" multiple v-model="form.demand_language" placeholder="请选择">
+                <el-option
+                  v-for="item in languages"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="6">
+            <el-form-item label="服务技能" prop="demand_service_skill">
+              <el-select size="mini" multiple v-model="form.demand_service_skill" placeholder="请选择">
+                <el-option
+                  v-for="item in skills"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="9">
+            <el-form-item
+              style="margin-left: 20px"
+              label="家政从业经验"
+              prop="demand_experience"
+              label-width="100"
+            >
+              <el-select
+                style="width: 150px"
+                size="mini"
+                v-model="form.demand_experience"
+                placeholder="请选择"
+              >
+                <el-option label="2~3年" value="2~3年"></el-option>
+                <el-option label="3~5年" value="3~5年"></el-option>
+                <el-option label="5~10年" value="5~10年"></el-option>
+                <el-option label="10~20年" value="10~20年"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="9">
+            <el-form-item label="其他要求" prop="demand_other">
+              <el-input size="mini" type="textarea" v-model="form.demand_other"></el-input>
+            </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addCustomerDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="addCustomerDialogVisible = false">保 存</el-button>
+        <el-button size="mini" @click="addCustomerDialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="addCustomerDialogVisible = false">保 存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -238,33 +473,62 @@
 <script>
 import eventVue from "common/eventVue";
 import CustomerSearch from "components/common/search/CustomerSearch";
+import { getLanguage, getCooking, getJob, getKills } from "network/select";
 export default {
   name: "Demand",
   data() {
     return {
       customers: [
         {
+          id: "1",
           name: "客户",
           family_area: "100.25",
           family_hometown: "安徽安庆",
           family_address: "家庭住址",
           service_type: "1",
-          service_other: "其他服务类型",
+          service_other: "其他内容",
           family_people: {
             children: 1,
             old: 2,
             adlut: 3,
           },
-          service_content: "服务内容",
+          service_content: [],
           demand_age: "20-30",
           demand_sex: 0,
           demand_education: "高中",
-          demand_job: ["育婴师", "司机"],
+          demand_job: ["育婴师", "管家"],
           demand_zodiac: "牛",
           demand_experience: "2-3年",
           demand_census: "不限",
           demand_cooking: "川菜",
-          demand_service_skill: "服务技能",
+          demand_service_skill: [],
+          mobile: "13695604265",
+          state: "0",
+          source: "来源",
+        },
+        {
+          id: "2",
+          name: "客户",
+          family_area: "100.25",
+          family_hometown: "安徽安庆",
+          family_address: "家庭住址",
+          service_type: "1",
+          service_other: "其他内容",
+          family_people: {
+            children: 1,
+            old: 2,
+            adlut: 3,
+          },
+          service_content: [],
+          demand_age: "20-30",
+          demand_sex: 0,
+          demand_education: "高中",
+          demand_job: ["育婴师", "管家"],
+          demand_zodiac: "牛",
+          demand_experience: "2-3年",
+          demand_census: "不限",
+          demand_cooking: "川菜",
+          demand_service_skill: [],
           mobile: "13695604265",
           state: "0",
           source: "来源",
@@ -285,6 +549,83 @@ export default {
       form: null,
       // 添加需求
       addCustomerForm: {
+        name: "",
+        family_area: "",
+        family_hometown: "",
+        family_address: "",
+        service_type: "",
+        service_other: "",
+        family_people: {
+          children: "",
+          old: "",
+          adlut: "",
+        },
+        service_content: "",
+        demand_age: "",
+        demand_sex: "",
+        demand_education: "",
+        demand_job: [],
+        demand_zodiac: "",
+        demand_experience: "",
+        demand_census: "",
+        demand_cooking: [],
+        demand_language: [],
+        demand_service_skill: [],
+        demand_other: "",
+        mobile: "",
+        state: "",
+        source: "",
+      },
+
+      // 岗位
+      jobs: null,
+      // 厨艺水平
+      cookings: null,
+      // 服务技能
+      skills: null,
+      languages: null,
+
+      // 多选框
+      selectSericeList: [],
+      // 人数
+      cookNumber: "",
+      handWashing: "",
+      autoWashing: "",
+      lookAfter: "",
+      sleep: "",
+      goSchool: "",
+      otherContent: "",
+
+      selectSerice: [
+        {
+          content: "做" + this.cookNumberf + "人饭菜",
+        },
+        {
+          content: "买菜",
+        },
+        {
+          content: "手洗" + this.handWashing + "人衣服",
+        },
+
+        {
+          content: "机洗" + this.autoWashing + "人衣服",
+        },
+        {
+          content: "照看" + this.lookAfter + "小孩",
+        },
+        {
+          content: "带" + this.sleep + "小孩睡觉",
+        },
+        {
+          content: "接送" + this.goSchool + "岁小孩上学",
+        },
+        {
+          content: this.otherContent,
+        },
+      ],
+      cookNumber: "",
+      // 编辑表单
+      editCustomerForm: {
         name: "客户",
         family_area: "100.25",
         family_hometown: "安徽安庆",
@@ -296,27 +637,120 @@ export default {
           old: 2,
           adlut: 3,
         },
-        service_content: "服务内容",
+        service_content: "",
         demand_age: "20-30",
         demand_sex: 0,
         demand_education: "高中",
-        demand_job: ["育婴师", "司机"],
+        demand_job: ["育婴师", "管家"],
         demand_zodiac: "牛",
         demand_experience: "2-3年",
         demand_census: "不限",
-        demand_cooking: "川菜",
-        demand_service_skill: "服务技能",
+        demand_cooking: [],
+        demand_language: [],
+        demand_service_skill: [],
+        demand_other: "",
         mobile: "13695604265",
         state: "0",
         source: "来源",
       },
-      // 编辑表单
-      editCustomerForm: null,
+
+      // 是否是添加客服弹框
+      isAddForm: true,
+      // 多选中
+      selected: [],
+
+      /**
+       * 验证规则
+       */
+      formRules: {
+        name: [
+          { required: true, message: "请输入客户姓名", trigger: "blur" },
+          { min: 2, max: 3, message: "长度在 2 到 3 个字符", trigger: "blur" },
+        ],
+        family_hometown: [
+          { required: true, message: "请输入客户籍贯", trigger: "blur" },
+        ],
+        family_address: [
+          { required: true, message: "请输入家庭地址", trigger: "blur" },
+        ],
+        mobile: [
+          { required: true, message: "请输入家庭手机号", trigger: "blur" },
+        ],
+        service_type: [
+          { required: true, message: "请输入服务类型", trigger: "blur" },
+        ],
+      },
     };
+  },
+  watch: {
+    cookNumber(value) {
+      this.selectSerice[0].content = "做" + value + "人饭菜";
+      this.checkboxChange();
+    },
+    handWashing(value) {
+      this.selectSerice[2].content = "手洗" + value + "人衣服";
+      this.checkboxChange();
+    },
+    autoWashing(value) {
+      this.selectSerice[3].content = "机洗" + value + "人衣服";
+      this.checkboxChange();
+    },
+    lookAfter(value) {
+      this.selectSerice[4].content = "照看" + value + "小孩";
+      this.checkboxChange();
+    },
+    sleep(value) {
+      this.selectSerice[5].content = "带" + value + "小孩睡觉";
+      this.checkboxChange();
+    },
+    goSchool(value) {
+      this.selectSerice[6].content = "接送" + value + "岁小孩上学";
+      this.checkboxChange();
+    },
+    otherContent(value) {
+      this.selectSerice[7].content = value;
+      this.checkboxChange();
+    },
   },
   created() {
     // 创建完成后赋值
     this.form = this.addCustomerForm;
+
+    // 岗位
+    getJob().then((res) => {
+      if (res.code === 200) {
+        this.jobs = res.data;
+      } else {
+        this.$message.waraing("获取岗位失败！");
+      }
+    });
+
+    // 厨艺水平
+    getCooking().then((res) => {
+      if (res.code === 200) {
+        this.cookings = res.data;
+      } else {
+        this.$message.waraing("获取厨艺水平失败！");
+      }
+    });
+
+    // 服务技能
+    getKills().then((res) => {
+      if (res.code === 200) {
+        this.skills = res.data;
+      } else {
+        this.$message.waraing("获取服务技能失败！");
+      }
+    });
+
+    // 获取语言能力分组
+    getLanguage().then((res) => {
+      if (res.code === 200) {
+        this.languages = res.data;
+      } else {
+        this.$message.waraing("获取语言能力失败！");
+      }
+    });
   },
   methods: {
     // 当前页改变时触发
@@ -328,12 +762,71 @@ export default {
     addCustomerBtn() {
       // 表单赋值
       this.form = this.addCustomerForm;
+      // 修改添加服务内容的显示
+      this.isAddForm = true;
+      // 显示添加表单
+      this.addCustomerDialogVisible = true;
+    },
+
+    // 编辑客户需求
+    customerEditBtn() {
+      // 表单赋值
+      this.form = this.editCustomerForm;
+      // 修改添加服务内容的显示
+      this.isAddForm = false;
       // 显示添加表单
       this.addCustomerDialogVisible = true;
     },
 
     // 选择删除
-    selectDeleteBtn() {},
+    selectDeleteBtn() {
+      if (this.selected.length == 0) {
+        this.$message.error("请选择要删除的客户");
+      } else {
+        console.log("你要删除的所有id" + this.selected);
+        console.log(typeof this.selected);
+      }
+    },
+
+    // 表格删除
+    DeleteFormBtn(id) {
+      console.log("我是表单中的删除键：" + id);
+    },
+
+    // 添加和编辑表单关闭回调
+    formDialogClose() {
+      this.$refs.form.resetFields();
+      this.clearService();
+    },
+
+    // 每次选择服务内容改变
+    checkboxChange() {
+      let serviceContent = this.selectSericeList.map((item) => {
+        return this.selectSerice[item].content;
+      });
+      this.form.service_content = serviceContent.join(",");
+    },
+
+    // 处理选择
+    handleSelectionChange(selectedArry) {
+      // 清除操作
+      this.selected = [];
+      selectedArry.forEach((obj) => {
+        this.selected.push(obj.id);
+      });
+    },
+
+    // 清除添加客户是的服务内容状态
+    clearService() {
+      this.selectSericeList = [];
+      this.cookNumber = "";
+      this.handWashing = "";
+      this.autoWashing = "";
+      this.lookAfter = "";
+      this.sleep = "";
+      this.goSchool = "";
+      this.otherContent = "";
+    },
   },
   components: {
     CustomerSearch,
@@ -405,6 +898,58 @@ export default {
   font-size: 16px;
   margin-bottom: 20px;
   font-weight: 700;
+  color: #75cbf4;
   border-bottom: 1px solid #dcdfe6;
+}
+
+.family-people {
+  /deep/.el-input__inner {
+    width: 90px;
+  }
+
+  .adult {
+    /deep/.el-input__inner {
+      margin-left: -20px;
+    }
+  }
+  .children {
+    /deep/.el-input__inner {
+      margin-left: -40px;
+    }
+  }
+}
+
+.address {
+  margin-left: 20px;
+}
+
+.small-line-input {
+  width: 20px;
+  border: none;
+  text-align: center;
+  border-bottom: 1px solid #dcdfe6;
+}
+.small-line-input2 {
+  width: 300px;
+  border: none;
+  border-bottom: 1px solid #dcdfe6;
+  padding-left: 10px;
+}
+
+.addFormDialog {
+  /deep/.el-dialog__body {
+    height: 500px;
+    overflow-y: auto;
+  }
+
+  /deep/.el-dialog__body::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+  }
+
+  /deep/.el-dialog__body::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
+  }
 }
 </style>

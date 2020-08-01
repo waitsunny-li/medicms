@@ -267,11 +267,15 @@
           prop="identity"
           label="身份证"
           :show-overflow-tooltip="true"
-          width="200"
         ></el-table-column>
         <el-table-column width="80" align="center" prop="age" label="年龄"></el-table-column>
-        <el-table-column align="center" prop="mobile" width="110px" label="手机号"></el-table-column>
-        <el-table-column width="100" align="center" prop="address" label="现居住地址" :show-overflow-tooltip="true">
+        <el-table-column align="center" prop="mobile" width="160px" label="手机号">
+          <template slot-scope="scope">
+            <i class="el-icon-phone" style="color: red"></i>
+            {{scope.row.mobile}}
+          </template>
+        </el-table-column>
+        <el-table-column align="center" prop="address" label="现居住地址" :show-overflow-tooltip="true">
           <template
             slot-scope="scope"
           >{{scope.row.now_p_text}}{{scope.row.now_c_text}}{{scope.row.now_d_text}}{{scope.row.now_address_desc}}</template>
@@ -288,7 +292,7 @@
             <p v-else>错误</p>
           </template>
         </el-table-column>
-        <el-table-column width="150" align="center" prop="in_time" label="入职时间"></el-table-column>
+        <el-table-column width="180" align="center" prop="in_time" label="入职时间"></el-table-column>
         <!-- 操作 -->
         <el-table-column label="操作" align="center" width="140px">
           <template slot-scope="scope">

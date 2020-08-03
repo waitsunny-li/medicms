@@ -3,10 +3,10 @@
     <el-card class="search-wrap">
       <el-form size="small" :inline="true" ref="searchForm" :model="CustomerSearchForm">
         <el-form-item prop="name">
-          <el-input size="mini" v-model="CustomerSearchForm.name" placeholder="姓名" clearable></el-input>
+          <el-input size="mini" v-model="CustomerSearchForm.name" placeholder="请输入客户姓名" clearable></el-input>
         </el-form-item>
         <el-form-item prop="telphone">
-          <el-input size="mini" v-model="CustomerSearchForm.telphone" placeholder="手机号" clearable></el-input>
+          <el-input size="mini" v-model="CustomerSearchForm.telphone" placeholder="请输入客户手机号" clearable></el-input>
         </el-form-item>
 
         <!-- 员工状态 -->

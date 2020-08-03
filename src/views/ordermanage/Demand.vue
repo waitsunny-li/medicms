@@ -72,43 +72,6 @@
               </template>
             </el-table-column>
             <el-table-column align="center" prop="name" label="姓名" width="100">
-              <template slot-scope="scope">
-                <div class="name-wrap">
-                  <el-popover placement="bottom-start" width="600" trigger="click">
-                    <!-- 内容 -->
-                    <el-tabs>
-                      <el-tab-pane label="新增事件">
-                        <!-- 表单 -->
-                        <el-table stripe style="width: 100%">
-                          <el-table-column prop="time" align="center" label="日期" width="180"></el-table-column>
-                          <el-table-column align="center" label="事件类型" width="180"></el-table-column>
-                          <el-table-column align="center" label="事件内容"></el-table-column>
-                          <el-table-column label="操作" align="center">
-                            <template slot-scope="scope">
-                              <el-button type="danger" icon="el-icon-delete" size="mini" circle></el-button>
-                            </template>
-                          </el-table-column>
-                        </el-table>
-
-                        <!-- 添加事件 -->
-                        <div class="option-wrap">增加事件</div>
-                        <!-- 表单 -->
-                        <el-form ref="form" class="eventForm" label-width="80px"></el-form>
-                        <!-- 保存按钮 -->
-                        <el-row>
-                          <el-col :span="5" :offset="20">
-                            <el-button size="mini" type="primary" round>保存</el-button>
-                          </el-col>
-                        </el-row>
-                      </el-tab-pane>
-                    </el-tabs>
-                    <!-- 按钮显示 -->
-                    <el-button type="text" id="popoPlus" slot="reference" icon="el-icon-s-fold"></el-button>
-                  </el-popover>
-
-                  <span style="margin-left: 10px">{{scope.row.name}}</span>
-                </div>
-              </template>
             </el-table-column>
             <el-table-column align="center" prop="family_hometown" label="家庭成员籍贯"></el-table-column>
             <el-table-column

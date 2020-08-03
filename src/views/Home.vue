@@ -93,7 +93,7 @@ export default {
             icon: "icon el-icon-coin",
           },
           {
-            navname: "订单生成",
+            navname: "订单列表",
             path: "/home/ordergenerate",
             icon: "icon el-icon-s-order",
           },

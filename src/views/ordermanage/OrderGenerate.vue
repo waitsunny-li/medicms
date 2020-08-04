@@ -47,7 +47,7 @@
                     <span>{{ scope.row.demand_education }}</span>
                   </el-form-item>
                   <el-form-item label="服务技能">
-                    <span>{{ scope.row.demand_service_skill }}</span>
+                    <span>{{ scope.row.demand_service_skill.join(',') }}</span>
                   </el-form-item>
                   <el-form-item label="生肖">
                     <span>{{ scope.row.demand_zodiac }}</span>
@@ -66,7 +66,33 @@
                 <div class="name-wrap">
                   <el-popover placement="bottom-start" width="600" trigger="click">
                     <!-- 内容 -->
-                    <el-tabs>
+                    <el-tabs >
+                      <el-tab-pane label="面试记录">
+                        <!-- 表单 -->
+                        <el-table stripe style="width: 100%">
+                          <el-table-column prop="time" align="center" label="日期" width="180"></el-table-column>
+                          <el-table-column align="center" label="事件类型" width="180"></el-table-column>
+                          <el-table-column align="center" label="事件内容"></el-table-column>
+                          <el-table-column label="操作" align="center">
+                            <template slot-scope="scope">
+                              <el-button type="danger" icon="el-icon-delete" size="mini" circle></el-button>
+                            </template>
+                          </el-table-column>
+                        </el-table>
+
+                        <!-- 添加事件 -->
+                        <div class="option-wrap">
+                          <i class="el-icon-folder-add"></i> 添加面试
+                        </div>
+                        <!-- 表单 -->
+                        <el-form ref="form" class="eventForm" label-width="80px"></el-form>
+                        <!-- 保存按钮 -->
+                        <el-row>
+                          <el-col :span="5" :offset="20">
+                            <el-button size="mini" type="primary" round>保存</el-button>
+                          </el-col>
+                        </el-row>
+                      </el-tab-pane>
                       <el-tab-pane label="跟进记录">
                         <!-- 表单 -->
                         <el-table stripe style="width: 100%">
@@ -81,7 +107,9 @@
                         </el-table>
 
                         <!-- 添加事件 -->
-                        <div class="option-wrap"><i class="el-icon-folder-add"></i> 添加跟进</div>
+                        <div class="option-wrap">
+                          <i class="el-icon-folder-add"></i> 添加跟进
+                        </div>
                         <!-- 表单 -->
                         <el-form ref="form" class="eventForm" label-width="80px"></el-form>
                         <!-- 保存按钮 -->
@@ -490,7 +518,7 @@ export default {
       }
     }
   }
-
+  
   .pagination {
     position: absolute;
     bottom: 30px;

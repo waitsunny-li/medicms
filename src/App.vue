@@ -11,7 +11,6 @@ export default {
     return {};
   },
   components: {},
-  
 };
 </script>
 
@@ -23,4 +22,5 @@ export default {
   width: 100%;
   background-color: #ededed;
 }
+
 </style>

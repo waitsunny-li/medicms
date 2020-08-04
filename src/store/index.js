@@ -6,7 +6,7 @@ Vue.use(Vuex)
 
 // 状态
 const state = {
-  navindex: 0,
+  navindex: sessionStorage.getItem('navindex')? sessionStorage.getItem('navindex') : 0,
   
   // 用户信息
   userInfo: {
@@ -22,6 +22,7 @@ const mutations = {
   // 修改当前的nav的下标
   changeNavIndex(state, index) {
     state.navindex = index
+    sessionStorage.setItem('navindex', index)
   },
  
   // 存储用户的基本信息

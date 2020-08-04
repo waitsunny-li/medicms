@@ -62,7 +62,7 @@ export default {
   margin-left: 6px;
 }
 .aside-item:hover {
-  background-color: #000;
+  // background-color: #000;
 }
 
 .actived {

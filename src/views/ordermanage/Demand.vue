@@ -59,8 +59,8 @@
                   <el-form-item label="服务技能">
                     <span>{{ scope.row.demand_service_skill }}</span>
                   </el-form-item>
-                  <el-form-item label="生肖">
-                    <span>{{ scope.row.demand_zodiac }}</span>
+                  <el-form-item label="工资">
+                    <span>10000 / 26天</span>
                   </el-form-item>
                   <el-form-item label="家政从业经验">
                     <span>{{ scope.row.demand_experience }}</span>
@@ -306,10 +306,9 @@
             <el-form-item label="年龄" prop="demand_age">
               <el-select size="mini" v-model="form.demand_age" placeholder="请选择">
                 <el-option label="无" value="无"></el-option>
-                <el-option label="20~30" value="20~30"></el-option>
-                <el-option label="30~40" value="30~40"></el-option>
-                <el-option label="40~50" value="40~50"></el-option>
-                <el-option label="50~60" value="50~60"></el-option>
+                <el-option label="40岁以下" value="40岁以下"></el-option>
+                <el-option label="45岁以下" value="45岁以下"></el-option>
+                <el-option label="50岁以下" value="50岁以下"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -354,7 +353,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="生肖" prop="demand_zodiac">
+            <el-form-item label="工资" prop="demand_zodiac">
               <el-input size="mini" v-model="form.demand_zodiac"></el-input>
             </el-form-item>
           </el-col>

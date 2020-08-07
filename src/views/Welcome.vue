@@ -1,30 +1,50 @@
 <template>
   <div class="welcome">
     <div class="header">
-      <!-- logo -->
-      <div class="logo-wrap">
-        <div class="headlogo">
-          <img src="~assets/img/logohead.png" alt />
-        </div>
-        <div class="img">
-          <img src="~assets/img/logobig.png" alt />
-        </div>
-      </div>
-      <!-- 导航 -->
-      <div class="nav">
-        <router-link v-for="(item, index) in navList" :key="index" :to="item.path">{{item.navname}}</router-link>
-      </div>
-      <!-- 时间-ip -->
-      <div class="time-ip-wrap">
-        <div class="time">您上次登录时间：{{$store.state.userInfo.last_login_time}}</div>
-        <div class="ip">IP：{{$store.state.userInfo.ip}}</div>
-      </div>
-      <!-- 主页退出 -->
-      <div class="home-logout">
-        <el-button type="text" icon="el-icon-monitor" class="home">主页</el-button>
+      <el-row>
+        <el-col :span="5">
+          <div class="logo-wrap">
+            <div class="headlogo">
+              <img src="~assets/img/logohead.png" alt />
+            </div>
+            <div class="img">
+              <img src="~assets/img/logobig.png" alt />
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="8">
+          <!-- 导航 -->
+          <div class="nav">
+            <span
+              v-for="(item, index) in navList"
+              :key="index"
+              @click="navClick(item.path, index)"
+            >{{item.navname}}</span>
+          </div>
+        </el-col>
+        <el-col :span="9" :offset="2">
+          <el-col :span="18">
+            <!-- 时间-ip -->
+            <div class="time-ip-wrap">
+              <div class="time">您上次登录时间：{{$store.state.userInfo.last_login_time}}</div>
+              <div class="ip">IP：{{$store.state.userInfo.ip}}</div>
+            </div>
+          </el-col>
+          <el-col :span="6" >
+            <!-- 主页退出 -->
+            <div class="home-logout">
+              <el-button type="text" icon="el-icon-monitor" class="home">主页</el-button>
 
-        <el-button type="text" icon="el-icon-switch-button" class="logout-btn" @click="logoutBtn">退出</el-button>
-      </div>
+              <el-button
+                type="text"
+                icon="el-icon-switch-button"
+                class="logout-btn"
+                @click="logoutBtn"
+              >退出</el-button>
+            </div>
+          </el-col>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
@@ -51,6 +71,10 @@ export default {
       this.$router.replace("/login");
       this.$message.success("退出成功！");
     },
+    navClick(path, index) {
+      this.$router.push(path);
+      this.$store.commit("changeNavIndex", index);
+    },
   },
 };
 </script>
@@ -68,8 +92,6 @@ export default {
   .header {
     width: 100%;
     height: 60px;
-    display: flex;
-    justify-content: space-between;
 
     .logo-wrap {
       width: 275px;
@@ -110,7 +132,8 @@ export default {
       justify-content: space-around;
       line-height: 60px;
 
-      a {
+      span {
+        cursor: pointer;
         color: #fff;
         font-size: 14px;
         font-family: "微软雅黑";
@@ -119,8 +142,7 @@ export default {
 
     // 登陆时间
     .time-ip-wrap {
-      margin-left: 100px;
-      width: 500px;
+      width: 400px;
       height: 100%;
       color: #fff;
       display: flex;
@@ -134,7 +156,7 @@ export default {
       }
 
       .ip {
-        margin-left: 50px;
+        margin-left: 10px;
         height: 60px;
         line-height: 60px;
         color: #fff;
@@ -144,7 +166,7 @@ export default {
 
     .home-logout {
       width: 120px;
-      height: 100%;
+      height: 60px;
       display: flex;
       align-content: center;
       justify-content: center;

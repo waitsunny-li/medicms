@@ -29,6 +29,7 @@
                   v-model="loginForm.password"
                   prefix-icon="el-icon-lock"
                   show-password
+                  @keyup.enter="enterClick"
                 ></el-input>
               </el-form-item>
             </el-form>
@@ -111,6 +112,10 @@ export default {
           });
       });
     },
+
+    enterClick() {
+      console.log('jjj')
+    }
   }
 };
 </script>

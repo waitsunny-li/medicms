@@ -30,7 +30,7 @@ const mutations = {
     state.userInfo.userToken = payload.userToken
     state.userInfo.username = payload.username
     state.userInfo.last_login_time = payload.last_login_time
-    state.userInfo.ip = payload.last_login_time
+    state.userInfo.ip = payload.ip
     // 保存在sessionStorage中
     setItem('userInfo', payload)
   },

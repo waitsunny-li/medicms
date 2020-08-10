@@ -34,6 +34,8 @@ export default {
       return this.$router.push(this.path);
     },
   },
+  created() {
+  },
 };
 </script>
 
@@ -55,7 +57,6 @@ export default {
 
   .content {
     display: flex;
-    
   }
 }
 .text {

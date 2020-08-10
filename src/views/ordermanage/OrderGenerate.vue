@@ -84,6 +84,7 @@
                           style="width: 100%"
                           height="200px"
                         >
+                          <el-table-column align="center" label="面试日期" prop="time"></el-table-column>
                           <el-table-column
                             prop="interviewer_number"
                             align="center"
@@ -208,14 +209,15 @@
                           style="width: 100%"
                           height="200px"
                         >
-                          <el-table-column prop="time" align="center" label="日期" width="180"></el-table-column>
+                          <el-table-column prop="time" align="center" label="日期" width="120"></el-table-column>
                           <el-table-column prop="record" align="center" label="跟单记录情况" width="180"></el-table-column>
                           <el-table-column
                             prop="recommend"
                             align="center"
                             label="推荐面试人员"
-                            width="180"
+                            width="110"
                           ></el-table-column>
+                          <el-table-column prop="interview_content" align="center" label="需求状态"></el-table-column>
                           <el-table-column prop="interview_content" align="center" label="面试情况"></el-table-column>
                           <el-table-column label="操作" align="center">
                             <template slot-scope="scope">
@@ -266,12 +268,7 @@
                             </el-col>
                           </el-row>
                           <el-row>
-                            <el-col :span="19">
-                              <el-form-item label="跟单记录情况" label-width="100px">
-                                <el-input type="textarea" v-model="addFollowUpForm.record"></el-input>
-                              </el-form-item>
-                            </el-col>
-                            <el-col :span="5">
+                            <el-col :span="6">
                               <el-form-item label="需求状态">
                                 <el-select
                                   size="mini"
@@ -280,7 +277,13 @@
                                 >
                                   <el-option label="跟进中" value="跟进中"></el-option>
                                   <el-option label="撤销" value="撤销"></el-option>
+                                  <el-option label="换人" value="换人"></el-option>
                                 </el-select>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :span="17" :offset="1">
+                              <el-form-item label="跟单记录情况" label-width="100px">
+                                <el-input type="textarea" v-model="addFollowUpForm.record"></el-input>
                               </el-form-item>
                             </el-col>
                           </el-row>
@@ -411,296 +414,13 @@
     </el-row>
 
     <!-- 调出家政员的基本信息 -->
-    <el-dialog
-      :title="staffInfoTitle"
-      :visible.sync="staffInfoDialogVisible"
-      width="870px"
-      center
-    >
-      <div class="staff-content" v-loading="staffInfoLoading">
-        <el-row class="expand-row">
-          <el-col :span="4">
-            <span class="label-text">手机号</span>
-            <span class="content-text">{{staffInfo.mobile}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">工资要求</span>
-            <span class="content-text">{{staffInfo.salary}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">英语水平</span>
-            <span class="content-text">{{staffInfo.english}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">计算机水平</span>
-            <span class="content-text">{{staffInfo.computer}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">政治面貌</span>
-            <span class="content-text">{{staffInfo.political_status}}</span>
-          </el-col>
-        </el-row>
-
-        <el-row class="expand-row">
-          <el-col :span="4">
-            <span class="label-text">工资待遇</span>
-            <span class="content-text">12000 / 26天</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">休假要求</span>
-            <span class="content-text">{{staffInfo.salary}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">户口地址</span>
-            <span
-              class="content-text"
-            >{{staffInfo.census_p_text}}{{staffInfo.cnnsus_c_text}}{{staffInfo.cnnsus_d_text}}{{staffInfo.census_address_desc}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">户口类型</span>
-            <span class="content-text">{{staffInfo.census_type}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">入职时间</span>
-            <span class="content-text">{{staffInfo.in_time}}</span>
-          </el-col>
-        </el-row>
-
-        <el-row class="expand-row">
-          <el-col :span="4">
-            <span class="label-text">学历</span>
-            <span class="content-text">{{staffInfo.education}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">现居住地</span>
-            <span
-              class="content-text"
-            >{{staffInfo.now_p_text}}{{staffInfo.now_c_text}}{{staffInfo.now_d_text}}{{staffInfo.now_address_desc}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">服务技能</span>
-            <span
-              class="content-text"
-              v-for="(item, index) in staffInfo.service_skills"
-              :key="index"
-            >{{item}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">家用电器</span>
-            <span
-              class="content-text"
-              v-for="(item, index) in staffInfo.device"
-              :key="index"
-            >{{item}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">入职来源</span>
-            <span class="content-text">{{staffInfo.recruiters_name}}：{{staffInfo.recruiters_mobile}}</span>
-          </el-col>
-        </el-row>
-
-        <el-row class="expand-row">
-          <el-col :span="4">
-            <span class="label-text">血型</span>
-            <span class="content-text">{{staffInfo.blood}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">健康状况</span>
-            <span class="content-text">{{staffInfo.health}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">婚姻状况</span>
-            <span class="content-text">{{staffInfo.marital_status}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">员工状态</span>
-            <span class="content-text">{{staffInfo.person_state}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">保险</span>
-            <span class="content-text">{{staffInfo.agreement_amount}}</span>
-          </el-col>
-        </el-row>
-
-        <el-row class="expand-row">
-          <el-col :span="4">
-            <span class="label-text">身高</span>
-            <span class="content-text">{{staffInfo.height}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">体重</span>
-            <span class="content-text">{{staffInfo.weight}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">籍贯</span>
-            <span class="content-text">{{staffInfo.census}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">生日</span>
-            <span class="content-text">{{staffInfo.birthday}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">语言能力</span>
-            <span
-              class="content-text"
-              v-for="(item, index) in staffInfo.language"
-              :key="index"
-            >{{item}}</span>
-          </el-col>
-        </el-row>
-
-        <el-row class="expand-row">
-          <el-col :span="4">
-            <span class="label-text">录入人</span>
-            <span class="content-text">{{staffInfo.salary}}</span>
-          </el-col>
-          <el-col :span="8">
-            <span class="label-text">家庭紧急联系</span>
-            <span class="content-text">{{staffInfo.urgent_name}}：{{staffInfo.urgent_mobile}}</span>
-          </el-col>
-          <el-col :span="8">
-            <span class="label-text">安置协议</span>
-            <span class="content-text">{{staffInfo.agreement_amount}}</span>
-          </el-col>
-        </el-row>
-
-        <el-row class="expand-row">
-          <el-col :span="12" style="display: flex">
-            <span class="label-text">工作经历</span>
-            <div
-              class="content-text"
-              v-for="(item, index) in staffInfo.work_experience"
-              :key="index"
-            >
-              <el-col :span="24">{{item.job}}</el-col>
-              <el-col :span="24">{{item.time.join('~')}}</el-col>
-              <el-col :span="24">{{item.address}}</el-col>
-              <el-col :span="24">{{item.content}}</el-col>
-            </div>
-          </el-col>
-          <el-col :span="12" style="display: flex">
-            <span class="label-text">家庭成员</span>
-            <div class="content-text" v-for="(item, index) in staffInfo.family_member" :key="index">
-              <el-col :span="24">{{item.name}}</el-col>
-              <el-col :span="24">{{item.relation}}</el-col>
-              <el-col :span="24">{{item.current_situation}}</el-col>
-            </div>
-          </el-col>
-        </el-row>
-      </div>
+    <el-dialog :title="staffInfoTitle" :visible.sync="staffInfoDialogVisible" width="870px" center>
+      <staff-info :staffInfo="staffInfo" :staffInfoLoading="staffInfoLoading"></staff-info>
     </el-dialog>
 
     <!-- 调出订单的基本详情 -->
     <el-dialog :title="orderInfoTitle" :visible.sync="orderInfoDialogVisible" width="870px" center>
-      <div class="staff-content" v-loading="orderInfoLoading">
-        <el-row class="expand-row">
-          <el-col :span="5">
-            <span class="label-text">客户姓名</span>
-            <span class="content-text">{{staffInfo.blood}}</span>
-          </el-col>
-          <el-col :span="7">
-            <span class="label-text">家庭成员籍贯</span>
-            <span class="content-text">{{staffInfo.health}}</span>
-          </el-col>
-          <el-col :span="7">
-            <span class="label-text">服务类型</span>
-            <span class="content-text">{{staffInfo.marital_status}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">需要服务</span>
-            <span class="content-text">{{staffInfo.person_state}}</span>
-          </el-col>
-        </el-row>
-        <el-row class="expand-row">
-          <el-col :span="5">
-            <span class="label-text">身份证</span>
-            <span class="content-text">{{staffInfo.mobile}}</span>
-          </el-col>
-          <el-col :span="7">
-            <span class="label-text">状态</span>
-            <span class="content-text">{{staffInfo.salary}}</span>
-          </el-col>
-          <el-col :span="7">
-            <span class="label-text">合同起止</span>
-            <span class="content-text">{{staffInfo.english}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">家庭情况备注</span>
-            <span class="content-text">{{staffInfo.computer}}</span>
-          </el-col>
-        </el-row>
-
-        <el-row class="expand-row">
-          <el-col :span="5">
-            <span class="label-text">保险单位</span>
-            <span class="content-text">12000 / 26天</span>
-          </el-col>
-          <el-col :span="7">
-            <span class="label-text">合同号</span>
-            <span class="content-text">{{staffInfo.salary}}</span>
-          </el-col>
-          <el-col :span="7">
-            <span class="label-text">创建日期</span>
-            <span
-              class="content-text"
-            >{{staffInfo.census_p_text}}{{staffInfo.cnnsus_c_text}}{{staffInfo.cnnsus_d_text}}{{staffInfo.census_address_desc}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">合同费用</span>
-            <span class="content-text">{{staffInfo.census_type}}</span>
-          </el-col>
-        </el-row>
-
-        <el-row class="expand-row">
-          <el-col :span="5">
-            <span class="label-text">第二联系人</span>
-            <span class="content-text">{{staffInfo.education}}</span>
-          </el-col>
-          <el-col :span="7">
-            <span class="label-text">家政员提成</span>
-            <span
-              class="content-text"
-            >{{staffInfo.now_p_text}}{{staffInfo.now_c_text}}{{staffInfo.now_d_text}}{{staffInfo.now_address_desc}}</span>
-          </el-col>
-          <el-col :span="7">
-            <span class="label-text">签合同时工资</span>
-            <span
-              class="content-text"
-              v-for="(item, index) in staffInfo.service_skills"
-              :key="index"
-            >{{item}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">入职来源</span>
-            <span class="content-text">{{staffInfo.recruiters_name}}：{{staffInfo.recruiters_mobile}}</span>
-          </el-col>
-        </el-row>
-
-        <el-row class="expand-row">
-          <el-col :span="5">
-            <span class="label-text">手机号</span>
-            <span class="content-text">{{staffInfo.height}}</span>
-          </el-col>
-          <el-col :span="7">
-            <span class="label-text">现居地</span>
-            <span class="content-text">安徽省临泉县送机证夏利张的减肥IE</span>
-          </el-col>
-          <el-col :span="7">
-            <span class="label-text">服务内容</span>
-            <span class="content-text">{{staffInfo.political_status}}</span>
-          </el-col>
-          <el-col :span="5">
-            <span class="label-text">家庭成员</span>
-            <span class="content-text">2老人，2成人，1小孩</span>
-          </el-col>
-        </el-row>
-        <el-row class="expand-row">
-          <el-col :span="5">
-            <span class="label-text">现在工资</span>
-            <span class="content-text">15000</span>
-          </el-col>
-        </el-row>
-      </div>
+      <order-info :orderInfo="orderInfo" :orderInfoLoading="orderInfoLoading"></order-info>
     </el-dialog>
 
     <!-- 完成订单时添加员工姓名和编号 -->
@@ -841,6 +561,8 @@
 
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
+import StaffInfo from "components/common/table/StaffInfo";
+import OrderInfo from "components/common/table/OrderInfo";
 import { getOneStraffInfo } from "network/detail";
 export default {
   name: "OrderGenerate",
@@ -861,7 +583,7 @@ export default {
             old: 2,
             adlut: 3,
           },
-          service_content: [],
+          service_content: "",
           demand_age: "20-30",
           demand_sex: 0,
           demand_education: "高中",
@@ -891,7 +613,7 @@ export default {
             old: 2,
             adlut: 3,
           },
-          service_content: [],
+          service_content: "",
           demand_age: "20-30",
           demand_sex: 0,
           demand_education: "高中",
@@ -908,6 +630,37 @@ export default {
           is_success: false,
         },
       ],
+      // 单个订单信息
+      orderInfo: {
+        id: "1",
+        name: "徐子真",
+        family_area: "100.25",
+        family_hometown: "安徽安庆",
+        family_address: "家庭住址",
+        service_type: "1",
+        service_other: "其他内容",
+        family_people: {
+          children: 1,
+          old: 2,
+          adlut: 3,
+        },
+        service_content: "",
+        demand_age: "20-30",
+        demand_sex: 0,
+        demand_education: "高中",
+        demand_job: ["育婴师", "管家"],
+        demand_zodiac: "牛",
+        demand_experience: "2-3年",
+        demand_census: "不限",
+        demand_cooking: "川菜",
+        demand_service_skill: [],
+        mobile: "13695604265",
+        state: "0",
+        source: "来源",
+
+        // 订单是否完成
+        is_success: true,
+      },
       // 当前页数
       currentPage: 1,
       // 总数据条数
@@ -1135,6 +888,8 @@ export default {
   },
   components: {
     CustomerSearch,
+    StaffInfo,
+    OrderInfo,
   },
   created() {
     // 默认赋值
@@ -1207,7 +962,6 @@ export default {
       }
     }
   }
-
 
   .pagination {
     position: absolute;

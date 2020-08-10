@@ -123,7 +123,36 @@
             <!-- 操作 -->
             <el-table-column fixed="right" label="操作" align="center" width="140px">
               <template slot-scope="scope">
-              
+                <el-tooltip
+                  class="item"
+                  :enterable="false"
+                  effect="dark"
+                  content="面试记录"
+                  placement="top"
+                >
+                  <el-button
+                    @click="interviewDisplayBtn(scope.row.id)"
+                    circle
+                    size="mini"
+                    icon="el-icon-camera"
+                    type="primary"
+                  ></el-button>
+                </el-tooltip>
+                <el-tooltip
+                  class="item"
+                  :enterable="false"
+                  effect="dark"
+                  content="查看跟进"
+                  placement="top"
+                >
+                  <el-button
+                    @click="lookFollowUp(scope.row.id)"
+                    circle
+                    size="mini"
+                    icon="el-icon-date"
+                    type="primary"
+                  ></el-button>
+                </el-tooltip>
               </template>
             </el-table-column>
           </el-table>
@@ -141,11 +170,92 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 面试记录 -->
+    <el-dialog title="订单号（12）的面试记录" :visible.sync="interviewDialogVisible" width="500" center>
+      <div class="interview-content">
+        <el-table stripe :data="interviewFormData" style="width: 100%" height="400px">
+          <el-table-column prop="time" align="center" label="面试时间" width="100"></el-table-column>
+          <el-table-column prop="interviewer_number" align="center" label="面试人员编号" width="120"></el-table-column>
+          <el-table-column align="center" label="姓名" width="100" prop="name">
+            <template slot-scope="scope">
+              <el-button
+                @click="staffInfoBtn(scope.row.staff_info.name, scope.row.staff_info.id)"
+                type="text"
+              >{{scope.row.staff_info.name}}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="手机号" prop="tel"></el-table-column>
+          <el-table-column align="center" label="面试内容" prop="interviewer_content"></el-table-column>
+          <el-table-column align="center" label="是否面试完成" prop="is_success">
+            <template slot-scope="scope">
+              <p v-if="scope.row.is_success">
+                <i
+                  class="el-icon-success"
+                  style="font-size: 18px; color: #67C23A;vertical-align: middle;"
+                ></i>
+                已通过
+              </p>
+              <p v-else>
+                <i
+                  style="font-size: 18px; color: #F56C6C;vertical-align: middle;"
+                  class="el-icon-error"
+                ></i> 未通过
+              </p>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </el-dialog>
+
+    <!-- 查看跟进记录 -->
+    <el-dialog :title="followUpTitle" :visible.sync="followUpDialogVisible" width="500" center>
+      <div class="followup-content">
+        <el-table :data="followUpFormData" stripe style="width: 100%" height="400px">
+          <el-table-column prop="time" align="center" label="日期" width="120"></el-table-column>
+          <el-table-column prop="record" align="center" label="跟单记录情况" width="180"></el-table-column>
+          <el-table-column prop="state" align="center" label="需求状态"></el-table-column>
+          <el-table-column prop="recommend" align="center" label="推荐面试人员" width="110">
+            <template slot-scope="scope">
+              <el-button
+                @click="staffInfoBtn(scope.row.recommend.name, scope.row.recommend.id)"
+                type="text"
+              >{{scope.row.recommend.name}}</el-button>
+            </template>
+          </el-table-column>
+          <el-table-column prop="interview_content" align="center" label="面试情况"></el-table-column>
+        </el-table>
+      </div>
+    </el-dialog>
+
+    <!-- 员工详情记录 -->
+    <el-dialog
+      :title="staffInfoTitle"
+      :visible.sync="staffInfoDialogVisible"
+      width="870"
+      center
+      append-to-body
+    >
+      <staff-info :staffInfo="staffInfo" :staffInfoLoading="staffInfoLoading"></staff-info>
+    </el-dialog>
+
+    <!-- 订单详情 -->
+    <el-dialog
+      :title="orderInfoTitle"
+      :visible.sync="orderInfoDialogVisible"
+      width="870"
+      center
+      append-to-body
+    >
+      <order-info :orderInfo="orderInfo" :orderInfoLoading="orderInfoLoading"></order-info>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
+import StaffInfo from "components/common/table/StaffInfo";
+import OrderInfo from "components/common/table/OrderInfo";
 export default {
   name: "OrderQuery",
   data() {
@@ -219,6 +329,177 @@ export default {
       per_page: null,
       // 是否加载
       loading: false,
+
+      // 订单的面试记录显示
+      interviewDialogVisible: false,
+      // 面试管理数据
+      interviewFormData: [
+        {
+          id: "1",
+          interviewer_number: "AF1002",
+          staff_info: {
+            id: "1",
+            name: "张小明",
+          },
+          tel: "13955844668",
+          interviewer_content: "是否有洁癖",
+          is_success: false,
+        },
+        {
+          id: "2",
+          interviewer_number: "AF1002",
+          staff_info: {
+            id: "1",
+            name: "张小红",
+          },
+          tel: "13955844668",
+          interviewer_content: "是否有洁癖",
+          is_success: true,
+        },
+        {
+          id: "3",
+          interviewer_number: "AF1002",
+          staff_info: {
+            id: "19",
+            name: "张小爱",
+          },
+          tel: "13955844668",
+          interviewer_content: "是否有洁癖",
+          is_success: true,
+        },
+        {
+          id: "4",
+          interviewer_number: "AF1002",
+          staff_info: {
+            id: "15",
+            name: "小爱同学",
+          },
+          tel: "13955844668",
+          interviewer_content: "是否有洁癖",
+          is_success: true,
+        },
+        {
+          id: "6",
+          interviewer_number: "AF1002",
+          staff_info: {
+            id: "10",
+            name: "小明同学",
+          },
+          tel: "13955844668",
+          interviewer_content: "是否有洁癖",
+          is_success: false,
+        },
+        {
+          id: "7",
+          interviewer_number: "AF1002",
+          staff_info: {
+            id: "125",
+            name: "小白同学",
+          },
+          tel: "13955844668",
+          interviewer_content: "是否有洁癖",
+          is_success: false,
+        },
+      ],
+
+      // 员工信息显示
+      staffInfoDialogVisible: false,
+      staffInfoLoading: false,
+      staffInfoTitle: "",
+      staffInfo: {},
+
+      // 订单的基本详情
+      orderInfoDialogVisible: false,
+      orderInfoTitle: "",
+      orderInfoLoading: false,
+      orderInfo: {
+        id: "1",
+        name: "徐子真",
+        family_area: "100.25",
+        family_hometown: "安徽安庆",
+        family_address: "家庭住址",
+        service_type: "1",
+        service_other: "其他内容",
+        family_people: {
+          children: 1,
+          old: 2,
+          adlut: 3,
+        },
+        service_content: "",
+        demand_age: "20-30",
+        demand_sex: 0,
+        demand_education: "高中",
+        demand_job: ["育婴师", "管家"],
+        demand_zodiac: "牛",
+        demand_experience: "2-3年",
+        demand_census: "不限",
+        demand_cooking: "川菜",
+        demand_service_skill: [],
+        mobile: "13695604265",
+        state: "0",
+        source: "来源",
+
+        // 订单是否完成
+        is_success: true,
+      },
+
+      // 跟进查看
+      followUpDialogVisible: false,
+      followUpTitle: "",
+      followUpFormData: [
+        {
+          time: "2019-12-12",
+          record: "jjj",
+          recommend: {},
+          state: "跟进中",
+          interview_content: "",
+        },
+        {
+          time: "2019-02-12",
+          record: "jjj",
+          recommend: {
+            id: "1",
+            name: "李只想",
+          },
+          state: "换人",
+          interview_content: "不合格呀",
+        },
+        {
+          time: "2019-02-12",
+          record: "jjj",
+          recommend: {
+            id: "1",
+            name: "李用想",
+          },
+          state: "换人",
+          interview_content: "合格啊",
+        },
+        {
+          time: "2019-02-12",
+          record: "jjj",
+          recommend: {},
+          state: "跟进中",
+          interview_content: "",
+        },
+        {
+          time: "2019-02-12",
+          record: "jjj",
+          recommend: {
+            id: "1",
+            name: "李美丽",
+          },
+          state: "换人",
+
+          interview_content: "不合格呀",
+        },
+        {
+          time: "2019-02-12",
+          record: "jjj",
+          recommend: {},
+          state: "换人",
+          interview_content: "合格呀",
+        },
+      ],
     };
   },
   computed: {},
@@ -228,9 +509,36 @@ export default {
     handleCurrentChange(currentpage) {
       // console.log(currentpage);
     },
+
+    // 面试记录按钮事件
+    interviewDisplayBtn(id) {
+      this.interviewDialogVisible = true;
+    },
+
+    // 查看单人的信息
+    staffInfoBtn(name, id) {
+      console.log(name, id);
+      this.staffInfoTitle = `家政员（${name}）的基本信息`;
+      this.staffInfoDialogVisible = true;
+    },
+    // 查看订单详情
+    orderInfoBtn(name, id) {
+      console.log(name, id);
+      // 发送请求
+      this.orderInfoTitle = `（${name}）订单的基本信息`;
+      this.orderInfoDialogVisible = true;
+    },
+
+    // 查看跟进
+    lookFollowUp(id) {
+      this.followUpTitle = `订单号（${id}）的跟进情况`;
+      this.followUpDialogVisible = true;
+    },
   },
   components: {
     CustomerSearch,
+    StaffInfo,
+    OrderInfo,
   },
 };
 </script>
@@ -321,6 +629,30 @@ export default {
   /deep/.el-table__body-wrapper::-webkit-scrollbar {
     width: 3px;
     height: 10px;
+  }
+}
+
+.interview-content {
+  /deep/.el-table__body-wrapper::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+  }
+
+  /deep/.el-table__body-wrapper::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
+  }
+}
+
+.followup-content {
+  /deep/.el-table__body-wrapper::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+  }
+
+  /deep/.el-table__body-wrapper::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
   }
 }
 </style>

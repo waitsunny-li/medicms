@@ -250,7 +250,13 @@
                   :enterable="false"
                   placement="top"
                 >
-                  <el-button icon="el-icon-s-order" size="mini" type="primary" circle @click="orderDisplayBtn(scope.row.id)"></el-button>
+                  <el-button
+                    icon="el-icon-s-order"
+                    size="mini"
+                    type="primary"
+                    circle
+                    @click="orderDisplayBtn(scope.row.name, scope.row.id)"
+                  ></el-button>
                 </el-tooltip>
               </template>
             </el-table-column>
@@ -271,12 +277,40 @@
     </el-row>
 
     <!-- 查看员工的所有订单 -->
-    <el-dialog title="提示" :visible.sync="staffOrderDialogVisible" width="30%" center>
-      <span>需要注意的是内容是默认不居中的</span>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="staffOrderDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="staffOrderDialogVisible = false">确 定</el-button>
-      </span>
+    <el-dialog
+      :title="staffOrderTitle"
+      :visible.sync="staffOrderDialogVisible"
+      width="770px"
+      center
+    >
+      <el-tabs>
+        <el-tab-pane label="已面试的">
+          <el-table stripe :data="interviewFormData" style="width: 100%" height="200px">
+            <el-table-column align="center" label="面试日期" prop="time"></el-table-column>
+            <el-table-column align="center" label="订单号" prop="order_number"></el-table-column>
+            <el-table-column align="center" label="客户名" prop="time"></el-table-column>
+            <el-table-column align="center" label="面试内容" prop="interviewer_content"></el-table-column>
+            <el-table-column align="center" label="是否面试完成" prop="is_success">
+              <template slot-scope="scope">
+                <p v-if="scope.row.is_success">
+                  <i
+                    class="el-icon-success"
+                    style="font-size: 18px; color: #67C23A;vertical-align: middle;"
+                  ></i>
+                  已通过
+                </p>
+                <p v-else>
+                  <i
+                    style="font-size: 18px; color: #F56C6C;vertical-align: middle;"
+                    class="el-icon-error"
+                  ></i> 未通过
+                </p>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
+        <el-tab-pane label="已服务的">已服务的</el-tab-pane>
+      </el-tabs>
     </el-dialog>
   </div>
 </template>
@@ -302,6 +336,44 @@ export default {
 
       // 显示员工的订单
       staffOrderDialogVisible: false,
+      staffOrderTitle: "",
+
+      // 已面试过的
+      interviewFormData: [
+        {
+          id: "1",
+          time: "2012-08-09",
+          order_number: "AF1002",
+          customer_name: "王大德",
+          interviewer_content: "是否有洁癖",
+          is_success: false,
+        },
+        {
+          id: "2",
+          time: "2012-08-09",
+          order_number: "AF1002",
+          customer_name: "王基德",
+          interviewer_content: "是否有洁癖",
+          is_success: false,
+        },
+        {
+          id: "3",
+          time: "2012-08-09",
+          order_number: "AF1002",
+          customer_name: "王美德",
+          interviewer_content: "是否有洁癖",
+          is_success: false,
+        },
+        {
+          id: "4",
+          time: "2012-08-09",
+          order_number: "AF1002",
+          customer_name: "王之德",
+          interviewer_content: "是否有洁癖",
+          is_success: false,
+        },
+       
+      ],
     };
   },
   computed: {},
@@ -337,9 +409,10 @@ export default {
     },
 
     // 显示该员工的所有订单
-    orderDisplayBtn(id) {
-      this.staffOrderDialogVisible = true
-    }
+    orderDisplayBtn(name, id) {
+      this.staffOrderTitle = `（${name}）的全部订单`;
+      this.staffOrderDialogVisible = true;
+    },
   },
   components: {
     Search,

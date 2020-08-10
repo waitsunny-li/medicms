@@ -172,7 +172,7 @@
     </el-row>
 
     <!-- 面试记录 -->
-    <el-dialog title="订单号（12）的面试记录" :visible.sync="interviewDialogVisible" width="500" center>
+    <el-dialog :title="interviewTitle" :visible.sync="interviewDialogVisible" width="870px" center>
       <div class="interview-content">
         <el-table stripe :data="interviewFormData" style="width: 100%" height="400px">
           <el-table-column prop="time" align="center" label="面试时间" width="100"></el-table-column>
@@ -209,7 +209,7 @@
     </el-dialog>
 
     <!-- 查看跟进记录 -->
-    <el-dialog :title="followUpTitle" :visible.sync="followUpDialogVisible" width="500" center>
+    <el-dialog :title="followUpTitle" :visible.sync="followUpDialogVisible" width="870px" center>
       <div class="followup-content">
         <el-table :data="followUpFormData" stripe style="width: 100%" height="400px">
           <el-table-column prop="time" align="center" label="日期" width="120"></el-table-column>
@@ -232,7 +232,7 @@
     <el-dialog
       :title="staffInfoTitle"
       :visible.sync="staffInfoDialogVisible"
-      width="870"
+      width="870px"
       center
       append-to-body
     >
@@ -243,7 +243,7 @@
     <el-dialog
       :title="orderInfoTitle"
       :visible.sync="orderInfoDialogVisible"
-      width="870"
+      width="870px"
       center
       append-to-body
     >
@@ -332,7 +332,7 @@ export default {
 
       // 订单的面试记录显示
       interviewDialogVisible: false,
-      // 面试管理数据
+      interviewTitle: "",
       interviewFormData: [
         {
           id: "1",
@@ -512,6 +512,7 @@ export default {
 
     // 面试记录按钮事件
     interviewDisplayBtn(id) {
+      this.interviewTitle = `订单号（${id}）的面试记录`
       this.interviewDialogVisible = true;
     },
 

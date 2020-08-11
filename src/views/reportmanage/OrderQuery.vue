@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <!-- 搜索框 -->
-        <customer-search></customer-search>
+        <customer-search @searchBtn="searchBtn"></customer-search>
 
         <!-- 表单 -->
         <el-card class="table-content">
@@ -505,6 +505,10 @@ export default {
   computed: {},
   watch: {},
   methods: {
+    // 搜索按钮
+    searchBtn(searchForm) {
+      console.log(searchForm)
+    },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
       // console.log(currentpage);

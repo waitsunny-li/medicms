@@ -330,7 +330,7 @@
               :enterable="false"
             >
               <el-button
-                @click="pictureBtn(scope.row.id)"
+                @click="pictureBtn(scope.row.name, scope.row.id)"
                 type="warning"
                 size="mini"
                 icon="el-icon-picture-outline"
@@ -365,7 +365,7 @@
 
     <!-- 图片上传 -->
     <el-dialog
-      title="图片上传"
+      :title="pictureTitle"
       :visible.sync="pictureDialogVisible"
       @close="picDialogClose"
       width="50%"
@@ -549,8 +549,8 @@
 
       <!-- 脚部 -->
       <span slot="footer" class="dialog-footer">
-        <el-button @click="pictureDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="savePicBtn">保 存</el-button>
+        <el-button size="mini" @click="pictureDialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="savePicBtn">保 存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -619,6 +619,7 @@ export default {
       /**
        * 上传图片显示，以及链接
        * */
+      pictureTitle: "",
       // 身份证上传
       dialogIdentyImageUrl: "",
       dialogIdentyVisible: false,
@@ -692,7 +693,8 @@ export default {
     },
 
     // 显示图片上传的弹框
-    pictureBtn(id) {
+    pictureBtn(name, id) {
+      this.pictureTitle = `（${name}）图片上传`
       this.pictureData.staff_id = id;
       this.pictureDialogVisible = true;
       // 获取图片
@@ -973,10 +975,18 @@ export default {
     eventVue.$on("saveUpdateStaff", (val) => {
       this.getUserData();
     });
+
+    // 监听员工的搜索
+    eventVue.$on('searchstaff', val => {
+      console.log('user-table中的搜索')
+    })
   },
   components: {
     AddStaff,
   },
+  destroyed() {
+    eventVue.$off("searchstaff")
+  }
 };
 </script>
 

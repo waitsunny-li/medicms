@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <!-- 搜索框 -->
-        <customer-search></customer-search>
+        <customer-search @searchBtn="searchBtn"></customer-search>
 
         <!-- 客户表单 -->
         <el-card class="table-content">
@@ -715,6 +715,10 @@ export default {
     });
   },
   methods: {
+    // 搜索按钮点击
+    searchBtn(searchForm) {
+      console.log('需求录入', searchForm)
+    },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
       // console.log(currentpage);

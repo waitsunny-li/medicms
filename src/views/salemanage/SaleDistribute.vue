@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <!-- 搜索框 -->
-        <feedback-search></feedback-search>
+        <feedback-search @searchBtn="searchBtn"></feedback-search>
 
         <el-card class="table-content">
           <!-- 表单 -->
@@ -146,6 +146,10 @@ export default {
   computed: {},
   watch: {},
   methods: {
+    // 搜索按钮
+    searchBtn(searchForm) {
+      console.log("分派", searchForm)
+    },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
       // console.log(currentpage);

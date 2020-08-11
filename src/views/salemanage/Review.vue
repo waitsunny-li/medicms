@@ -15,7 +15,12 @@ export default {
   },
   watch:{
   },
-  methods: {},
+  methods: {
+    // 搜索按钮
+    searchBtn(searchForm) {
+      console.log("客户回访", searchForm)
+    },
+  },
 };
 </script>
 

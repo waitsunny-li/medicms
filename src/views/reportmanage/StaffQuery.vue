@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <!-- 搜索框 -->
-        <search></search>
+        <search @searchbtn="searchBtn"></search>
 
         <!-- 表单 -->
         <el-card class="user-table-card">
@@ -284,10 +284,17 @@
       center
     >
       <el-tabs>
-        <el-tab-pane label="已面试的">
-          <el-table stripe :data="interviewFormData" style="width: 100%" height="200px">
+        <el-tab-pane class="interview" label="已面试的">
+          <el-table stripe :data="interviewFormData" style="width: 100%" height="400px">
             <el-table-column align="center" label="面试日期" prop="time"></el-table-column>
-            <el-table-column align="center" label="订单号" prop="order_number"></el-table-column>
+            <el-table-column align="center" label="订单号" prop="order_number">
+              <template slot-scope="scope">
+                <el-button
+                  @click="showOrderInfo(scope.row.order_number)"
+                  type="text"
+                >{{scope.row.order_number}}</el-button>
+              </template>
+            </el-table-column>
             <el-table-column align="center" label="客户名" prop="time"></el-table-column>
             <el-table-column align="center" label="面试内容" prop="interviewer_content"></el-table-column>
             <el-table-column align="center" label="是否面试完成" prop="is_success">
@@ -309,15 +316,53 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="已服务的">已服务的</el-tab-pane>
+        <el-tab-pane label="已服务的">
+          <el-table stripe :data="serviceDFormData" style="width: 100%" height="400px">
+            <el-table-column align="center" label="时间起止" prop="start_end" width="180"></el-table-column>
+            <el-table-column align="center" label="订单号" prop="order_number">
+              <template slot-scope="scope">
+                <el-button
+                  @click="showOrderInfo(scope.row.order_number)"
+                  type="text"
+                >{{scope.row.order_number}}</el-button>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="客户名" prop="customer_name"></el-table-column>
+            <el-table-column align="center" label="合同总周期" prop="service_cycle">
+              <template slot-scope="scope">{{scope.row.service_cycle}}天</template>
+            </el-table-column>
+            <el-table-column align="center" label="状态" prop="state">
+              <template slot-scope="scope">
+                <p v-if="scope.row.state === '服务完成'">
+                  <el-tag effect="dark" type="success">{{scope.row.state}}</el-tag>
+                </p>
+                <p v-else-if="scope.row.state === '正在服务'">
+                  <el-tag effect="dark">{{scope.row.state}}</el-tag>
+                </p>
+                <p v-else-if="scope.row.state === '服务终止'">
+                  <el-tag effect="dark" type="danger">{{scope.row.state}}</el-tag>
+                </p>
+                <p v-else-if="scope.row.state === '服务换人'">
+                  <el-tag effect="dark" type="warning">{{scope.row.state}}</el-tag>
+                </p>
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-tab-pane>
       </el-tabs>
+    </el-dialog>
+
+    <!-- 显示点击的订单详情 -->
+    <el-dialog :title="orderInfoTitle" :visible.sync="orderInfoDialogVisible" width="870px" center>
+      <order-info :orderInfo="orderInfo" :orderInfoLoading="orderInfoLoading"></order-info>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import eventVue from "common/eventVue";
 import Search from "components/common/search/Search";
+import OrderInfo from "components/common/table/OrderInfo";
+import eventVue from "common/eventVue";
 import { requestUserListDate } from "network/detail";
 export default {
   name: "StaffQuery",
@@ -346,7 +391,7 @@ export default {
           order_number: "AF1002",
           customer_name: "王大德",
           interviewer_content: "是否有洁癖",
-          is_success: false,
+          is_success: true,
         },
         {
           id: "2",
@@ -372,13 +417,118 @@ export default {
           interviewer_content: "是否有洁癖",
           is_success: false,
         },
-       
+        {
+          id: "5",
+          time: "2012-08-09",
+          order_number: "AF1002",
+          customer_name: "王之德",
+          interviewer_content: "是否有洁癖",
+          is_success: false,
+        },
+        {
+          id: "6",
+          time: "2012-08-09",
+          order_number: "AF1002",
+          customer_name: "王之德",
+          interviewer_content: "是否有洁癖",
+          is_success: false,
+        },
+        {
+          id: "4",
+          time: "2012-08-09",
+          order_number: "AF1002",
+          customer_name: "王之德",
+          interviewer_content: "是否有洁癖",
+          is_success: false,
+        },
+        {
+          id: "4",
+          time: "2012-08-09",
+          order_number: "AF1002",
+          customer_name: "王之德",
+          interviewer_content: "是否有洁癖",
+          is_success: false,
+        },
       ],
+      // 已服务过的
+      serviceDFormData: [
+        {
+          id: "1",
+          start_end: "2020-01-02~2021-01-01",
+          order_number: "AF12548",
+          customer_name: "姬大德",
+          service_cycle: "360",
+          state: "服务完成",
+        },
+        {
+          id: "2",
+          start_end: "2020-02-02~2021-02-01",
+          order_number: "AF12569",
+          customer_name: "姬小德",
+          service_cycle: "360",
+          state: "正在服务",
+        },
+        {
+          id: "3",
+          start_end: "2019-01-02~2020-01-01",
+          order_number: "AF14478",
+          customer_name: "楚风",
+          service_cycle: "360",
+          state: "服务终止",
+        },
+        {
+          id: "4",
+          start_end: "2020-05-02~2021-05-01",
+          order_number: "AF12548",
+          customer_name: "哪吒",
+          service_cycle: "360",
+          state: "服务换人",
+        },
+      ],
+
+      // 订单详情
+      orderInfoLoading: false,
+      orderInfoDialogVisible: false,
+      orderInfoTitle: "",
+      orderInfo: {
+        id: "1",
+        name: "徐子真",
+        family_area: "100.25",
+        family_hometown: "安徽安庆",
+        family_address: "家庭住址",
+        service_type: "1",
+        service_other: "其他内容",
+        family_people: {
+          children: 1,
+          old: 2,
+          adlut: 3,
+        },
+        service_content: "",
+        demand_age: "20-30",
+        demand_sex: 0,
+        demand_education: "高中",
+        demand_job: ["育婴师", "管家"],
+        demand_zodiac: "牛",
+        demand_experience: "2-3年",
+        demand_census: "不限",
+        demand_cooking: "川菜",
+        demand_service_skill: [],
+        mobile: "13695604265",
+        state: "0",
+        source: "来源",
+
+        // 订单是否完成
+        is_success: true,
+      },
     };
   },
   computed: {},
   watch: {},
   methods: {
+    // 搜索按钮
+    searchBtn(searchForm) {
+      console.log(searchForm)
+    },
     // 定义请求用户列表数据
     getUserData() {
       this.loading = true;
@@ -413,9 +563,17 @@ export default {
       this.staffOrderTitle = `（${name}）的全部订单`;
       this.staffOrderDialogVisible = true;
     },
+
+    // 展示该订单号
+    showOrderInfo(order_number) {
+      console.log(order_number);
+      this.orderInfoTitle = `（${order_number}）订单的基本信息`
+      this.orderInfoDialogVisible = true
+    },
   },
   components: {
     Search,
+    OrderInfo
   },
   created() {
     this.getUserData();
@@ -504,6 +662,18 @@ export default {
     height: 150px;
     justify-content: center;
     overflow-y: auto;
+  }
+}
+
+.interview {
+  /deep/.el-table__body-wrapper::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+  }
+
+  /deep/.el-table__body-wrapper::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
   }
 }
 </style>

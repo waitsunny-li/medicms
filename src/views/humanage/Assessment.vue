@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <!-- 搜索框 -->
-        <search></search>
+        <search @searchbtn="searchBtn"></search>
 
         <!-- 表单 -->
         <el-card class="table-content">
@@ -251,6 +251,10 @@ export default {
   },
   watch: {},
   methods: {
+    // 搜索按钮
+    searchBtn() {
+      console.log("考核评价");
+    },
     // 定义请求用户列表数据
     getStaffData() {
       this.loading = true;
@@ -298,7 +302,12 @@ export default {
     },
   },
   created() {
+    // 监听查询按钮
+    // eventVue.$on("searchbtn", (val) => {});
+
     this.getStaffData();
+  },
+  destroyed() {
   },
 };
 </script>

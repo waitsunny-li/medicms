@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <!-- 搜索框 -->
-        <customer-search></customer-search>
+        <customer-search @searchBtn="searchBtn"></customer-search>
 
         <!-- 表单 -->
         <!-- 表单 -->
@@ -246,6 +246,10 @@ export default {
   computed: {},
   watch: {},
   methods: {
+    // 搜索按钮点击
+    searchBtn(searchForm) {
+      console.log('订单续签', searchForm)
+    },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
       // console.log(currentpage);

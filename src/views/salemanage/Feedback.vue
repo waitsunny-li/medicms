@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <!-- 搜索框 -->
-        <feedback-search></feedback-search>
+        <feedback-search @searchBtn="searchBtn"></feedback-search>
 
         <!-- 表单 -->
         <el-card class="table-content">
@@ -23,7 +23,7 @@
               </template>
             </el-table-column>
             <el-table-column align="center" prop="time" label="时间" width="180"></el-table-column>
-            <el-table-column align="center" prop="content" label="投诉事件"></el-table-column>
+            <el-table-column align="center" prop="content" label="投诉事件" :show-overflow-tooltip="true"></el-table-column>
             <el-table-column align="center" prop="is_solved" label="是否解决" width="180">
               <template slot-scope="scope">
                 <div v-if="scope.row.is_solved">
@@ -168,6 +168,10 @@ export default {
   computed: {},
   watch: {},
   methods: {
+    // 搜索按钮
+    searchBtn(searchForm) {
+      console.log("客户反馈", searchForm)
+    },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
       // console.log(currentpage);

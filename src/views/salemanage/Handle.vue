@@ -3,12 +3,12 @@
     <el-row>
       <el-col :span="24">
         <!-- 搜索框 -->
-        <feedback-search></feedback-search>
+        <feedback-search @searchBtn="searchBtn"></feedback-search>
 
         <el-card class="table-content">
           <!-- 表单 -->
           <el-table :data="feedFormData" style="width: 100%" border class="user-table-wrap">
-            <el-table-column prop="name" align="center" label="客户姓名" width="180"></el-table-column>
+            <el-table-column prop="name" align="center" label="客户姓名" width="100"></el-table-column>
             <el-table-column align="center" prop="mobile" label="联络电话" width="180">
               <template slot-scope="scope">
                 <i class="el-icon-phone" style="color: red"></i>
@@ -16,8 +16,13 @@
               </template>
             </el-table-column>
             <el-table-column align="center" prop="time" label="时间" width="180"></el-table-column>
-            <el-table-column align="center" prop="content" label="投诉事件"></el-table-column>
-            <el-table-column align="center" prop="is_solved" label="是否解决" width="180">
+            <el-table-column
+              align="center"
+              prop="content"
+              label="投诉事件"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column align="center" prop="is_solved" label="是否解决" width="100">
               <template slot-scope="scope">
                 <div v-if="scope.row.is_solved">
                   <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
@@ -27,25 +32,26 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="is_dispatch" label="是否分配" width="180">
+            <el-table-column align="center" prop="is_dispatch" label="是否分配" width="100">
               <template slot-scope="scope">
                 <div v-if="scope.row.is_dispatch">已分配</div>
                 <div v-else>未分配</div>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="rate" width="200" label="客户满意度">
+            <el-table-column align="center" prop="rate" width label="客户满意度">
               <template slot-scope="scope">
-                <el-rate
-                  :disabled="true"
-                  :value="scope.row.rate"
-                  :texts="['极差', '失望', '一般', '满意', '非常满意']"
-                  show-text
-                ></el-rate>
-              </template>
-            </el-table-column>
-            <el-table-column align="center" label="操作">
-              <template slot-scope="scope">
-                <el-tooltip class="item" effect="dark" content="分配" placement="top"></el-tooltip>
+                <p v-if="scope.row.is_solved">
+                  <el-rate
+                    :disabled="true"
+                    :value="scope.row.rate"
+                    :texts="texts"
+                    :colors="colors"
+                    show-text
+                  ></el-rate>
+                </p>
+                <p v-else>
+                  <el-button @click="rateBtn(scope.row.id)" type="text">评价</el-button>
+                </p>
               </template>
             </el-table-column>
           </el-table>
@@ -62,6 +68,33 @@
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 显示评价框 -->
+    <el-dialog title="评价" :visible.sync="rateDialogVisible" width="400px" center @close="rateClose">
+      <el-form ref="rateForm" :model="rateForm" label-width="80px">
+        <el-form-item label="是否完成" prop="is_solved">
+          <el-switch v-model="rateForm.is_solved" active-color="#13ce66"></el-switch>
+        </el-form-item>
+
+        <transition name="el-zoom-in-center">
+          <div v-show="rateForm.is_solved" class="transition-box">
+            <el-form-item label="评分" prop="rate">
+              <el-rate
+                v-model="rateForm.rate"
+                :colors="colors"
+                :texts="texts"
+                show-text
+                style="margin-top: 10px"
+              ></el-rate>
+            </el-form-item>
+          </div>
+        </transition>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="rateDialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="saveRateBtn">保 存</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -81,7 +114,17 @@ export default {
           is_dispatch: true,
           is_solved: true, // 是否解决
           content: "你们家的阿姨态度恶劣，鸠占鹊巢！",
-          rate: 4,
+          rate: 5,
+        },
+        {
+          id: "2",
+          name: "小轰鸣",
+          mobile: "13955844668",
+          time: "2020-08-12",
+          is_dispatch: true,
+          is_solved: false, // 是否解决
+          content: "你们家的阿姨态度恶劣，鸠占鹊巢！",
+          rate: 2,
         },
       ],
 
@@ -93,15 +136,42 @@ export default {
       per_page: null,
       // 是否加载
       loading: false,
+      // 评分颜色和辅助文字
+      texts: ["极差", "失望", "一般", "满意", "非常满意"],
+      colors: ["#99A9BF", "#F7BA2A", "#FF9900"],
+
+      // 显示评价框内容
+      rateDialogVisible: false,
+      rateForm: {
+        id: "",
+        is_solved: false,
+        rate: null,
+      },
     };
   },
   computed: {},
   watch: {},
   methods: {
+    // 搜索按钮
+    searchBtn(searchForm) {
+      console.log("处理结果", searchForm);
+    },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
       // console.log(currentpage);
     },
+    // 评价按钮
+    rateBtn(id) {
+      this.rateDialogVisible = true;
+    },
+    // 评价框关闭事件
+    rateClose() {
+      this.$refs.rateForm.resetFields()
+    },
+    // 保存按钮
+    saveRateBtn() {
+      console.log(this.rateForm)
+    }
   },
   mounted() {},
   components: {

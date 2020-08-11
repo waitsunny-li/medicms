@@ -26,12 +26,14 @@ export default {
     UserTable
   },
   created() {
-    eventVue.$on('searchbtn', val => {
-      console.log('你点击了搜索按钮')
-    })
+    
   },
   methods: {
-
+    // 搜索按钮
+    searchBtn(searchForm) {
+      console.log(searchForm)
+      console.log("培训记录");
+    },
   }
 };
 </script>

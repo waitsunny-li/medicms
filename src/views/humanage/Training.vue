@@ -3,7 +3,7 @@
     <el-row>
       <el-col :span="24">
         <!-- 搜索框 -->
-        <search></search>
+        <search @searchbtn="searchBtn"></search>
 
         <!-- 表单 -->
         <el-card class="table-content">
@@ -195,8 +195,8 @@
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addTraningDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="saveTrainingForm">保 存</el-button>
+        <el-button size="mini" @click="addTraningDialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="saveTrainingForm">保 存</el-button>
       </span>
     </el-dialog>
 
@@ -270,15 +270,14 @@
       </el-form>
 
       <span slot="footer" class="dialog-footer">
-        <el-button @click="editTraningDialogVisible = false">取 消</el-button>
-        <el-button @click="editSaveTraining" type="primary">保 存</el-button>
+        <el-button size="mini" @click="editTraningDialogVisible = false">取 消</el-button>
+        <el-button size="mini" @click="editSaveTraining" type="primary">保 存</el-button>
       </span>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import eventVue from "common/eventVue";
 import Search from "components/common/search/Search";
 import {
   requestUserListDate,
@@ -357,6 +356,11 @@ export default {
     //  }
   },
   methods: {
+    // 搜索按钮
+    searchBtn(searchForm) {
+      console.log(searchForm)
+      console.log("培训记录");
+    },
     // 定义请求用户列表数据
     getUserData() {
       this.loading = true;

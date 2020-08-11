@@ -68,7 +68,8 @@ export default {
 
     // 搜索操作
     searchBtn() {
-      eventVue.$emit("searchbtn", this.searchForm);
+      eventVue.$emit("searchstaff", this.searchForm);
+      this.$emit("searchbtn", this.searchForm);
     },
   },
   created() {},

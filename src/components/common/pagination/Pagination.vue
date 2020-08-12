@@ -2,10 +2,10 @@
   <div class="pagination" :style="{width: screenWidth}">
     <el-pagination
       @current-change="handleCurrentChange"
-      :current-page.sync="currentPage"
-      :page-size="per_page"
+      :current-page.sync="currentpage"
+      :page-size="perpages"
       layout="prev, pager, next, jumper"
-      :total="total"
+      :total="totalNumber"
     ></el-pagination>
   </div>
 </template>
@@ -19,7 +19,7 @@ export default {
       type: Number,
       default: 1
     },
-    per_page: {
+    perpage: {
       type: Number,
       default: 10
     },
@@ -29,18 +29,33 @@ export default {
     }
   },
   data() {
-    return {};
+    return {
+      currentpage: null,
+      perpages: null,
+      totalNumber: null
+    };
   },
   computed: {
     screenWidth() {
       return this.$store.state.screenWidth - 240 + 'px'
     }
   },
+  watch: {
+    currentPage(val) {
+      this.currentpage = val
+    },
+    perpage(val) {
+      this.perpages = val
+    },
+    total(val) {
+      this.totalNumber = val
+    }
+  },
   methods: {
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
       // console.log(currentpage);
-      eventVue.$emit("handlecurrentchange", currentpage)
+      this.$emit("handlecurrentchange", currentpage)
     },
   },
 };

@@ -6,14 +6,14 @@
         <customer-search @searchBtn="searchBtn"></customer-search>
 
         <!-- 表单 -->
-        <el-card class="table-content">
+        <el-card class="table-content" :style="{height: screenHeight}">
           <!-- 表单内容 -->
           <!-- 表单 -->
           <el-table
             :data="orderList"
             class="user-table-wrap"
             style="width: 100%"
-            height="550"
+            :height="scrollHeight"
             v-loading="loading"
             border
           >
@@ -71,7 +71,7 @@
               </template>
             </el-table-column>
             <el-table-column align="center" prop="name" label="名字" width="100"></el-table-column>
-            <el-table-column align="center" prop="family_hometown" label="家庭成员籍贯"></el-table-column>
+            <el-table-column align="center" prop="family_hometown" min-width="120" label="家庭成员籍贯"></el-table-column>
             <el-table-column
               class="identify"
               align="center"
@@ -106,6 +106,7 @@
               align="center"
               prop="family_address"
               label="现居住地址"
+              min-width="180"
               :show-overflow-tooltip="true"
             ></el-table-column>
             <el-table-column align="center" prop="source" label="来源" :show-overflow-tooltip="true"></el-table-column>
@@ -156,20 +157,17 @@
               </template>
             </el-table-column>
           </el-table>
-
-          <!-- 分页 -->
-          <div class="pagination">
-            <el-pagination
-              @current-change="handleCurrentChange"
-              :current-page.sync="currentPage"
-              :page-size="per_page"
-              layout="prev, pager, next, jumper"
-              :total="total"
-            ></el-pagination>
-          </div>
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 分页 -->
+    <pagination
+      :currentPage="currentPage"
+      :perpage="per_page"
+      :total="total"
+      @handlecurrentchange="handleCurrentChange"
+    />
 
     <!-- 面试记录 -->
     <el-dialog :title="interviewTitle" :visible.sync="interviewDialogVisible" width="870px" center>
@@ -255,6 +253,7 @@
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
 import StaffInfo from "components/common/table/StaffInfo";
+import Pagination from "components/common/pagination/Pagination";
 import OrderInfo from "components/common/table/OrderInfo";
 export default {
   name: "OrderQuery",
@@ -502,7 +501,14 @@ export default {
       ],
     };
   },
-  computed: {},
+  computed: {
+    screenHeight() {
+      return this.$store.state.screenHeight - 210 + "px";
+    },
+    scrollHeight() {
+      return this.$store.state.screenHeight - 290 + "px";
+    },
+  },
   watch: {},
   methods: {
     // 搜索按钮
@@ -544,13 +550,14 @@ export default {
     CustomerSearch,
     StaffInfo,
     OrderInfo,
+    Pagination
   },
 };
 </script>
 
 <style lang="less" scoped>
 .table-content {
-  margin-top: 20px;
+  margin-top: 10px;
   border-top: 2px solid #75cbf4;
   box-shadow: 0 0 3px 0 rgba(3, 3, 3, 0.1);
   position: relative;

@@ -6,10 +6,10 @@
         <customer-search @searchBtn="searchBtn"></customer-search>
 
         <!-- 表单 -->
-        <el-card class="table-content">
+        <el-card class="table-content" :style="{height: screenHeight}">
           <!-- 表单 -->
-          <el-table :data="customerListData" style="width: 100%" border class="user-table-wrap">
-            <el-table-column prop="name" align="center" label="客户姓名" width="180"></el-table-column>
+          <el-table :data="customerListData" style="width: 100%" border class="user-table-wrap" :height="scrollHeight">
+            <el-table-column prop="name" align="center" label="客户姓名" width="100"></el-table-column>
             <el-table-column align="center" prop="mobile" label="联络电话" width="180">
               <template slot-scope="scope">
                 <i class="el-icon-phone" style="color: red"></i>
@@ -17,7 +17,7 @@
               </template>
             </el-table-column>
             <el-table-column align="center" prop="family_address" label="地址" width="180"></el-table-column>
-            <el-table-column align="center" prop="service_type" label="服务类型" width="180">
+            <el-table-column align="center" prop="service_type" label="服务类型" width="100">
               <template slot-scope="scope">
                 <p v-if="scope.row.service_type == 1">长期</p>
                 <p v-if="scope.row.service_type == 2">短期</p>
@@ -29,7 +29,7 @@
               >{{scope.row.family_people.children}}小孩，{{scope.row.family_people.adlut}}成人，{{scope.row.family_people.old}}老人</template>
             </el-table-column>
             <el-table-column align="center" prop="state" label="状态"></el-table-column>
-            <el-table-column align="center" label="操作">
+            <el-table-column align="center" label="操作" width="180">
               <template slot-scope="scope">
                 <el-button
                   type="text"
@@ -45,19 +45,17 @@
               </template>
             </el-table-column>
           </el-table>
-          <!-- 分页 -->
-          <div class="pagination">
-            <el-pagination
-              @current-change="handleCurrentChange"
-              :current-page.sync="currentPage"
-              :page-size="per_page"
-              layout="prev, pager, next, jumper"
-              :total="total"
-            ></el-pagination>
-          </div>
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 分页 -->
+    <pagination
+      :currentPage="currentPage"
+      :perpage="per_page"
+      :total="total"
+      @handlecurrentchange="handleCurrentChange"
+    />
 
     <!-- 查看回访记录 -->
     <el-dialog :title="lookTitle" :visible.sync="visitDialogVisible" width="500px" center>
@@ -93,6 +91,7 @@
 
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
+import Pagination from "components/common/pagination/Pagination";
 export default {
   name: "SalesVisit",
   data() {
@@ -165,7 +164,14 @@ export default {
       },
     };
   },
-  computed: {},
+  computed: {
+    screenHeight() {
+      return this.$store.state.screenHeight - 210 + "px";
+    },
+    scrollHeight() {
+      return this.$store.state.screenHeight - 290 + "px";
+    },
+  },
   watch: {},
   methods: {
     // 搜索按钮点击
@@ -191,13 +197,14 @@ export default {
   },
   components: {
     CustomerSearch,
+    Pagination
   },
 };
 </script>
 
 <style lang="less" scoped>
 .table-content {
-  margin-top: 20px;
+  margin-top: 10px;
   border-top: 2px solid #75cbf4;
   box-shadow: 0 0 3px 0 rgba(3, 3, 3, 0.1);
   position: relative;

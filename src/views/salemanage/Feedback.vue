@@ -6,7 +6,7 @@
         <feedback-search @searchBtn="searchBtn"></feedback-search>
 
         <!-- 表单 -->
-        <el-card class="table-content">
+        <el-card class="table-content" :style="{height: screenHeight}">
           <!-- 公共操作 -->
           <el-row>
             <el-col :span="24">
@@ -14,7 +14,7 @@
             </el-col>
           </el-row>
           <!-- 表单 -->
-          <el-table :data="feedFormData" style="width: 100%" border class="user-table-wrap">
+          <el-table :data="feedFormData" style="width: 100%" border class="user-table-wrap" :height="scrollHeight">
             <el-table-column prop="name" align="center" label="客户姓名" width="180"></el-table-column>
             <el-table-column align="center" prop="mobile" label="联络电话" width="180">
               <template slot-scope="scope">
@@ -56,19 +56,17 @@
               </template>
             </el-table-column>
           </el-table>
-          <!-- 分页 -->
-          <div class="pagination">
-            <el-pagination
-              @current-change="handleCurrentChange"
-              :current-page.sync="currentPage"
-              :page-size="per_page"
-              layout="prev, pager, next, jumper"
-              :total="total"
-            ></el-pagination>
-          </div>
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 分页 -->
+    <pagination
+      :currentPage="currentPage"
+      :perpage="per_page"
+      :total="total"
+      @handlecurrentchange="handleCurrentChange"
+    />
 
     <!-- 新增投诉 -->
     <el-dialog
@@ -111,6 +109,7 @@
 
 <script>
 import feedbackSearch from "components/common/search/feedbackSearch";
+import Pagination from "components/common/pagination/Pagination";
 export default {
   name: "Feedback",
   data() {
@@ -165,7 +164,14 @@ export default {
       },
     };
   },
-  computed: {},
+  computed: {
+    screenHeight() {
+      return this.$store.state.screenHeight - 210 + "px";
+    },
+    scrollHeight() {
+      return this.$store.state.screenHeight - 290 + "px";
+    },
+  },
   watch: {},
   methods: {
     // 搜索按钮
@@ -198,6 +204,7 @@ export default {
   },
   components: {
     feedbackSearch,
+    Pagination
   },
   created() {
     this.form = this.addFeedForm;
@@ -207,7 +214,7 @@ export default {
 
 <style lang="less" scoped>
 .table-content {
-  margin-top: 20px;
+  margin-top: 10px;
   border-top: 2px solid #75cbf4;
   box-shadow: 0 0 3px 0 rgba(3, 3, 3, 0.1);
   position: relative;

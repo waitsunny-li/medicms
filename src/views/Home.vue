@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <el-container>
+    <el-container :style="{height: screenHeight + 'px'}">
       <!-- 侧边栏 -->
       <el-aside width="200px" class="aside-wrap"  :style="{height: screenHeight + 'px', overflow: 'hidden'}">
         <!-- icon -->

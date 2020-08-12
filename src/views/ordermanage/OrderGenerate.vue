@@ -6,14 +6,14 @@
         <customer-search @searchBtn="searchBtn"></customer-search>
 
         <!-- 表单 -->
-        <el-card class="table-content">
+        <el-card class="table-content" :style="{height: screenHeight}">
           <!-- 表单内容 -->
           <!-- 表单 -->
           <el-table
             :data="orderList"
             class="user-table-wrap"
             style="width: 100%"
-            height="550"
+            :height="scrollHeight"
             v-loading="loading"
             border
           >
@@ -398,20 +398,17 @@
               </template>
             </el-table-column>
           </el-table>
-
-          <!-- 分页 -->
-          <div class="pagination">
-            <el-pagination
-              @current-change="handleCurrentChange"
-              :current-page.sync="currentPage"
-              :page-size="per_page"
-              layout="prev, pager, next, jumper"
-              :total="total"
-            ></el-pagination>
-          </div>
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 分页 -->
+    <pagination
+      :currentPage="currentPage"
+      :perpage="per_page"
+      :total="total"
+      @handlecurrentchange="handleCurrentChange"
+    />
 
     <!-- 调出家政员的基本信息 -->
     <el-dialog :title="staffInfoTitle" :visible.sync="staffInfoDialogVisible" width="870px" center>
@@ -562,6 +559,7 @@
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
 import StaffInfo from "components/common/table/StaffInfo";
+import Pagination from "components/common/pagination/Pagination";
 import OrderInfo from "components/common/table/OrderInfo";
 import { getOneStraffInfo } from "network/humanageRequest";
 export default {
@@ -818,6 +816,12 @@ export default {
     language() {
       return this.staffInfo.language;
     },
+    screenHeight() {
+      return this.$store.state.screenHeight - 210 + "px";
+    },
+    scrollHeight() {
+      return this.$store.state.screenHeight - 290 + "px";
+    },
   },
   watch: {},
   methods: {
@@ -894,6 +898,7 @@ export default {
     CustomerSearch,
     StaffInfo,
     OrderInfo,
+    Pagination
   },
   created() {
     // 默认赋值
@@ -919,7 +924,7 @@ export default {
 
 <style lang="less" scoped>
 .table-content {
-  margin-top: 20px;
+  margin-top: 10px;
   border-top: 2px solid #75cbf4;
   box-shadow: 0 0 3px 0 rgba(3, 3, 3, 0.1);
   position: relative;

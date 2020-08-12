@@ -6,13 +6,13 @@
         <search @searchbtn="searchBtn"></search>
 
         <!-- 表单 -->
-        <el-card class="user-table-card">
+        <el-card class="user-table-card" :style="{height: screenHeight}">
           <!-- 表格 -->
           <el-table
             :data="userList"
             class="user-table-wrap"
             style="width: 100%"
-            height="550"
+            :height="scrollHeight"
             v-loading="loading"
             border
           >
@@ -221,6 +221,7 @@
               align="center"
               prop="address"
               label="现居住地址"
+              min-width="180"
               :show-overflow-tooltip="true"
             >
               <template
@@ -261,20 +262,17 @@
               </template>
             </el-table-column>
           </el-table>
-
-          <!-- 分页 -->
-          <div class="pagination">
-            <el-pagination
-              @current-change="handleCurrentChange"
-              :current-page.sync="currentPage"
-              :page-size="per_page"
-              layout="prev, pager, next, jumper"
-              :total="total"
-            ></el-pagination>
-          </div>
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 分页 -->
+    <pagination
+      :currentPage="currentPage"
+      :perpage="per_page"
+      :total="total"
+      @handlecurrentchange="handleCurrentChange"
+    />
 
     <!-- 查看员工的所有订单 -->
     <el-dialog
@@ -362,6 +360,7 @@
 <script>
 import Search from "components/common/search/Search";
 import OrderInfo from "components/common/table/OrderInfo";
+import Pagination from "components/common/pagination/Pagination";
 import eventVue from "common/eventVue";
 import { requestUserListDate } from "network/humanageRequest";
 export default {
@@ -522,7 +521,14 @@ export default {
       },
     };
   },
-  computed: {},
+  computed: {
+    screenHeight() {
+      return this.$store.state.screenHeight - 210 + "px";
+    },
+    scrollHeight() {
+      return this.$store.state.screenHeight - 290 + "px";
+    },
+  },
   watch: {},
   methods: {
     // 搜索按钮
@@ -573,7 +579,8 @@ export default {
   },
   components: {
     Search,
-    OrderInfo
+    OrderInfo,
+    Pagination
   },
   created() {
     this.getUserData();
@@ -584,7 +591,7 @@ export default {
 <style  lang="less" scoped>
 .staff-query {
   .user-table-card {
-    margin-top: 20px;
+    margin-top: 10px;
 
     .el-card__body {
       .user-table-wrap {

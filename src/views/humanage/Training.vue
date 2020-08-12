@@ -6,14 +6,14 @@
         <search @searchbtn="searchBtn"></search>
 
         <!-- 表单 -->
-        <el-card class="table-content">
+        <el-card class="table-content" :style="{height: screenHeight}">
           <el-table
             :data="userList"
             class="user-table-wrap"
             border
             style="width: 100%"
             v-loading="loading"
-            height="550"
+            :height="scrollHeight"
           >
             <el-table-column type="index" width="50" align="center"></el-table-column>
             <el-table-column prop="name" align="center" label="姓名"></el-table-column>
@@ -66,20 +66,17 @@
               </template>
             </el-table-column>
           </el-table>
-
-          <!-- 分页 -->
-          <div class="pagination">
-            <el-pagination
-              @current-change="handleCurrentChange"
-              :current-page.sync="currentPage"
-              :page-size="per_page"
-              layout="prev, pager, next, jumper"
-              :total="total"
-            ></el-pagination>
-          </div>
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 分页 -->
+    <pagination
+      :currentPage="currentPage"
+      :perpage="per_page"
+      :total="total"
+      @handlecurrentchange="handleCurrentChange"
+    />
 
     <!-- 查看培训记录 -->
     <el-dialog
@@ -111,7 +108,10 @@
               size="mini"
               icon="el-icon-edit"
             ></el-button>
-            <el-popconfirm title="此经历内容确定永远删除吗？" @onConfirm="deleteTraining(scope.row.staff_id, scope.row.id)">
+            <el-popconfirm
+              title="此经历内容确定永远删除吗？"
+              @onConfirm="deleteTraining(scope.row.staff_id, scope.row.id)"
+            >
               <el-button
                 style="margin-left:10px"
                 type="danger"
@@ -279,13 +279,14 @@
 
 <script>
 import Search from "components/common/search/Search";
+import Pagination from "components/common/pagination/Pagination";
 import {
   requestUserListDate,
   getTrainingsData,
   saveTrainingsData,
   getOneTrainingInfo,
   updateTrainingInfo,
-  deleteTrainingInfo
+  deleteTrainingInfo,
 } from "network/humanageRequest";
 import { getProvince, getCity, getDistrict, getJob } from "network/select";
 export default {
@@ -346,18 +347,20 @@ export default {
       },
     };
   },
-  computed: {},
+  computed: {
+    screenHeight() {
+      return this.$store.state.screenHeight - 210 + "px";
+    },
+    scrollHeight() {
+      return this.$store.state.screenHeight - 290 + "px";
+    },
+  },
   watch: {
-    //  address_p_c_d(value) {
-    //    this.addTrainingForm.address_p_c_d = value.map(item => {
-    //      return item.name
-    //    })
-    //  }
   },
   methods: {
     // 搜索按钮
     searchBtn(searchForm) {
-      console.log(searchForm)
+      console.log(searchForm);
       console.log("培训记录");
     },
     // 定义请求用户列表数据
@@ -382,7 +385,7 @@ export default {
 
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      // console.log(currentpage);
+      console.log(currentpage);
     },
 
     // 获取该员工的所有培训数据
@@ -399,7 +402,7 @@ export default {
     // 查看培训记录按钮
     lookTrainingBtn(id, name) {
       // 先请求数据
-      this.getOneStaffTrainingsData(id)
+      this.getOneStaffTrainingsData(id);
       this.staff_tranings = name;
       this.traningDialogVisible = true;
     },
@@ -466,7 +469,7 @@ export default {
               this.$message.success(res.msg);
               this.editTraningDialogVisible = false;
               // 刷新该员工的所有培训记录
-              this.getOneStaffTrainingsData(this.editTrainings.staff_id)
+              this.getOneStaffTrainingsData(this.editTrainings.staff_id);
             } else {
               this.$message.error(res.msg);
             }
@@ -480,20 +483,21 @@ export default {
 
     // 删除培训内容
     deleteTraining(staff_id, id) {
-      let ids = [id]
-      deleteTrainingInfo(ids).then(res => {
-        if(res.code === 200) {
-          this.$message.success(res.msg)
+      let ids = [id];
+      deleteTrainingInfo(ids).then((res) => {
+        if (res.code === 200) {
+          this.$message.success(res.msg);
 
-          this.getOneStaffTrainingsData(staff_id)
-        }else {
-          this.$message.error(res.msg)
+          this.getOneStaffTrainingsData(staff_id);
+        } else {
+          this.$message.error(res.msg);
         }
-      })
-    }
+      });
+    },
   },
   components: {
     Search,
+    Pagination,
   },
   created() {
     // 获取用户数据
@@ -512,7 +516,7 @@ export default {
 
 <style lang="less" scoped>
 .table-content {
-  margin-top: 20px;
+  margin-top: 10px;
   border-top: 2px solid #75cbf4;
   box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1);
   position: relative;
@@ -551,7 +555,7 @@ export default {
     }
 
     /deep/.el-dialog__body::-webkit-scrollbar {
-      width: 8px;
+      width: 5px;
       height: 10px;
     }
 
@@ -604,7 +608,7 @@ export default {
   }
 
   /deep/.el-table__body-wrapper::-webkit-scrollbar {
-    width: 4px;
+    width: 5px;
     height: 10px;
   }
 

@@ -6,13 +6,13 @@
         <search @searchbtn="searchBtn"></search>
 
         <!-- 表单 -->
-        <el-card class="table-content">
+        <el-card class="table-content" :style="{height: screenHeight}">
           <el-table
             :data="staffList"
             v-loading="loading"
             border
             style="width: 100%"
-            height="550px"
+            :height="scrollHeight"
             class="user-table-wrap"
           >
             <el-table-column prop="name" align="center" label="姓名"></el-table-column>
@@ -135,25 +135,18 @@
               <el-button size="mini" type="primary" @click="evaluateVisible = true">保 存</el-button>
             </div>
           </el-dialog>
-
-          <!-- 分页 -->
-          <div class="pagination">
-            <el-pagination
-              @current-change="handleCurrentChange"
-              :current-page.sync="currentPage"
-              :page-size="per_page"
-              layout="prev, pager, next, jumper"
-              :total="total"
-            ></el-pagination>
-          </div>
         </el-card>
       </el-col>
     </el-row>
+
+    <!-- 分页 -->
+    <pagination :currentPage="currentPage" :perpage="per_page" :total="total" @handlecurrentchange="handleCurrentChange" />
   </div>
 </template>
 
 <script>
 import Search from "components/common/search/Search";
+import Pagination from "components/common/pagination/Pagination";
 import { requestUserListDate } from "network/humanageRequest";
 export default {
   name: "Assessment",
@@ -245,9 +238,17 @@ export default {
       },
     };
   },
-  computed: {},
+  computed: {
+    screenHeight() {
+      return this.$store.state.screenHeight - 210 + "px";
+    },
+    scrollHeight() {
+      return this.$store.state.screenHeight - 290 + "px";
+    },
+  },
   components: {
     Search,
+    Pagination
   },
   watch: {},
   methods: {
@@ -315,7 +316,7 @@ export default {
 <style lang="less" scoped>
 .assessment {
   .table-content {
-    margin-top: 20px;
+    margin-top: 10px;
     border-top: 2px solid #75cbf4;
     box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1);
     position: relative;

@@ -563,7 +563,7 @@
 import CustomerSearch from "components/common/search/CustomerSearch";
 import StaffInfo from "components/common/table/StaffInfo";
 import OrderInfo from "components/common/table/OrderInfo";
-import { getOneStraffInfo } from "network/detail";
+import { getOneStraffInfo } from "network/humanageRequest";
 export default {
   name: "OrderGenerate",
   data() {

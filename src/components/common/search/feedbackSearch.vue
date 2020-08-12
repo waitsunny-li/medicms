@@ -13,12 +13,19 @@
             clearable
           ></el-input>
         </el-form-item>
+        <!-- 分配状态 -->
+        <el-form-item prop="distribute_state">
+          <el-select v-model="feedbacksearchForm.distribute_state" placeholder="分配状态">
+            <el-option label="已分配" value="1"></el-option>
+            <el-option label="未分配" value="0"></el-option>
+          </el-select>
+        </el-form-item>
 
         <!-- 处理状态 -->
-        <el-form-item prop="state">
-          <el-select v-model="feedbacksearchForm.state" placeholder="状态">
+        <el-form-item prop="solved_state">
+          <el-select v-model="feedbacksearchForm.solved_state" placeholder="处理状态">
             <el-option label="已解决" value="1"></el-option>
-            <el-option label="未解决" value="3"></el-option>
+            <el-option label="未解决" value="0"></el-option>
           </el-select>
         </el-form-item>
         <!-- 录入时间 -->
@@ -51,7 +58,8 @@ export default {
       feedbacksearchForm: {
         name: "",
         telphone: "",
-        state: "",
+        distribute_state: "",
+        solved_state: "",
         join_date: "",
       },
     };

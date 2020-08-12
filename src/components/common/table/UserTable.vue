@@ -1,6 +1,6 @@
 <template>
   <div class="user-table">
-    <el-card class="user-table-card">
+    <el-card class="user-table-card" :style="{height: screenHeight}">
       <!-- 公共操作 -->
       <el-row>
         <el-col :span="24">
@@ -16,7 +16,7 @@
         :data="userList"
         class="user-table-wrap"
         style="width: 100%"
-        height="550"
+        :height="scrollHeight"
         @selection-change="handleSelectionChange"
         v-loading="loading"
         border
@@ -341,7 +341,7 @@
         </el-table-column>
       </el-table>
 
-      <!-- 分页 -->
+      <!-- 分页
       <div class="pagination">
         <el-pagination
           @current-change="handleCurrentChange"
@@ -350,7 +350,7 @@
           layout="prev, pager, next, jumper"
           :total="total"
         ></el-pagination>
-      </div>
+      </div> -->
     </el-card>
 
     <!-- 添加用户 -->
@@ -563,7 +563,7 @@ import {
   getOneStraffInfo,
   uploadImage,
   getOneStaffImage,
-} from "network/detail";
+} from "network/humanageRequest";
 import AddStaff from "components/common/table/AddStaff";
 import eventVue from "common/eventVue";
 
@@ -651,6 +651,14 @@ export default {
       Badyimg: [],
       otherimg: [],
     };
+  },
+  computed: {
+    screenHeight() {
+      return this.$store.state.screenHeight - 210 + 'px'
+    },
+    scrollHeight() {
+       return this.$store.state.screenHeight - 290 + 'px'
+    }
   },
   methods: {
     // 定义请求用户列表数据
@@ -992,7 +1000,7 @@ export default {
 
 <style lang='less' scoped>
 .user-table {
-  margin-top: 20px;
+  margin-top: 10px;
 
   .el-card__body {
     .user-table-wrap {
@@ -1032,7 +1040,7 @@ export default {
 }
 .user-table-card {
   position: relative;
-  height: 700px;
+  // height: 700px;
 
   .pagination {
     position: absolute;

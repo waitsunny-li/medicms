@@ -2,7 +2,7 @@
   <div class="home">
     <el-container>
       <!-- 侧边栏 -->
-      <el-aside width="200px" class="aside-wrap">
+      <el-aside width="200px" class="aside-wrap"  :style="{height: screenHeight + 'px', overflow: 'hidden'}">
         <!-- icon -->
         <div class="icon-wrap">
           <div class="img-wrap">
@@ -10,7 +10,7 @@
           </div>
         </div>
         <!-- 功能栏 -->
-        <div class="aside">
+        <div class="aside" :style="{height: screenHeight + 'px'}">
           <aside-main-nav :asideNavList="asideNavList" />
         </div>
       </el-aside>
@@ -41,9 +41,12 @@
             </div>
           </div>
         </el-header>
-        <el-main>
+        <el-main :style="{height: screenHeight - 80 + 'px', overflow: 'hidden'}">
           <router-view name="content" />
         </el-main>
+        <el-footer class="footer">
+          <!-- <pagination /> -->
+        </el-footer>
       </el-container>
     </el-container>
   </div>
@@ -52,6 +55,7 @@
 <script>
 import MainNav from "components/content/mainnav/MainNav";
 import AsideMainNav from "components/content/mainnav/AsideMainNav";
+import Pagination from "components/common/pagination/Pagination";
 
 export default {
   name: "Home",
@@ -164,24 +168,32 @@ export default {
         ],
       ],
       selectAsides: null,
-      windowWidth:
-        window.innerWidth ||
-        document.documentElement.clientWidth ||
-        document.body.clientWidth, // 屏幕宽度
-      windowHeight:
-        window.innerHeight ||
-        document.documentElement.clientHeight ||
-        document.body.clientHeight, // 屏幕高度
     };
   },
   components: {
     MainNav,
     AsideMainNav,
+    Pagination
+  },
+  computed: {
+    screenHeight() {
+      return this.$store.state.screenHeight
+    }
   },
   mounted() {
-    // 初始化侧边栏高度
-    let aside = document.getElementsByClassName("aside-wrap")[0];
-    aside.style.height = this.windowHeight + "px";
+    // 初始化操作
+    this.$store.commit("changeWidthHeight", {
+        width: window.innerWidth,
+        height: window.innerHeight
+      })
+    // 窗口改变时获取窗口的高度
+    window.onresize = () => {
+      console.log(window.innerHeight - 40)
+      this.$store.commit("changeWidthHeight", {
+        width: window.innerWidth,
+        height: window.innerHeight
+      })
+    }
   },
   methods: {
     currentSelect(index) {

@@ -286,9 +286,8 @@ import {
   getOneTrainingInfo,
   updateTrainingInfo,
   deleteTrainingInfo
-} from "network/detail";
-import { getProvince, getCity, getDistrict } from "network/select";
-import { getJob } from "network/select";
+} from "network/humanageRequest";
+import { getProvince, getCity, getDistrict, getJob } from "network/select";
 export default {
   name: "Training",
   data() {

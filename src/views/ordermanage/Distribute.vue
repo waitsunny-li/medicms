@@ -179,7 +179,6 @@
 
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
-import {} from "network/detail";
 export default {
   name: "Distribute",
   data() {

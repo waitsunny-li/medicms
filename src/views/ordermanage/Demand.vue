@@ -436,6 +436,7 @@
 import eventVue from "common/eventVue";
 import CustomerSearch from "components/common/search/CustomerSearch";
 import { getLanguage, getCooking, getJob, getKills } from "network/select";
+import { getCustomerInfo } from "network/orderRequest"
 export default {
   name: "Demand",
   data() {
@@ -715,6 +716,21 @@ export default {
     });
   },
   methods: {
+    // 定义获取客户需求信息
+    getCustomerInfo() {
+      this.loading = true
+      getCustomerInfo().then(res => {
+        if(res.code === 200) {
+          // 获取客户数据
+          this.customers = res.data
+          this.loading = false
+        }else {
+          this.$message.error(res.msg)
+          this.loading = false
+        }
+      })
+    },
+
     // 搜索按钮点击
     searchBtn(searchForm) {
       console.log('需求录入', searchForm)

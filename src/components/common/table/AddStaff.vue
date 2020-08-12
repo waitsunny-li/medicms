@@ -504,7 +504,7 @@
 
 <script>
 import eventVue from "common/eventVue";
-import { saveStaffInfo, getOneStraffInfo, updateStraffInfo } from "network/detail";
+import { saveStaffInfo, getOneStraffInfo, updateStraffInfo } from "network/humanageRequest";
 import {
   getProvince,
   getCity,

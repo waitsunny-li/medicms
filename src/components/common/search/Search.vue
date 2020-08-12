@@ -84,6 +84,10 @@ export default {
   border-top: 2px solid #75cbf4;
   box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1);
 
+  /deep/.el-card__body {
+    width: 1170px;
+  }
+
   .el-form-item {
     width: 170px;
     margin: 0;

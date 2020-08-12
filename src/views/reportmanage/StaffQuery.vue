@@ -363,7 +363,7 @@
 import Search from "components/common/search/Search";
 import OrderInfo from "components/common/table/OrderInfo";
 import eventVue from "common/eventVue";
-import { requestUserListDate } from "network/detail";
+import { requestUserListDate } from "network/humanageRequest";
 export default {
   name: "StaffQuery",
   data() {

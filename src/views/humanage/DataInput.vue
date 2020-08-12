@@ -9,6 +9,9 @@
         <user-table></user-table>
       </el-col>
     </el-row>
+
+    <!-- 分页 -->
+    <pagination />
   </div>
 </template>
 
@@ -16,6 +19,7 @@
 import eventVue from 'common/eventVue'
 import Search from "components/common/search/Search";
 import UserTable from 'components/common/table/UserTable'
+import Pagination from "components/common/pagination/Pagination";
 export default {
   name: "DataInput",
   data() {
@@ -23,7 +27,8 @@ export default {
   },
   components: {
     Search,
-    UserTable
+    UserTable,
+    Pagination
   },
   created() {
     

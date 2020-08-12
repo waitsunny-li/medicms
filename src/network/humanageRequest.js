@@ -3,6 +3,9 @@ import {
 } from './request'
 import Qs from 'qs'
 
+/**
+ * 资料录入
+ */
 // 请求员工列表数据
 export function requestUserListDate() {
   return request({
@@ -71,6 +74,10 @@ export function getOneStaffImage(id) {
   })
 }
 
+
+/**
+ *  培训记录
+ */
 // 请求培训记录
 export function getTrainingsData(id) {
   return request({
@@ -119,5 +126,20 @@ export function deleteTrainingInfo(ids) {
     data: {
       ids: ids
     }
+  })
+}
+
+
+/**
+ * 考核评价
+ */
+// 请求单个员工的所有培训记录
+
+// 对考核进行保存评价内容
+export function saveAssessment(data) {
+  return request({
+    url: "",
+    method: "post",
+    data
   })
 }

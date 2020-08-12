@@ -154,7 +154,7 @@
 
 <script>
 import Search from "components/common/search/Search";
-import { requestUserListDate } from "network/detail";
+import { requestUserListDate } from "network/humanageRequest";
 export default {
   name: "Assessment",
   data() {

@@ -7,6 +7,10 @@ Vue.use(Vuex)
 // 状态
 const state = {
   navindex: sessionStorage.getItem('navindex')? sessionStorage.getItem('navindex') : 0,
+
+  // 窗口的宽和高
+  screenWidth: "",
+  screenHeight: "",
   
   // 用户信息
   userInfo: {
@@ -34,6 +38,12 @@ const mutations = {
     // 保存在sessionStorage中
     setItem('userInfo', payload)
   },
+
+  // 动态修改窗口的宽和高
+  changeWidthHeight(state, payload) {
+    state.screenWidth = payload.width
+    state.screenHeight = payload.height
+  }
 }
 
 const store =  new Vuex.Store({

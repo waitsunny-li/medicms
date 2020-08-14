@@ -4,10 +4,24 @@ import {
 import Qs from 'qs'
 
 /**
+ * 搜索
+ */
+// 人员状态搜索
+export function searchAppointStaff(state) {
+  return request({
+    url: "/staff/index",
+    method: "get",
+    params: {
+      person_state: state
+    }
+  })
+}
+
+/**
  * 资料录入
  */
 // 请求员工列表数据
-export function requestUserListDate() {
+export function requestUserListDate(tate) {
   return request({
     url: "/staff/index",
     method: "get",
@@ -50,6 +64,15 @@ export function updateStraffInfo(data) {
   return request({
     url: '/staff/update',
     method: 'post',
+    data: data
+  })
+}
+
+// 保存事件内容
+export function saveEventInfo(data) {
+  return request({
+    url: "/staff/event",
+    method: "post",
     data: data
   })
 }
@@ -133,13 +156,12 @@ export function deleteTrainingInfo(ids) {
 /**
  * 考核评价
  */
-// 请求单个员工的所有培训记录
 
 // 对考核进行保存评价内容
 export function saveAssessment(data) {
   return request({
-    url: "",
+    url: "/train/assess",
     method: "post",
-    data
+    data: data
   })
 }

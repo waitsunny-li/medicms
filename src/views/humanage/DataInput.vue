@@ -252,12 +252,12 @@
                           </div>
                           <!-- 表单 -->
                           <el-form
-                            ref="form"
+                            ref="eventForm"
                             class="eventForm"
                             :model="eventForm"
                             label-width="80px"
                           >
-                            <el-form-item label="事件类型">
+                            <el-form-item label="事件类型" prop="event_type">
                               <el-select
                                 size="mini"
                                 v-model="eventForm.event_type"
@@ -268,7 +268,7 @@
                                 <el-option label="处罚" value="3"></el-option>
                               </el-select>
                             </el-form-item>
-                            <el-form-item label="事件内容">
+                            <el-form-item label="事件内容" prop="content">
                               <el-input
                                 size="mini"
                                 type="textarea"
@@ -280,7 +280,7 @@
                           <!-- 保存按钮 -->
                           <el-row>
                             <el-col :span="5" :offset="20">
-                              <el-button size="mini" type="primary" round>保存</el-button>
+                              <el-button size="mini" type="primary" @click="saveEventData" round>保存</el-button>
                             </el-col>
                           </el-row>
                         </el-tab-pane>
@@ -607,6 +607,7 @@ import {
   requestUserListDate,
   deleteStaff,
   getOneStraffInfo,
+  saveEventInfo,
   uploadImage,
   getOneStaffImage,
 } from "network/humanageRequest";
@@ -656,6 +657,7 @@ export default {
       ],
       // 新增事件表单
       eventForm: {
+        staff_id: "",
         event_type: "",
         content: "",
       },
@@ -877,6 +879,25 @@ export default {
       this.addUserFormVisible = true;
       // 发送员工id
       eventVue.$emit("editstaffevent", id);
+    },
+
+    // 保存事件按钮
+    saveEventData() {
+      let { event_type, content } = this.eventForm;
+      if (event_type.trim() == "" || content.trim() == "") {
+        this.$message.error('不能为空')
+      }else {
+        saveEventInfo(this.eventForm).then(res => {
+          let {code, msg} = res
+          if(code === 200) {
+            this.$message.success(msg)
+            this.eventForm.event_type = ""
+            this.eventForm.content = ""
+          }else {
+            this.$message.error(msg)
+          }
+        })
+      };
     },
 
     /**

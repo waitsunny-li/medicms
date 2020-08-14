@@ -122,11 +122,16 @@
     </el-row>
 
     <!-- 分页 -->
-    <pagination :currentPage="currentPage" :perpage="per_page" :total="total" @handlecurrentchange="handleCurrentChange" />
+    <pagination
+      :currentPage="currentPage"
+      :perpage="per_page"
+      :total="total"
+      @handlecurrentchange="handleCurrentChange"
+    />
 
     <!-- 显示分配员工列表 -->
-    <el-dialog title="分配" :visible.sync="distributeDialogVisible" width="580px" center>
-      <div class="content">
+    <el-dialog title="分配" :visible.sync="distributeDialogVisible" @close="distributeDislogClose" width="580px" center>
+      <div class="dis-content">
         <el-input
           size="mini"
           placeholder="请输入要分配的员工姓名"
@@ -141,6 +146,8 @@
           :data="defalutStaffData"
           style="width: 100%"
           :highlight-current-row="true"
+          height="260"
+          v-loading="distributeLoading"
         >
           <el-table-column align="center" prop="number" label="编号" width="90"></el-table-column>
           <el-table-column align="center" prop="name" label="姓名" width="90"></el-table-column>
@@ -172,6 +179,11 @@
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
+import {
+  getCustomerInfo,
+  searchNameStaff,
+  distributeStaff,
+} from "network/orderRequest";
 export default {
   name: "Distribute",
   data() {
@@ -242,6 +254,8 @@ export default {
       loading: false,
       // 显示分配员工列表
       distributeDialogVisible: false,
+      // 分配loading
+      distributeLoading: false,
       // 目前显示的客户id
       currentCustomId: "",
       // 要查询的员工姓名
@@ -278,7 +292,6 @@ export default {
           person_state: 3,
         },
       ],
-      queryStaffName: "",
       // 选中的员工
       currentSelectStaff: {
         id: "1",
@@ -297,13 +310,27 @@ export default {
   },
   watch: {},
   methods: {
+    // 定义获取客户需求信息
+    getAllCustomerInfo() {
+      this.loading = true;
+      getCustomerInfo().then((res) => {
+        if (res.code === 200) {
+          // 获取客户数据
+          this.customers = res.data;
+          this.loading = false;
+        } else {
+          this.$message.error(res.msg);
+          this.loading = false;
+        }
+      });
+    },
     // 搜索按钮点击
     searchBtn(searchForm) {
-      console.log('手工分配', searchForm)
+      console.log("手工分配", searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      // console.log(currentpage);
+      console.log(currentpage);
     },
 
     // 表单中分配按钮
@@ -315,6 +342,17 @@ export default {
     // 点击搜索按钮事件
     queryStaffBtn() {
       console.log(this.queryStaffName);
+      this.distributeDialogVisible = true;
+      searchNameStaff(this.queryStaffName).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          this.defalutStaffData = data;
+          this.defalutStaffData = false;
+        } else {
+          this.$message.error(msg);
+          this.distributeDialogVisible = false;
+        }
+      });
     },
 
     // 分配给他
@@ -325,12 +363,16 @@ export default {
         type: "warning",
       })
         .then(() => {
-          this.$message({
-            type: "success",
-            message: "分配成功!",
+          distributeStaff(cusid, staid).then((res) => {
+            let { code, msg } = res;
+            if (code === 200) {
+              this.$message.success(msg)
+              // 关闭分配弹框
+              this.distributeDialogVisible = false;
+            } else {
+              this.$message.error(msg);
+            }
           });
-          // 关闭分配弹框
-          this.distributeDialogVisible = false
         })
         .catch(() => {
           this.$message({
@@ -339,10 +381,15 @@ export default {
           });
         });
     },
+
+    // 分配弹框关门回调
+    distributeDislogClose() {
+      this.queryStaffName = ""
+    }
   },
   components: {
     CustomerSearch,
-    Pagination
+    Pagination,
   },
 };
 </script>
@@ -369,7 +416,7 @@ export default {
       }
 
       /deep/.el-table__body-wrapper::-webkit-scrollbar {
-        width: 3px;
+        width: 5px;
         height: 10px;
       }
 
@@ -406,6 +453,18 @@ export default {
   }
 }
 
+.dis-content {
+  /deep/.el-table__body-wrapper::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+  }
+
+  /deep/.el-table__body-wrapper::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
+  }
+}
+
 .queryStaffTable {
   margin-top: 50px;
 }
@@ -414,16 +473,5 @@ export default {
   /deep/.el-table .current-row-class {
     background: #75cbf4;
   }
-}
-
-/* 用来设置当前页面element全局table 选中某行时的背景色*/
-.el-table__body tr.current-row > td {
-  background-color: #f19944 !important;
-  /* color: #f19944; */ /* 设置文字颜色，可以选择不设置 */
-}
-/* 用来设置当前页面element全局table 鼠标移入某行时的背景色*/
-.el-table--enable-row-hover .el-table__body tr:hover > td {
-  background-color: #f19944;
-  /* color: #f19944; */ /* 设置文字颜色，可以选择不设置 */
 }
 </style>

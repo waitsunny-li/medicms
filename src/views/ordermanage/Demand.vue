@@ -71,8 +71,7 @@
                 </el-form>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="name" label="姓名" width="100">
-            </el-table-column>
+            <el-table-column align="center" prop="name" label="姓名" width="100"></el-table-column>
             <el-table-column align="center" prop="family_hometown" label="家庭成员籍贯" min-width="110"></el-table-column>
             <el-table-column
               class="identify"
@@ -115,7 +114,7 @@
                   size="mini"
                   type="primary"
                   icon="el-icon-edit"
-                  @click="customerEditBtn"
+                  @click="customerEditBtn(scope.row.name, scope.row.id)"
                   circle
                 ></el-button>
                 <el-popconfirm
@@ -143,11 +142,16 @@
     </el-row>
 
     <!-- 分页 -->
-    <pagination :currentPage="currentPage" :perpage="per_page" :total="total" @handlecurrentchange="handleCurrentChange" />
+    <pagination
+      :currentPage="currentPage"
+      :perpage="per_page"
+      :total="total"
+      @handlecurrentchange="handleCurrentChange"
+    />
 
     <!-- 添加客户需求表单 -->
     <el-dialog
-      title="新增客户"
+      :title="addEditFormTitle"
       @close="formDialogClose"
       :visible.sync="addCustomerDialogVisible"
       class="addFormDialog"
@@ -155,7 +159,13 @@
       center
     >
       <!-- 表单内容 -->
-      <el-form ref="form" :rules="formRules" :model="form" label-width="80px">
+      <el-form
+        ref="form"
+        :rules="formRules"
+        :model="form"
+        label-width="80px"
+        v-loading="addEditFormLoading"
+      >
         <el-row>
           <el-col :span="24" class="title-home">
             <i class="el-icon-s-home"></i> 家庭情况
@@ -419,7 +429,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="addCustomerDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="addCustomerDialogVisible = false">保 存</el-button>
+        <el-button size="mini" type="primary" @click="saveCustomerInfo">保 存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -430,7 +440,12 @@ import eventVue from "common/eventVue";
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
 import { getLanguage, getCooking, getJob, getKills } from "network/select";
-import { getCustomerInfo } from "network/orderRequest"
+import {
+  getCustomerInfo,
+  saveCustomerInfo,
+  getOneCustomerInfo,
+  deleteCustomer,
+} from "network/orderRequest";
 export default {
   name: "Demand",
   data() {
@@ -501,9 +516,13 @@ export default {
       loading: false,
       // 是否显示添加需求的弹框
       addCustomerDialogVisible: false,
+      // 添加等待
+      addEditFormLoading: false,
 
       // 添加编辑表单
       form: null,
+      // 添加编辑头部
+      addEditFormTitle: "",
       // 添加需求
       addCustomerForm: {
         name: "",
@@ -582,36 +601,9 @@ export default {
       ],
       cookNumber: "",
       // 编辑表单
-      editCustomerForm: {
-        name: "客户",
-        family_area: "100.25",
-        family_hometown: "安徽安庆",
-        family_address: "家庭住址",
-        service_type: "1",
-        service_other: "其他服务类型",
-        family_people: {
-          children: 1,
-          old: 2,
-          adlut: 3,
-        },
-        service_content: "",
-        demand_age: "20-30",
-        demand_sex: 0,
-        demand_education: "高中",
-        demand_job: ["育婴师", "管家"],
-        demand_zodiac: "牛",
-        demand_experience: "2-3年",
-        demand_census: "不限",
-        demand_cooking: [],
-        demand_language: [],
-        demand_service_skill: [],
-        demand_other: "",
-        mobile: "13695604265",
-        state: "0",
-        source: "来源",
-      },
+      editCustomerForm: {},
 
-      // 是否是添加客服弹框
+      // 是否是添加客户服务弹框
       isAddForm: true,
       // 多选中
       selected: [],
@@ -632,9 +624,6 @@ export default {
         ],
         mobile: [
           { required: true, message: "请输入家庭手机号", trigger: "blur" },
-        ],
-        service_type: [
-          { required: true, message: "请输入服务类型", trigger: "blur" },
         ],
       },
     };
@@ -719,23 +708,23 @@ export default {
   },
   methods: {
     // 定义获取客户需求信息
-    getCustomerInfo() {
-      this.loading = true
-      getCustomerInfo().then(res => {
-        if(res.code === 200) {
+    getAllCustomerInfo() {
+      this.loading = true;
+      getCustomerInfo().then((res) => {
+        if (res.code === 200) {
           // 获取客户数据
-          this.customers = res.data
-          this.loading = false
-        }else {
-          this.$message.error(res.msg)
-          this.loading = false
+          this.customers = res.data;
+          this.loading = false;
+        } else {
+          this.$message.error(res.msg);
+          this.loading = false;
         }
-      })
+      });
     },
 
     // 搜索按钮点击
     searchBtn(searchForm) {
-      console.log('需求录入', searchForm)
+      console.log("需求录入", searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
@@ -744,18 +733,54 @@ export default {
 
     // 添加客户需求
     addCustomerBtn() {
+      this.addEditFormTitle = `新增客户`;
       // 表单赋值
       this.form = this.addCustomerForm;
       // 修改添加服务内容的显示
       this.isAddForm = true;
       // 显示添加表单
       this.addCustomerDialogVisible = true;
+      this.addEditFormLoading = false
+    },
+
+    // 保存客户需求数据
+    saveCustomerInfo() {
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          saveCustomerInfo(this.addCustomerForm).then((res) => {
+            let { code, msg } = res;
+            if (code === 200) {
+              this.$message.success(msg);
+              this.addCustomerDialogVisible = false;
+              this.getAllCustomerInfo();
+            } else {
+              this.$message.error(msg);
+            }
+          });
+        } else {
+          return false;
+        }
+      });
     },
 
     // 编辑客户需求
-    customerEditBtn() {
-      // 表单赋值
-      this.form = this.editCustomerForm;
+    customerEditBtn(name, id) {
+      this.addEditFormTitle = `编辑客户（${name}）`;
+      this.addEditFormLoading = true;
+      // 获取要展示的客户信息
+      getOneCustomerInfo(id).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          this.editCustomerForm = data;
+          // 表单赋值
+          this.form = this.editCustomerForm;
+          this.addEditFormLoading = false;
+          this.getAllCustomerInfo();
+        } else {
+          this.$message.error(msg);
+          this.addEditFormLoading = false;
+        }
+      });
       // 修改添加服务内容的显示
       this.isAddForm = false;
       // 显示添加表单
@@ -767,14 +792,29 @@ export default {
       if (this.selected.length == 0) {
         this.$message.error("请选择要删除的客户");
       } else {
-        console.log("你要删除的所有id" + this.selected);
-        console.log(typeof this.selected);
+        deleteCustomer(this.selected).then((res) => {
+          let { code, msg } = res;
+          if (code === 200) {
+            this.$message.success(msg);
+            this.getAllCustomerInfo();
+          } else {
+            this.$message.error(msg);
+          }
+        });
       }
     },
 
     // 表格删除
     DeleteFormBtn(id) {
-      console.log("我是表单中的删除键：" + id);
+      deleteCustomer([id]).then((res) => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg);
+          this.getAllCustomerInfo();
+        } else {
+          this.$message.error(msg);
+        }
+      });
     },
 
     // 添加和编辑表单关闭回调
@@ -814,7 +854,7 @@ export default {
   },
   components: {
     CustomerSearch,
-    Pagination
+    Pagination,
   },
 };
 </script>

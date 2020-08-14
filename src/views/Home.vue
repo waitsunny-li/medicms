@@ -84,6 +84,11 @@ export default {
             path: "/home/assessment",
             icon: "icon el-icon-notebook-2",
           },
+          {
+            navname: "员工申诉",
+            path: "/home/staffappeal",
+            icon: "icon el-icon-notebook-2",
+          },
         ],
         [
           {

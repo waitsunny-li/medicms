@@ -1,5 +1,5 @@
 <template>
-  <div class="assessment">
+  <div class="staff-appeal">
     <el-row>
       <el-col :span="24">
         <!-- 搜索框 -->
@@ -54,8 +54,8 @@
                 <el-button
                   type="text"
                   size="mini"
-                  @click="lookAssessBtn(scope.row.id, scope.row.name)"
-                >查看考核</el-button>
+                  @click="lookAppealBtn(scope.row.id, scope.row.name)"
+                >查看申诉</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -72,7 +72,7 @@
     />
 
     <!-- 查看培训记录 -->
-    <el-dialog :title="staff_name + '的考核记录'" :visible.sync="assessDialogVisible" width="70%" center>
+    <el-dialog :title="staff_name + '的申诉记录'" :visible.sync="assessDialogVisible" width="800px" center>
       <!-- 表单内容 -->
       <el-table
         height="500"
@@ -85,9 +85,8 @@
         <el-table-column prop="start_end" align="center" label="日期" width="180">
           <template slot-scope="scope">{{scope.row.time.join(' ~ ')}}</template>
         </el-table-column>
-        <el-table-column prop="project" align="center" label="培训项目" width="180"></el-table-column>
-        <el-table-column prop="content" :show-overflow-tooltip="true" align="center" label="培训内容"></el-table-column>
-        <el-table-column prop="address" align="center" label="地址"></el-table-column>
+        <el-table-column prop="project" align="center" label="事件类型" width="180"></el-table-column>
+        <el-table-column prop="content" :show-overflow-tooltip="true" align="center" label="事件内容"></el-table-column>
         <el-table-column prop="address" align="center" label="考核评价">
           <template slot-scope="scope">
             <div v-if="scope.row.is_by == 0">未审核</div>
@@ -167,7 +166,7 @@ import {
   searchAppointStaff,
 } from "network/humanageRequest";
 export default {
-  name: "Assessment",
+  name: "Staffappeal",
   data() {
     return {
       // 加载中
@@ -233,7 +232,7 @@ export default {
     // 定义请求用户列表数据
     getStaffData() {
       this.loading = true;
-      searchAppointStaff("1")
+      requestUserListDate()
         .then((res) => {
           if (res.code === 200) {
             this.staffList = res.data.data;
@@ -273,8 +272,8 @@ export default {
       });
     },
 
-    // 查看培训记录按钮
-    lookAssessBtn(id, name) {
+    // 查看申诉记录按钮
+    lookAppealBtn(id, name) {
       this.staff_name = name;
       this.assessDialogVisible = true;
       // 先请求数据

@@ -14,6 +14,7 @@ const Home = () => import('../views/Home')
 const DataInput = () => import('../views/humanage/DataInput')
 const Training = () => import('../views/humanage/Training')
 const Assessment = () => import('../views/humanage/Assessment')
+const Staffappeal = () => import('../views/humanage/Staffappeal')
 
 // 订单管理
 const Demand = () => import('../views/ordermanage/Demand')
@@ -79,6 +80,15 @@ const routes = [{
         },
         meta: {
           title: "考核评价"
+        }
+      },
+      {
+        path: 'staffappeal',
+        components: {
+          content: Staffappeal
+        },
+        meta: {
+          title: "员工申诉"
         }
       },
 

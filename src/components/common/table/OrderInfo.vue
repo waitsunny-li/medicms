@@ -139,8 +139,7 @@ export default {
 <style lang='less' scoped>
 /deep/.expand-row {
   border-bottom: 1px solid #f1f1f1;
-  padding: 10px 0;
-
+  padding: 15px 0;
   .label-text {
     color: #585656;
     font-size: 13px;

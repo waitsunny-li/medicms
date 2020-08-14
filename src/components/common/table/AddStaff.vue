@@ -272,7 +272,7 @@
             </el-col>
             <el-col :span="5">
               <el-form-item label="岗位" prop="job">
-                <el-select multiple size="mini" v-model="staffForm.job" placeholder="请选择">
+                <el-select size="mini" v-model="staffForm.job" placeholder="请选择">
                   <el-option
                     v-for="item in jobs"
                     :key="item.id"

@@ -24,6 +24,7 @@
             :height="scrollHeight"
             v-loading="loading"
             border
+            :default-sort = "{prop: 'create_time', order: 'descending'}"
           >
             <!-- 选择 -->
             <el-table-column type="selection" width="55"></el-table-column>
@@ -38,7 +39,7 @@
                 </p>
                 <el-form label-position="center" inline class="demo-table-expand">
                   <el-form-item label="年龄">
-                    <span>{{ scope.row.demand_age }}</span>
+                    <span>{{ scope.row.demand_age }}岁以下</span>
                   </el-form-item>
                   <el-form-item label="籍贯">
                     <span>{{ scope.row.demand_census }}</span>
@@ -57,16 +58,16 @@
                     <span>{{ scope.row.demand_education }}</span>
                   </el-form-item>
                   <el-form-item label="服务技能">
-                    <span>{{ scope.row.demand_service_skill }}</span>
+                    <span>{{ scope.row.demand_service_skill.join('，') }}</span>
                   </el-form-item>
                   <el-form-item label="工资">
-                    <span>10000 / 26天</span>
+                    <span>{{scope.row.demand_salary}} / 月</span>
                   </el-form-item>
                   <el-form-item label="家政从业经验">
                     <span>{{ scope.row.demand_experience }}</span>
                   </el-form-item>
                   <el-form-item label="厨艺">
-                    <span>{{ scope.row.demand_cooking }}</span>
+                    <span>{{ scope.row.demand_cooking.join('，') }}</span>
                   </el-form-item>
                 </el-form>
               </template>
@@ -82,11 +83,18 @@
               width="100"
             >
               <template slot-scope="scope">
-                <p v-if="scope.row.service_type == 1">长期</p>
-                <p v-if="scope.row.service_type == 2">短期</p>
+                <p v-if="scope.row.service_type == 0">{{scope.row.service_other}}</p>
+                <p v-if="scope.row.service_type == 1">全日住家型</p>
+                <p v-if="scope.row.service_type == 2">日间照料型</p>
+                <p v-if="scope.row.service_type == 3">计时收费型</p>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="service_other" label="需要服务"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="service_content"
+              :show-overflow-tooltip="true"
+              label="需要服务"
+            ></el-table-column>
             <el-table-column width="180" align="center" label="家庭成员">
               <template
                 slot-scope="scope"
@@ -105,8 +113,32 @@
               min-width="120"
               :show-overflow-tooltip="true"
             ></el-table-column>
-            <el-table-column align="center" prop="source" label="来源" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="source_id"
+              label="来源"
+              :show-overflow-tooltip="true"
+            >
+              <template slot-scope="scope">
+                <div v-for="item in source" :key="item.id">
+                  <div
+                    style="overflow: hidden;
+                      text-overflow: ellipsis;
+                      white-space: nowrap; height: 30px"
+                    v-if="scope.row.source_id == item.id"
+                  >{{item.name}}</div>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <p v-if="scope.row.state == 0">面试中</p>
+                <p v-if="scope.row.state == 1">进行中</p>
+                <p v-if="scope.row.state == 3">结束</p>
+                <p v-if="scope.row.state == 4">取消</p>
+              </template>
+            </el-table-column>
+            <el-table-column width="130px" :show-overflow-tooltip="true" align="center" sortable prop="create_time" label="录入时间"></el-table-column>
             <!-- 操作 -->
             <el-table-column label="操作" align="center" width="140px">
               <template slot-scope="scope">
@@ -190,9 +222,10 @@
           <el-col :span="6">
             <el-form-item label="服务类型" prop="service_type">
               <el-select size="mini" v-model="form.service_type" placeholder="请选择">
-                <el-option label="全日住家型" value="1"></el-option>
-                <el-option label="日间照料型" value="2"></el-option>
-                <el-option label="计时收费型" value="3"></el-option>
+                <el-option label="无" :value="0"></el-option>
+                <el-option label="全日住家型" :value="1"></el-option>
+                <el-option label="日间照料型" :value="2"></el-option>
+                <el-option label="计时收费型" :value="3"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -205,13 +238,14 @@
             </el-form-item>
           </el-col>
           <el-col :span="7">
-            <el-form-item label="来源" prop="source">
-              <el-select size="mini" v-model="form.source" placeholder="请选择">
-                <el-option label="二次开发老客户" value="二次开发老客户"></el-option>
-                <el-option label="二次开发失效客户" value="二次开发失效客户"></el-option>
-                <el-option label="家政员介绍" value="家政员介绍"></el-option>
-                <el-option label="家政客户转介绍" value="家政客户转介绍"></el-option>
-                <el-option label="公司接待" value="公司接待"></el-option>
+            <el-form-item label="来源" prop="source_id">
+              <el-select size="mini" v-model="form.source_id" placeholder="请选择">
+                <el-option
+                  v-for="item in source"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -235,8 +269,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="8" style="display: flex">
-              <el-form-item class="adult" prop="family_people.adlut">
-                <el-input size="mini" v-model="form.family_people.adlut" placeholder="成人几位？"></el-input>
+              <el-form-item class="adult" prop="family_people.adult">
+                <el-input size="mini" v-model="form.family_people.adult" placeholder="成人几位？"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="8" style="display: flex">
@@ -308,10 +342,10 @@
           <el-col :span="6">
             <el-form-item label="年龄" prop="demand_age">
               <el-select size="mini" v-model="form.demand_age" placeholder="请选择">
-                <el-option label="无" value="无"></el-option>
-                <el-option label="40岁以下" value="40岁以下"></el-option>
-                <el-option label="45岁以下" value="45岁以下"></el-option>
-                <el-option label="50岁以下" value="50岁以下"></el-option>
+                <el-option label="无" value="0"></el-option>
+                <el-option label="40岁以下" value="40"></el-option>
+                <el-option label="45岁以下" value="45"></el-option>
+                <el-option label="50岁以下" value="50"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -356,8 +390,16 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="工资" prop="demand_zodiac">
-              <el-input size="mini" v-model="form.demand_zodiac"></el-input>
+            <el-form-item label="生肖" prop="demand_zodiac">
+              <el-select size="mini" v-model="form.demand_zodiac" placeholder="请选择">
+                <el-option label="无" value="无"></el-option>
+                <el-option
+                  v-for="item in zodiacs"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.name"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -412,24 +454,37 @@
                 v-model="form.demand_experience"
                 placeholder="请选择"
               >
-                <el-option label="2~3年" value="2~3年"></el-option>
-                <el-option label="3~5年" value="3~5年"></el-option>
-                <el-option label="5~10年" value="5~10年"></el-option>
-                <el-option label="10~20年" value="10~20年"></el-option>
+                <el-option label="2~3年" value="2~3"></el-option>
+                <el-option label="3~5年" value="3~5"></el-option>
+                <el-option label="5~10年" value="5~10"></el-option>
+                <el-option label="10~20年" value="10~20"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-
           <el-col :span="9">
-            <el-form-item label="其他要求" prop="demand_other">
-              <el-input size="mini" type="textarea" v-model="form.demand_other"></el-input>
+            <el-form-item label="工资">
+              <el-col :span="10">
+                <el-input size="mini" v-model="wages_start"></el-input>
+              </el-col>
+              <el-col :span="2" :offset="1">~</el-col>
+              <el-col :span="10">
+                <el-input size="mini" v-model="wages_end"></el-input>
+              </el-col>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="9">
+            <el-form-item label="其他要求" prop="service_other_content">
+              <el-input size="mini" type="textarea" v-model="form.service_other_content"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="addCustomerDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="saveCustomerInfo">保 存</el-button>
+        <el-button size="mini" type="primary" @click="saveCustomerInfo" v-if="isAddForm">保 存</el-button>
+        <el-button size="mini" v-else type="primary" @click="saveEditCustomerInfo">编 辑</el-button>
       </span>
     </el-dialog>
   </div>
@@ -439,73 +494,19 @@
 import eventVue from "common/eventVue";
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
-import { getLanguage, getCooking, getJob, getKills } from "network/select";
+import { getAllSelects, getAllSource } from "network/select";
 import {
   getCustomerInfo,
   saveCustomerInfo,
   getOneCustomerInfo,
   deleteCustomer,
+  updateCustomer,
 } from "network/orderRequest";
 export default {
   name: "Demand",
   data() {
     return {
-      customers: [
-        {
-          id: "1",
-          name: "客户",
-          family_area: "100.25",
-          family_hometown: "安徽安庆",
-          family_address: "家庭住址",
-          service_type: "1",
-          service_other: "其他内容",
-          family_people: {
-            children: 1,
-            old: 2,
-            adlut: 3,
-          },
-          service_content: [],
-          demand_age: "20-30",
-          demand_sex: 0,
-          demand_education: "高中",
-          demand_job: ["育婴师", "管家"],
-          demand_zodiac: "牛",
-          demand_experience: "2-3年",
-          demand_census: "不限",
-          demand_cooking: "川菜",
-          demand_service_skill: [],
-          mobile: "13695604265",
-          state: "0",
-          source: "来源",
-        },
-        {
-          id: "2",
-          name: "客户",
-          family_area: "100.25",
-          family_hometown: "安徽安庆",
-          family_address: "家庭住址",
-          service_type: "1",
-          service_other: "其他内容",
-          family_people: {
-            children: 1,
-            old: 2,
-            adlut: 3,
-          },
-          service_content: [],
-          demand_age: "20-30",
-          demand_sex: 0,
-          demand_education: "高中",
-          demand_job: ["育婴师", "管家"],
-          demand_zodiac: "牛",
-          demand_experience: "2-3年",
-          demand_census: "不限",
-          demand_cooking: "川菜",
-          demand_service_skill: [],
-          mobile: "13695604265",
-          state: "0",
-          source: "来源",
-        },
-      ],
+      customers: [],
       // 当前页数
       currentPage: 1,
       // 总数据条数
@@ -534,24 +535,28 @@ export default {
         family_people: {
           children: "",
           old: "",
-          adlut: "",
+          adult: "",
         },
         service_content: "",
+        service_other_content: "",
         demand_age: "",
         demand_sex: "",
         demand_education: "",
-        demand_job: [],
-        demand_zodiac: "",
+        demand_zodiac: [],
         demand_experience: "",
+        demand_job: [],
         demand_census: "",
         demand_cooking: [],
         demand_language: [],
         demand_service_skill: [],
-        demand_other: "",
+        demand_salary: "",
         mobile: "",
-        state: "",
-        source: "",
+        // state: "",
+        source_id: "",
       },
+      // 工资起止
+      wages_start: "",
+      wages_end: "",
 
       // 岗位
       jobs: null,
@@ -560,6 +565,8 @@ export default {
       // 服务技能
       skills: null,
       languages: null,
+      zodiacs: null,
+      source: null,
 
       // 多选框
       selectSericeList: [],
@@ -622,6 +629,28 @@ export default {
         family_address: [
           { required: true, message: "请输入家庭地址", trigger: "blur" },
         ],
+        family_area: [
+          { required: true, message: "请输入家庭面积", trigger: "blur" },
+        ],
+        demand_age: [
+          { required: true, message: "请输入员工年龄", trigger: "blur" },
+        ],
+        demand_job: [
+          { required: true, message: "请输入员工岗位", trigger: "blur" },
+        ],
+        demand_experience: [
+          { required: true, message: "请输入员工从业经验", trigger: "blur" },
+        ],
+        demand_census: [
+          { required: true, message: "请输入员工籍贯", trigger: "blur" },
+        ],
+        demand_sex: [
+          { required: true, message: "请输入员工性别", trigger: "blur" },
+        ],
+        demand_cooking: [
+          { required: true, message: "请输入员工厨艺", trigger: "blur" },
+        ],
+
         mobile: [
           { required: true, message: "请输入家庭手机号", trigger: "blur" },
         ],
@@ -670,39 +699,31 @@ export default {
     // 创建完成后赋值
     this.form = this.addCustomerForm;
 
-    // 岗位
-    getJob().then((res) => {
-      if (res.code === 200) {
-        this.jobs = res.data;
+    // 获取客户数据
+    this.getAllCustomerInfo();
+
+    // 获取需求选择
+    getAllSelects().then((res) => {
+      let { code, data, msg } = res;
+      if (code === 200) {
+        let { language, cooking, service_skill, job, zodiac } = data;
+        this.languages = language;
+        this.cookings = cooking;
+        this.skills = service_skill;
+        this.jobs = job;
+        this.zodiacs = zodiac;
       } else {
-        this.$message.waraing("获取岗位失败！");
+        this.$message.error(msg);
       }
     });
 
-    // 厨艺水平
-    getCooking().then((res) => {
-      if (res.code === 200) {
-        this.cookings = res.data;
+    // 获取需求来源
+    getAllSource().then((res) => {
+      let { code, data, msg } = res;
+      if (code === 200) {
+        this.source = data;
       } else {
-        this.$message.waraing("获取厨艺水平失败！");
-      }
-    });
-
-    // 服务技能
-    getKills().then((res) => {
-      if (res.code === 200) {
-        this.skills = res.data;
-      } else {
-        this.$message.waraing("获取服务技能失败！");
-      }
-    });
-
-    // 获取语言能力分组
-    getLanguage().then((res) => {
-      if (res.code === 200) {
-        this.languages = res.data;
-      } else {
-        this.$message.waraing("获取语言能力失败！");
+        this.$message.error(msg);
       }
     });
   },
@@ -713,7 +734,13 @@ export default {
       getCustomerInfo().then((res) => {
         if (res.code === 200) {
           // 获取客户数据
-          this.customers = res.data;
+          this.customers = res.data.data;
+          // 页数赋值
+          this.currentPage = res.data.current_page;
+          // 总数据条数
+          this.total = res.data.total;
+          // 每页的条
+          this.per_page = res.data.per_page;
           this.loading = false;
         } else {
           this.$message.error(res.msg);
@@ -740,11 +767,15 @@ export default {
       this.isAddForm = true;
       // 显示添加表单
       this.addCustomerDialogVisible = true;
-      this.addEditFormLoading = false
+      this.addEditFormLoading = false;
     },
 
     // 保存客户需求数据
     saveCustomerInfo() {
+      // 更新需求工工资
+      this.addCustomerForm.demand_salary =
+        this.wages_start + "~" + this.wages_end;
+
       this.$refs.form.validate((valid) => {
         if (valid) {
           saveCustomerInfo(this.addCustomerForm).then((res) => {
@@ -772,6 +803,10 @@ export default {
         let { code, data, msg } = res;
         if (code === 200) {
           this.editCustomerForm = data;
+          console.log(this.editCustomerForm);
+          let wage = this.editCustomerForm.demand_salary.split("~");
+          this.wages_start = wage[0];
+          this.wages_end = wage[1];
           // 表单赋值
           this.form = this.editCustomerForm;
           this.addEditFormLoading = false;
@@ -785,6 +820,30 @@ export default {
       this.isAddForm = false;
       // 显示添加表单
       this.addCustomerDialogVisible = true;
+    },
+
+    // 保存编辑
+    saveEditCustomerInfo() {
+      // 更新需求工工资
+      this.editCustomerForm.demand_salary =
+        this.wages_start + "~" + this.wages_end;
+
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          updateCustomer(this.editCustomerForm).then((res) => {
+            let { code, msg } = res;
+            if (code === 200) {
+              this.$message.success(msg);
+              this.addCustomerDialogVisible = false;
+              this.getAllCustomerInfo();
+            } else {
+              this.$message.error(msg);
+            }
+          });
+        } else {
+          return false;
+        }
+      });
     },
 
     // 选择删除
@@ -806,8 +865,9 @@ export default {
 
     // 表格删除
     DeleteFormBtn(id) {
-      deleteCustomer([id]).then((res) => {
+      deleteCustomer(id).then((res) => {
         let { code, msg } = res;
+        console.log(res);
         if (code === 200) {
           this.$message.success(msg);
           this.getAllCustomerInfo();
@@ -850,6 +910,11 @@ export default {
       this.sleep = "";
       this.goSchool = "";
       this.otherContent = "";
+
+      // 清除
+      this.addCustomerForm.demand_salary = "";
+      this.wages_start = "";
+      this.wages_end = "";
     },
   },
   components: {

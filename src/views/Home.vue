@@ -66,6 +66,7 @@ export default {
         { navname: "订单管理", path: "/home/demand" },
         { navname: "售后管理", path: "/home/feedback" },
         { navname: "报表管理", path: "/home/customquery" },
+        { navname: "系统管理", path: "/home/sysmanage" },
       ],
       asideNavList: [
         [
@@ -171,6 +172,13 @@ export default {
             icon: "icon el-icon-notebook-2",
           },
         ],
+        [
+          {
+            navname: "系统设置",
+            path: "/home/sysmanage",
+            icon: "icon el-icon-setting",
+          },
+        ]
       ],
       selectAsides: null,
     };

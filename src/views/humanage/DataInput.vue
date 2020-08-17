@@ -32,263 +32,297 @@
               @selection-change="handleSelectionChange"
               v-loading="loading"
               border
+              @expand-change="expandShow"
             >
               <!-- 选择 -->
               <el-table-column type="selection" width="55"></el-table-column>
               <!-- 展示 -->
               <el-table-column type="expand">
                 <template slot-scope="scope">
-                  <el-row class="expand-row">
-                    <el-col :span="4">
-                      <span class="label-text">手机号</span>
-                      <span class="content-text">{{scope.row.mobile}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">工资要求</span>
-                      <span class="content-text">{{scope.row.salary}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">英语水平</span>
-                      <span class="content-text">{{scope.row.english}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">计算机水平</span>
-                      <span class="content-text">{{scope.row.computer}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">政治面貌</span>
-                      <span class="content-text">{{scope.row.political_status}}</span>
-                    </el-col>
-                  </el-row>
+                  <el-tabs v-model="activeName" class="staffInfo-wrap">
+                    <el-tab-pane label="客户详情" name="first">
+                      <el-row class="expand-row">
+                        <el-col :span="4">
+                          <span class="label-text">手机号</span>
+                          <span class="content-text">{{scope.row.mobile}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">工资要求</span>
+                          <span class="content-text">{{scope.row.salary}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">英语水平</span>
+                          <span class="content-text">{{scope.row.english}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">计算机水平</span>
+                          <span class="content-text">{{scope.row.computer}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">政治面貌</span>
+                          <span class="content-text">{{scope.row.political_status}}</span>
+                        </el-col>
+                      </el-row>
 
-                  <el-row class="expand-row">
-                    <el-col :span="4">
-                      <span class="label-text">生肖</span>
-                      <span class="content-text">{{scope.row.zodiac}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">休假要求</span>
-                      <span class="content-text">{{scope.row.salary}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">户口地址</span>
-                      <span
-                        class="content-text"
-                      >{{scope.row.census_p_text}}{{scope.row.cnnsus_c_text}}{{scope.row.cnnsus_d_text}}{{scope.row.census_address_desc}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">户口类型</span>
-                      <span class="content-text">{{scope.row.census_type}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">入职时间</span>
-                      <span class="content-text">{{scope.row.in_time}}</span>
-                    </el-col>
-                  </el-row>
+                      <el-row class="expand-row">
+                        <el-col :span="4">
+                          <span class="label-text">生肖</span>
+                          <span class="content-text">{{scope.row.zodiac}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">休假要求</span>
+                          <span class="content-text">{{scope.row.salary}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">户口地址</span>
+                          <span
+                            class="content-text"
+                          >{{scope.row.census_p_text}}{{scope.row.cnnsus_c_text}}{{scope.row.cnnsus_d_text}}{{scope.row.census_address_desc}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">户口类型</span>
+                          <span class="content-text">{{scope.row.census_type}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">入职时间</span>
+                          <span class="content-text">{{scope.row.in_time}}</span>
+                        </el-col>
+                      </el-row>
 
-                  <el-row class="expand-row">
-                    <el-col :span="4">
-                      <span class="label-text">学历</span>
-                      <span class="content-text">{{scope.row.education}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">现居住地</span>
-                      <span
-                        class="content-text"
-                      >{{scope.row.now_p_text}}{{scope.row.now_c_text}}{{scope.row.now_d_text}}{{scope.row.now_address_desc}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">服务技能</span>
-                      <span class="content-text">{{scope.row.service_skills}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">家用电器</span>
-                      <span class="content-text">{{scope.row.device}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">入职来源</span>
-                      <span
-                        class="content-text"
-                      >{{scope.row.recruiters_name}}：{{scope.row.recruiters_mobile}}</span>
-                    </el-col>
-                  </el-row>
+                      <el-row class="expand-row">
+                        <el-col :span="4">
+                          <span class="label-text">学历</span>
+                          <span class="content-text">{{scope.row.education}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">现居住地</span>
+                          <span
+                            class="content-text"
+                          >{{scope.row.now_p_text}}{{scope.row.now_c_text}}{{scope.row.now_d_text}}{{scope.row.now_address_desc}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">服务技能</span>
+                          <span class="content-text">{{scope.row.service_skills}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">家用电器</span>
+                          <span class="content-text">{{scope.row.device}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">入职来源</span>
+                          <span
+                            class="content-text"
+                          >{{scope.row.recruiters_name}}：{{scope.row.recruiters_mobile}}</span>
+                        </el-col>
+                      </el-row>
 
-                  <el-row class="expand-row">
-                    <el-col :span="4">
-                      <span class="label-text">血型</span>
-                      <span class="content-text">{{scope.row.blood}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">健康状况</span>
-                      <span class="content-text">{{scope.row.health}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">婚姻状况</span>
-                      <span class="content-text">{{scope.row.marital_status}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">员工状态</span>
-                      <span class="content-text">{{scope.row.person_state}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">保险</span>
-                      <span class="content-text">{{scope.row.agreement_amount}}</span>
-                    </el-col>
-                  </el-row>
+                      <el-row class="expand-row">
+                        <el-col :span="4">
+                          <span class="label-text">血型</span>
+                          <span class="content-text">{{scope.row.blood}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">健康状况</span>
+                          <span class="content-text">{{scope.row.health}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">婚姻状况</span>
+                          <span class="content-text">{{scope.row.marital_status}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">员工状态</span>
+                          <span class="content-text">{{scope.row.person_state}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">保险</span>
+                          <span class="content-text">{{scope.row.agreement_amount}}</span>
+                        </el-col>
+                      </el-row>
 
-                  <el-row class="expand-row">
-                    <el-col :span="4">
-                      <span class="label-text">身高</span>
-                      <span class="content-text">{{scope.row.height}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">体重</span>
-                      <span class="content-text">{{scope.row.weight}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">籍贯</span>
-                      <span class="content-text">{{scope.row.census}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">生日</span>
-                      <span class="content-text">{{scope.row.birthday}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">语言能力</span>
-                      <span class="content-text">{{scope.row.language}}</span>
-                    </el-col>
-                  </el-row>
+                      <el-row class="expand-row">
+                        <el-col :span="4">
+                          <span class="label-text">身高</span>
+                          <span class="content-text">{{scope.row.height}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">体重</span>
+                          <span class="content-text">{{scope.row.weight}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">籍贯</span>
+                          <span class="content-text">{{scope.row.census}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">生日</span>
+                          <span class="content-text">{{scope.row.birthday}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">语言能力</span>
+                          <span class="content-text">{{scope.row.language}}</span>
+                        </el-col>
+                      </el-row>
 
-                  <el-row class="expand-row">
-                    <el-col :span="4">
-                      <span class="label-text">录入人</span>
-                      <span class="content-text">{{scope.row.salary}}</span>
-                    </el-col>
-                    <el-col :span="5">
-                      <span class="label-text">家庭紧急联系</span>
-                      <span
-                        class="content-text"
-                      >{{scope.row.urgent_name}}：{{scope.row.urgent_mobile}}</span>
-                    </el-col>
-                    <el-col :span="8">
-                      <span class="label-text">安置协议</span>
-                      <span class="content-text">{{scope.row.agreement_amount}}</span>
-                    </el-col>
-                  </el-row>
+                      <el-row class="expand-row">
+                        <el-col :span="4">
+                          <span class="label-text">录入人</span>
+                          <span class="content-text">{{scope.row.salary}}</span>
+                        </el-col>
+                        <el-col :span="5">
+                          <span class="label-text">家庭紧急联系</span>
+                          <span
+                            class="content-text"
+                          >{{scope.row.urgent_name}}：{{scope.row.urgent_mobile}}</span>
+                        </el-col>
+                        <el-col :span="8">
+                          <span class="label-text">安置协议</span>
+                          <span class="content-text">{{scope.row.agreement_amount}}</span>
+                        </el-col>
+                      </el-row>
 
-                  <el-row class="expand-row">
-                    <el-col :span="12" style="display: flex">
-                      <span class="label-text">工作经历</span>
-                      <div
-                        class="content-text"
-                        v-for="(item, index) in scope.row.work_experience"
-                        :key="index"
+                      <el-row class="expand-row">
+                        <el-col :span="12" style="display: flex">
+                          <span class="label-text">工作经历</span>
+                          <div
+                            class="content-text"
+                            v-for="(item, index) in scope.row.work_experience"
+                            :key="index"
+                          >
+                            <el-col :span="24">{{item.job}}</el-col>
+                            <el-col :span="24">{{item.time.join('~')}}</el-col>
+                            <el-col :span="24">{{item.address}}</el-col>
+                            <el-col :span="24">{{item.content}}</el-col>
+                          </div>
+                        </el-col>
+                        <el-col :span="12" style="display: flex">
+                          <span class="label-text">家庭成员</span>
+                          <div
+                            class="content-text"
+                            v-for="(item, index) in scope.row.family_member"
+                            :key="index"
+                          >
+                            <el-col :span="24">{{item.name}}</el-col>
+                            <el-col :span="24">{{item.relation}}</el-col>
+                            <el-col :span="24">{{item.current_situation}}</el-col>
+                          </div>
+                        </el-col>
+                      </el-row>
+
+                      <el-row class="expand-row">
+                        <el-col :span="12" style="display: flex">
+                          <span class="label-text">培训经历</span>
+                          <div class="content-text">
+                            <el-col :span="24">月嫂</el-col>
+                            <el-col :span="24">2017年至2019年</el-col>
+                            <el-col :span="24">本公司</el-col>
+                            <el-col :span="24">照顾小孩、老年人、宠物</el-col>
+                          </div>
+                        </el-col>
+                      </el-row>
+                    </el-tab-pane>
+                    <el-tab-pane label="新增事件" name="second">
+                      <!-- 表单 -->
+                      <el-table
+                        :data="eventData"
+                        stripe
+                        style="width: 100%"
+                        height="250px"
+                        :default-sort="{prop: 'create_time', order: 'descending'}"
                       >
-                        <el-col :span="24">{{item.job}}</el-col>
-                        <el-col :span="24">{{item.time.join('~')}}</el-col>
-                        <el-col :span="24">{{item.address}}</el-col>
-                        <el-col :span="24">{{item.content}}</el-col>
-                      </div>
-                    </el-col>
-                    <el-col :span="12" style="display: flex">
-                      <span class="label-text">家庭成员</span>
-                      <div
-                        class="content-text"
-                        v-for="(item, index) in scope.row.family_member"
-                        :key="index"
-                      >
-                        <el-col :span="24">{{item.name}}</el-col>
-                        <el-col :span="24">{{item.relation}}</el-col>
-                        <el-col :span="24">{{item.current_situation}}</el-col>
-                      </div>
-                    </el-col>
-                  </el-row>
+                        <el-table-column
+                          prop="create_time"
+                          align="center"
+                          label="日期"
+                          width="180"
+                          sortable
+                        ></el-table-column>
+                        <el-table-column prop="event_type" align="center" label="事件类型" width="180">
+                          <template slot-scope="scope">
+                            <p v-if="scope.row.event_type == 1">
+                              <el-tag size="mini" type="info" effect="dark">黑名单</el-tag>
+                            </p>
+                            <p v-if="scope.row.event_type == 2">
+                              <el-tag size="mini" type="success" effect="dark">奖赏</el-tag>
+                            </p>
+                            <p v-if="scope.row.event_type == 3">
+                              <el-tag size="mini" type="danger" effect="dark">处罚</el-tag>
+                            </p>
+                          </template>
+                        </el-table-column>
+                        <el-table-column
+                          align="center"
+                          prop="content"
+                          :show-overflow-tooltip="true"
+                          label="事件内容"
+                        ></el-table-column>
+                        <el-table-column label="操作" align="center">
+                          <template slot-scope="scope">
+                            <el-button type="danger" icon="el-icon-delete" size="mini" circle></el-button>
+                          </template>
+                        </el-table-column>
+                      </el-table>
 
-                  <el-row class="expand-row">
-                    <el-col :span="12" style="display: flex">
-                      <span class="label-text">培训经历</span>
-                      <div class="content-text">
-                        <el-col :span="24">月嫂</el-col>
-                        <el-col :span="24">2017年至2019年</el-col>
-                        <el-col :span="24">本公司</el-col>
-                        <el-col :span="24">照顾小孩、老年人、宠物</el-col>
+                      <!-- 添加事件 -->
+                      <div class="option-wrap">
+                        <i class="el-icon-folder-add"></i> 增加事件
                       </div>
-                    </el-col>
-                  </el-row>
+                      <!-- 表单 -->
+                      <el-form
+                        ref="eventForm"
+                        class="eventForm"
+                        :model="eventForm"
+                        label-width="80px"
+                      >
+                        <el-form-item label="事件类型" prop="event_type">
+                          <el-select
+                            size="mini"
+                            v-model="eventForm.event_type"
+                            placeholder="请选择事件类型"
+                          >
+                            <el-option label="黑名单" value="1"></el-option>
+                            <el-option label="奖赏" value="2"></el-option>
+                            <el-option label="处罚" value="3"></el-option>
+                          </el-select>
+                        </el-form-item>
+                        <el-form-item label="事件内容" prop="content">
+                          <el-input
+                            size="mini"
+                            type="textarea"
+                            :rows="3"
+                            v-model="eventForm.content"
+                          ></el-input>
+                        </el-form-item>
+                      </el-form>
+                      <!-- 保存按钮 -->
+                      <el-row>
+                        <el-col :span="5" :offset="20">
+                          <el-button size="mini" type="primary" @click="saveEventData" round>保存</el-button>
+                        </el-col>
+                      </el-row>
+                    </el-tab-pane>
+                    <el-tab-pane label="经理评价" name="three">
+                      <el-row>
+                        <el-col :span="4">经理评价内容：
+                        </el-col>
+                        <el-col :span="20">该员工符合标准，给予通过</el-col>
+                      </el-row>
+                      <el-row style="margin-top: 30px">
+                        <el-col :span="3">评价：</el-col>
+                        <el-col :span="10">
+                          <el-input type="textarea"></el-input>
+                        </el-col>
+                      </el-row>
+                      <el-row style="margin-top: 30px">
+                        <el-col :span="5" :offset="12">
+                          <el-button type="primary" size="mini">保 存</el-button>
+                        </el-col>
+                      </el-row>
+                    </el-tab-pane>
+                  </el-tabs>
                 </template>
               </el-table-column>
               <el-table-column align="center" prop="name" label="姓名" width="100">
                 <template slot-scope="scope">
                   <div class="name-wrap">
-                    <el-popover
-                      placement="bottom-start"
-                      width="600"
-                      trigger="click"
-                      @hide="popoverHiden"
-                    >
-                      <!-- 内容 -->
-                      <el-tabs>
-                        <el-tab-pane label="新增事件">
-                          <!-- 表单 -->
-                          <el-table :data="eventData" stripe style="width: 100%">
-                            <el-table-column prop="time" align="center" label="日期" width="180"></el-table-column>
-                            <el-table-column
-                              prop="event_type"
-                              align="center"
-                              label="事件类型"
-                              width="180"
-                            ></el-table-column>
-                            <el-table-column align="center" prop="content" label="事件内容"></el-table-column>
-                            <el-table-column label="操作" align="center">
-                              <template slot-scope="scope">
-                                <el-button type="danger" icon="el-icon-delete" size="mini" circle></el-button>
-                              </template>
-                            </el-table-column>
-                          </el-table>
-
-                          <!-- 添加事件 -->
-                          <div class="option-wrap">
-                            <i class="el-icon-folder-add"></i> 增加事件
-                          </div>
-                          <!-- 表单 -->
-                          <el-form
-                            ref="eventForm"
-                            class="eventForm"
-                            :model="eventForm"
-                            label-width="80px"
-                          >
-                            <el-form-item label="事件类型" prop="event_type">
-                              <el-select
-                                size="mini"
-                                v-model="eventForm.event_type"
-                                placeholder="请选择事件类型"
-                              >
-                                <el-option label="黑名单" value="1"></el-option>
-                                <el-option label="奖赏" value="2"></el-option>
-                                <el-option label="处罚" value="3"></el-option>
-                              </el-select>
-                            </el-form-item>
-                            <el-form-item label="事件内容" prop="content">
-                              <el-input
-                                size="mini"
-                                type="textarea"
-                                :rows="3"
-                                v-model="eventForm.content"
-                              ></el-input>
-                            </el-form-item>
-                          </el-form>
-                          <!-- 保存按钮 -->
-                          <el-row>
-                            <el-col :span="5" :offset="20">
-                              <el-button size="mini" type="primary" @click="saveEventData" round>保存</el-button>
-                            </el-col>
-                          </el-row>
-                        </el-tab-pane>
-                      </el-tabs>
-                      <!-- 按钮显示 -->
-                      <el-button type="text" id="popoPlus" slot="reference" icon="el-icon-s-fold"></el-button>
-                    </el-popover>
-
                     <span style="margin-left: 10px">{{scope.row.name}}</span>
                   </div>
                 </template>
@@ -607,6 +641,7 @@ import {
   requestUserListDate,
   deleteStaff,
   getOneStraffInfo,
+  getEventInfo,
   saveEventInfo,
   uploadImage,
   getOneStaffImage,
@@ -645,16 +680,12 @@ export default {
         take_body: [],
         other: [],
       },
+      // 默认显示客户详情
+      activeName: "first",
       // 域名
       baseurl: "http://qqq.shihanphp.cn/",
       // 新增事件数据
-      eventData: [
-        {
-          time: "2012-12-02",
-          event_type: 1,
-          content: "重大拉黑事件",
-        },
-      ],
+      eventData: [],
       // 新增事件表单
       eventForm: {
         staff_id: "",
@@ -881,23 +912,44 @@ export default {
       eventVue.$emit("editstaffevent", id);
     },
 
+    //获取该员工的所有事件内容
+    eventTabsShow(staff_id) {
+      this.eventForm.staff_id = staff_id;
+      getEventInfo(staff_id).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          console.log(data);
+          this.eventData = data;
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+
+    // 展开是触发
+    expandShow(row, expandedRows) {
+      if(expandedRows.length == 0) return;
+      this.eventTabsShow(row.id)
+    },
+
     // 保存事件按钮
     saveEventData() {
-      let { event_type, content } = this.eventForm;
+      let { event_type, content, staff_id } = this.eventForm;
       if (event_type.trim() == "" || content.trim() == "") {
-        this.$message.error('不能为空')
-      }else {
-        saveEventInfo(this.eventForm).then(res => {
-          let {code, msg} = res
-          if(code === 200) {
-            this.$message.success(msg)
-            this.eventForm.event_type = ""
-            this.eventForm.content = ""
-          }else {
-            this.$message.error(msg)
+        this.$message.error("不能为空");
+      } else {
+        saveEventInfo(this.eventForm).then((res) => {
+          let { code, msg } = res;
+          if (code === 200) {
+            this.$message.success(msg);
+            this.eventForm.event_type = "";
+            this.eventForm.content = "";
+            this.eventTabsShow(staff_id);
+          } else {
+            this.$message.error(msg);
           }
-        })
-      };
+        });
+      }
     },
 
     /**
@@ -1073,6 +1125,10 @@ export default {
     .user-table-wrap {
       margin-top: 20px;
 
+      /deep/.staffInfo-wrap {
+        margin-left: 70px;
+      }
+
       /deep/.el-table__body-wrapper {
         overflow-x: hidden;
 
@@ -1096,7 +1152,6 @@ export default {
 }
 // 新增事件
 .option-wrap {
-  margin-top: 30px;
   width: 100%;
   height: 40px;
   line-height: 40px;

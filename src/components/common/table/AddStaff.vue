@@ -374,7 +374,13 @@
           <el-row>
             <el-col :span="8">
               <el-form-item label="自我评价" prop="self_evaluation">
-                <el-input type="textarea" autosize v-model="staffForm.self_evaluation"></el-input>
+                <el-input type="textarea" :autosize="{ minRows: 3, maxRows: 4}" v-model="staffForm.self_evaluation"></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="8">
+              <el-form-item label="面试评价" prop="">
+                <el-input :autosize="{ minRows: 3, maxRows: 4}" type="textarea"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -631,7 +637,7 @@ export default {
         now_address_desc: [
           { required: true, message: "请输入现居地址", trigger: "blur" },
         ],
-        job: [{ required: true, message: "请输入岗位", trigger: "change" }],
+        job: [{ required: true, message: "请输入岗位", trigger: "blur" }],
         spare_time: [{ required: true, message: "请输入空余时间", trigger: "blur" }],
       },
 

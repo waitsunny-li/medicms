@@ -8,14 +8,14 @@ import {
 // 获取所有客户需求等信息
 export function getCustomerInfo() {
   return request({
-    url: "",
+    url: "/customer/index",
     method: "get",
   })
 }
 // 添加客户需求数据
 export function saveCustomerInfo(data) {
   return request({
-    url: "",
+    url: "/customer/save",
     method: "post",
     data: data
   })
@@ -23,23 +23,32 @@ export function saveCustomerInfo(data) {
 // 获取单个客户的信息
 export function getOneCustomerInfo(id) {
   return request({
-    url: "",
+    url: "/customer/edit",
     method: "get",
     params: {
-      id
+      id: id
     }
   })
 }
 // 删除客户信息
-export function deleteCustomer(ids) {
+export function deleteCustomer(id) {
   return request({
-    url: "",
-    method: "post",
-    data: {
-      ids
+    url: "/customer/delete",
+    method: "get",
+    params: {
+      id: id
     }
   })
 }
+// 修改单个客户需求
+export function updateCustomer(data) {
+  return request({
+    url: "/customer/update",
+    method: "post",
+    data: data
+  })
+}
+
 
 
 /**
@@ -108,12 +117,12 @@ export function deleteInterview(id) {
   })
 }
 // 获取该订单的所有面试
-export function getInterviewInfo(id) {
+export function getInterviewInfo(customer_id) {
   return request({
-    url: "",
+    url: "/interview/index",
     method: "post",
     data: {
-      id: id
+      customer_id: customer_id
     }
   })
 }

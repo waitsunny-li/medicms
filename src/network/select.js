@@ -109,3 +109,18 @@ export function getKills() {
   })
 }
 
+// 获取需求前置
+export function getAllSelects() {
+  return request({
+    url: "/customer/create",
+    method: "get",
+  })
+}
+
+// 获取需求来源
+export function getAllSource() {
+  return request({
+    url: "/source/index",
+    method: "get",
+  })
+}

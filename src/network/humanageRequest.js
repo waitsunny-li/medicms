@@ -68,6 +68,17 @@ export function updateStraffInfo(data) {
   })
 }
 
+// 获取用户所有的事件内容
+export function getEventInfo(staff_id) {
+  return request({
+    url: "/event/index",
+    method: "get",
+    params: {
+      staff_id: staff_id
+    }
+  })
+}
+
 // 保存事件内容
 export function saveEventInfo(data) {
   return request({

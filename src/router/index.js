@@ -37,6 +37,9 @@ const StaffQuery = () => import('../views/reportmanage/StaffQuery')
 const OrderQuery = () => import('../views/reportmanage/OrderQuery')
 const ComplaintQuery = () => import('../views/reportmanage/ComplaintQuery')
 
+// 系统管理
+const SysManage = () => import('../views/systemmanage/SysManage')
+
 
 
 const routes = [{
@@ -230,6 +233,15 @@ const routes = [{
         },
         meta: {
           title: "投诉查询"
+        }
+      },
+      {
+        path: 'SysManage',
+        components: {
+          content: SysManage
+        },
+        meta: {
+          title: "系统管理"
         }
       },
     ]

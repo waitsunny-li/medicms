@@ -14,7 +14,14 @@
             </el-col>
           </el-row>
           <!-- 表单 -->
-          <el-table :data="feedFormData" style="width: 100%" border class="user-table-wrap" :height="scrollHeight">
+          <el-table
+            :data="feedFormData"
+            style="width: 100%"
+            border
+            class="user-table-wrap"
+            :height="scrollHeight"
+            v-loading="loading"
+          >
             <el-table-column prop="name" align="center" label="客户姓名" width="180"></el-table-column>
             <el-table-column align="center" prop="mobile" label="联络电话" width="180">
               <template slot-scope="scope">
@@ -22,11 +29,16 @@
                 {{scope.row.mobile}}
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="time" label="时间" width="180"></el-table-column>
-            <el-table-column align="center" prop="content" label="投诉事件" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column align="center" prop="is_solved" label="是否解决" width="180">
+            <el-table-column align="center" prop="complaint_time" label="时间" width="180"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="content"
+              label="投诉事件"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
+            <el-table-column align="center" prop="is_status" label="是否解决" width="180">
               <template slot-scope="scope">
-                <div v-if="scope.row.is_solved">
+                <div v-if="scope.row.is_status">
                   <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
                 </div>
                 <div v-else>
@@ -34,9 +46,9 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="is_dispatch" label="是否分配" width="180">
+            <el-table-column align="center" prop="is_assign" label="是否分配" width="180">
               <template slot-scope="scope">
-                <div v-if="scope.row.is_dispatch">已分配</div>
+                <div v-if="scope.row.is_assign">已分配</div>
                 <div v-else>未分配</div>
               </template>
             </el-table-column>
@@ -78,9 +90,9 @@
     >
       <!-- 表单 -->
       <el-form ref="form" :rules="addFeedRules" :model="form" label-width="80px">
-        <el-form-item label="日期" prop="time">
+        <el-form-item label="日期" prop="complaint_time">
           <el-date-picker
-            v-model="form.time"
+            v-model="form.complaint_time"
             type="datetime"
             placeholder="选择日期"
             format="yyyy-MM-dd HH:mm:ss"
@@ -101,7 +113,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="addFeedDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="addFeedDialogVisible = false">保 存</el-button>
+        <el-button size="mini" type="primary" @click="saveComplaintInfo">保 存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -110,20 +122,12 @@
 <script>
 import feedbackSearch from "components/common/search/feedbackSearch";
 import Pagination from "components/common/pagination/Pagination";
+import { saveComplaint, getComplaint } from "network/feedbackRequest";
 export default {
   name: "Feedback",
   data() {
     return {
       feedFormData: [
-        {
-          id: '1',
-          name: "小红时",
-          mobile: "13955844668",
-          time: "2020-05-12",
-          is_dispatch: false,
-          is_solved: false, // 是否解决
-          content: "你们家的阿姨态度恶劣，鸠占鹊巢！",
-        },
       ],
 
       // 当前页数
@@ -140,7 +144,7 @@ export default {
       addFeedForm: {
         name: "",
         mobile: "",
-        time: "",
+        complaint_time: "",
         content: "",
       },
 
@@ -174,9 +178,31 @@ export default {
   },
   watch: {},
   methods: {
+    // 获取投诉列表
+    getAllComplaints() {
+      this.loading = true
+      getComplaint().then((res) => {
+        let { code, data, msg } = res;
+        console.log(data)
+        if (code === 200) {
+          // 获取客户数据
+          this.feedFormData = data.data;
+          // 页数赋值
+          this.currentPage = data.current_page;
+          // 总数据条数
+          this.total = data.total;
+          // 每页的条
+          this.per_page = data.per_page;
+          this.loading = false;
+        } else {
+          this.$message.error(msg);
+          this.loading = true
+        }
+      });
+    },
     // 搜索按钮
     searchBtn(searchForm) {
-      console.log("客户反馈", searchForm)
+      console.log("客户反馈", searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
@@ -185,11 +211,33 @@ export default {
 
     // 添加投诉
     addFeedbackBtn() {
+      this.form = this.addFeedForm;
       // 获取当前时间
-      this.addFeedForm.time = new Date()
+      this.addFeedForm.complaint_time = new Date()
         .toLocaleString("chinese", { hour12: false })
         .replace(/\//g, "-");
+
       this.addFeedDialogVisible = true;
+    },
+
+    // 保存
+    saveComplaintInfo() {
+      this.$refs.form.validate((valid) => {
+        if (valid) {
+          saveComplaint(this.addFeedForm).then((res) => {
+            let { code, msg } = res;
+            if (code === 200) {
+              this.$message.success(msg);
+              this.addFeedDialogVisible = false
+              this.getAllComplaints()
+            } else {
+              this.$message.error(msg);
+            }
+          });
+        } else {
+          return false;
+        }
+      });
     },
 
     // 添加投诉框的关闭事件
@@ -199,15 +247,15 @@ export default {
 
     // 删除
     deleteSuccess(id) {
-      console.log(id)
-    }
+      console.log(id);
+    },
   },
   components: {
     feedbackSearch,
-    Pagination
+    Pagination,
   },
   created() {
-    this.form = this.addFeedForm;
+    this.getAllComplaints()
   },
 };
 </script>

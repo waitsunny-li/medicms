@@ -31,7 +31,7 @@
             <el-table-column align="center" prop="state" label="状态"></el-table-column>
             <el-table-column align="center" label="操作">
               <template slot-scope="scope">
-                <el-button type="primary" size="mini" @click="printDispatchBtn">打印派出单</el-button>
+                <el-button type="primary" size="mini" @click="printDispatchBtn">查看派出单</el-button>
               </template>
             </el-table-column>
           </el-table>

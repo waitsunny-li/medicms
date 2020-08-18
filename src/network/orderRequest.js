@@ -117,12 +117,13 @@ export function deleteInterview(id) {
   })
 }
 // 获取该订单的所有面试
-export function getInterviewInfo(customer_id) {
+export function getInterviewInfo(idObj) {
   return request({
     url: "/interview/index",
-    method: "post",
-    data: {
-      customer_id: customer_id
+    method: "get",
+    params: {
+      customer_id: idObj.customer_id ? idObj.customer_id : "",
+      staff_id: idObj.staff_id ? idObj.staff_id : ""
     }
   })
 }
@@ -137,9 +138,9 @@ export function getFollowUpInfo(id) {
   })
 }
 // 保存面试记录
-export function saveInterviewInfo(data) {
+export function saveInterview(data) {
   return request({ 
-    url: "",
+    url: "/interview/save",
     method: "post",
     data: data
   })
@@ -148,6 +149,26 @@ export function saveInterviewInfo(data) {
 export function saveFollowUpInfo(data) {
   return request({ 
     url: "",
+    method: "post",
+    data: data
+  })
+}
+
+/**
+ * 销售回访
+ */
+// 获取回访记录
+export function getSalesVisitInfo() {
+  return request({ 
+    url: "/visit/index",
+    method: "get",
+  })
+}
+
+// 保存回访记录
+export function saveSalesVisitInfo(data) {
+  return request({ 
+    url: "/visit/save",
     method: "post",
     data: data
   })

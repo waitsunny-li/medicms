@@ -131,6 +131,10 @@
                         </template>
                       </el-table-column>
                     </el-table>
+
+                    <div class="add-wrap" style="margin-top: 20px; ">
+                      <el-button size="mini">添加面试</el-button>
+                    </div>
                   </el-tab-pane>
                   <el-tab-pane label="跟进记录" name="third">
                     <!-- 表单 -->
@@ -309,6 +313,12 @@
                 <p v-if="scope.row.state == 4">取消</p>
               </template>
             </el-table-column>
+            <el-table-column
+              align="center"
+              prop="create_time"
+              label="录入时间"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
             <el-table-column align="center" prop="is_success" label="是否完成">
               <template slot-scope="scope">
                 <div v-if="scope.row.is_success">
@@ -325,6 +335,7 @@
                 </div>
               </template>
             </el-table-column>
+
             <!-- 操作 -->
             <el-table-column label="操作" align="center" width="140px">
               <template slot-scope="scope">
@@ -543,7 +554,7 @@
         label-width="80px"
         style="width: 100%; margin-top: 10px"
       >
-        <!-- <el-row>
+        <el-row>
           <el-col :span="8">
             <el-form-item label-width="110px" label="面试人员编号" prop="staff_number">
               <el-autocomplete
@@ -566,7 +577,7 @@
             </el-form-item>
           </el-col>
          
-        </el-row>-->
+        </el-row>
         <el-row>
           <el-col :span="5">
             <el-form-item label="是否通过" prop="is_success">
@@ -584,7 +595,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="editInterviewDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="saveInterviewInfo">确 定</el-button>
+        <el-button size="mini" type="primary" @click="saveInterviewInfo">保 存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -603,7 +614,7 @@ import {
   saveFisrstStaff,
   deleteInterview,
   getInterviewInfo,
-  saveInterviewInfo,
+  saveInterview,
   getFollowUpInfo,
   saveFollowUpInfo,
   getOneCustomerInfo,
@@ -750,13 +761,11 @@ export default {
       interviewLoading: false,
 
       // 编辑面试
-      editInterviewDialogVisible: false,
+      editInterviewDialogVisible: true,
       interviewForm: {
-        staff_number: "",
-        name: "",
-        mobile: "",
+        staff_id: "",
         interviewer_content: "",
-        is_success: false,
+        status: "",
       },
       interviewFormRules: {
         staff_number: [
@@ -907,14 +916,20 @@ export default {
 
     // 显示面试和跟进
     expandShow(row, expandedRows) {
-      if(expandedRows.length == 0) return;
+      if (expandedRows.length == 0) return;
       // 赋值当前点击展开的订单号
       this.currentOrderId = row.id;
-      console.log(row.id)
+      console.log(row.id);
       // // 获取面试记录
-      // this.getAllInterviewInfo(row.id);
+      this.getAllInterviewInfo(row.id);
       // // 获取跟进记录
       // this.getAllFollowUpInfo(id);
+    },
+
+
+    // 搜索选中
+    handleSelect(item) {
+      console.log(item);
     },
 
     // 编辑订单弹框的关闭回调
@@ -986,8 +1001,9 @@ export default {
     // 定义获取面试记录的函数
     getAllInterviewInfo(id) {
       this.interviewLoading = true;
-      getInterviewInfo(id).then((res) => {
+      getInterviewInfo({ customer_id: id }).then((res) => {
         let { code, data, msg } = res;
+        console.log(res);
         if (code === 200) {
           this.interviewFormData = data;
           this.interviewLoading = false;
@@ -1024,7 +1040,9 @@ export default {
     },
 
     // 展开面试是回调(展示时开始获取所有面试，和所有跟进)
-    interviewShow(id) {},
+    interviewShow(id) {
+      // this.getAllInterviewInfo(id)
+    },
     inaterviewhide() {
       console.log("jjj");
       this.$refs.interviewform.resetFields();
@@ -1065,7 +1083,7 @@ export default {
     saveInterviewInfo() {
       this.$refs.interviewform.validate((valid) => {
         if (valid) {
-          saveInterviewInfo(this.interviewForm).then((res) => {
+          saveInterview(this.interviewForm).then((res) => {
             let { code, msg } = res;
             if (code === 200) {
               this.$messagew.success(msg);

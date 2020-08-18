@@ -8,7 +8,14 @@
         <!-- 表单 -->
         <el-card class="table-content" :style="{height: screenHeight}">
           <!-- 表单 -->
-          <el-table :data="customerListData" style="width: 100%" border class="user-table-wrap" :height="scrollHeight">
+          <el-table
+            :data="customerListData"
+            style="width: 100%"
+            border
+            class="user-table-wrap"
+            :height="scrollHeight"
+            v-loading="loading"
+          >
             <el-table-column prop="name" align="center" label="客户姓名" width="100"></el-table-column>
             <el-table-column align="center" prop="mobile" label="联络电话" width="180">
               <template slot-scope="scope">
@@ -19,8 +26,10 @@
             <el-table-column align="center" prop="family_address" label="地址" width="180"></el-table-column>
             <el-table-column align="center" prop="service_type" label="服务类型" width="100">
               <template slot-scope="scope">
-                <p v-if="scope.row.service_type == 1">长期</p>
-                <p v-if="scope.row.service_type == 2">短期</p>
+                <p v-if="scope.row.service_type == 0">{{scope.row.service_other}}</p>
+                <p v-if="scope.row.service_type == 1">全日住家型</p>
+                <p v-if="scope.row.service_type == 2">日间照料型</p>
+                <p v-if="scope.row.service_type == 3">计时收费型</p>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="family_people" label="家庭成员">
@@ -28,13 +37,20 @@
                 slot-scope="scope"
               >{{scope.row.family_people.children}}小孩，{{scope.row.family_people.adlut}}成人，{{scope.row.family_people.old}}老人</template>
             </el-table-column>
-            <el-table-column align="center" prop="state" label="状态"></el-table-column>
+            <el-table-column align="center" prop="state" label="状态">
+              <template slot-scope="scope">
+                <p v-if="scope.row.state == 0">面试中</p>
+                <p v-if="scope.row.state == 1">进行中</p>
+                <p v-if="scope.row.state == 3">结束</p>
+                <p v-if="scope.row.state == 4">取消</p>
+              </template>
+            </el-table-column>
             <el-table-column align="center" label="操作" width="180">
               <template slot-scope="scope">
                 <el-button
                   type="text"
                   size="mini"
-                  @click="lookVisitBtn(scope.row.name, scope.row.id)"
+                  @click="lookVisitBtn(scope.row.name, scope.row.visit)"
                 >查看回访记录</el-button>
                 <el-button
                   type="primary"
@@ -62,8 +78,8 @@
       <!-- 表单 -->
       <el-row>
         <el-col :span="24">
-          <el-table :data="visitListData" border>
-            <el-table-column align="center" prop="time" label="日期" width="180px"></el-table-column>
+          <el-table :data="customerVisitList" border>
+            <el-table-column align="center" prop="create_time" label="日期" width="180px"></el-table-column>
             <el-table-column align="center" prop="content" label="内容"></el-table-column>
           </el-table>
         </el-col>
@@ -73,9 +89,16 @@
     <!-- 添加回访记录 -->
     <el-dialog :title="addTitle" :visible.sync="addVisitDialogVisible" width="500px" center>
       <!-- 表单 -->
-      <el-form ref="addVisitForm" :model="addVisitForm" label-width="80px">
+      <el-form ref="addVisitForm" :rules="addVisitRules" :model="addVisitForm" label-width="80px">
         <el-form-item label="时间" prop="time">
-          <el-input size="mini" v-model="addVisitForm.time" style="width: 100px"></el-input>
+          <el-date-picker
+            v-model="addVisitForm.date"
+            type="date"
+            size="mini"
+            placeholder="选择日期"
+            format="yyyy 年 MM 月 dd 日"
+            value-format="yyyy-MM-dd"
+          ></el-date-picker>
         </el-form-item>
         <el-form-item label="记录" prop="content">
           <el-input type="textarea" size="mini" v-model="addVisitForm.content"></el-input>
@@ -83,7 +106,7 @@
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="addVisitDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="addVisitDialogVisible = false">保 存</el-button>
+        <el-button size="mini" type="primary" @click="saveVisitInfo">保 存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -92,62 +115,24 @@
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
+import { getSalesVisitInfo, saveSalesVisitInfo } from "network/orderRequest";
+
 export default {
   name: "SalesVisit",
   data() {
     return {
       // 客户订单
-      customerListData: [
-        {
-          id: "1",
-          name: "李大侠",
-          family_area: "100.25",
-          family_hometown: "安徽安庆",
-          family_address: "家庭住址",
-          service_type: "1",
-          service_other: "其他内容",
-          family_people: {
-            children: 1,
-            old: 2,
-            adlut: 3,
-          },
-          service_content: [],
-          demand_age: "20-30",
-          demand_sex: 0,
-          demand_education: "高中",
-          demand_job: ["育婴师", "管家"],
-          demand_zodiac: "牛",
-          demand_experience: "2-3年",
-          demand_census: "不限",
-          demand_cooking: "川菜",
-          demand_service_skill: [],
-          mobile: "13695604265",
-          state: "已完成",
-          source: "来源",
-        },
-      ],
+      customerListData: [],
+      // 回访记录
+      customerVisitList: [],
       // 当前页数
       currentPage: 1,
       // 总数据条数
       total: null,
       // 每页的条数
       per_page: null,
+      loading: false,
 
-      // 回访记录数据
-      visitListData: [
-        {
-          time: "第七天",
-          content: "我感觉服务人员很是不错，不偷懒",
-        },
-        {
-          time: "第一个月",
-          content: "我感觉服务人员很是不错，不偷懒",
-        },
-        {
-          time: "第二个月",
-          content: "我感觉服务人员很是不错，不偷懒",
-        },
-      ],
       // 显示回访记录
       visitDialogVisible: false,
       // 显示目前的查看的客户
@@ -159,8 +144,14 @@ export default {
       addTitle: "",
       // 添加回访表单
       addVisitForm: {
-        time: "",
+        customer_id: "",
+        date: "",
         content: "",
+      },
+      addVisitRules: {
+        content: [
+          { required: true, message: "请输入记录内容", trigger: "blur" },
+        ],
       },
     };
   },
@@ -173,10 +164,34 @@ export default {
     },
   },
   watch: {},
+  created() {
+    this.getAllSaleVisitInfo();
+  },
   methods: {
+    // 获取全部回访记录
+    getAllSaleVisitInfo() {
+      getSalesVisitInfo().then((res) => {
+        let { code, data, msg } = res;
+        console.log(data);
+        if (code === 200) {
+          // 获取客户数据
+          this.customerListData = data.data;
+          // 页数赋值
+          this.currentPage = data.current_page;
+          // 总数据条数
+          this.total = data.total;
+          // 每页的条
+          this.per_page = data.per_page;
+          this.loading = false;
+        } else {
+          this.$message.error(msg);
+          this.loading = true;
+        }
+      });
+    },
     // 搜索按钮点击
     searchBtn(searchForm) {
-      console.log('销售回访', searchForm)
+      console.log("销售回访", searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
@@ -184,8 +199,9 @@ export default {
     },
 
     // 查看回访记录按钮
-    lookVisitBtn(name, id) {
+    lookVisitBtn(name, visit) {
       this.lookTitle = `查看客户（${name}）的回访记录`;
+      this.customerVisitList = visit;
       this.visitDialogVisible = true;
     },
 
@@ -193,11 +209,36 @@ export default {
     addVisitBtn(name, id) {
       this.addTitle = `为客户（${name}）添加记录`;
       this.addVisitDialogVisible = true;
+      this.addVisitForm.customer_id = id;
+      // 获取当前时间
+      this.addVisitForm.date = new Date()
+        .toLocaleDateString()
+        .replace(/\//g, "-");
+    },
+
+    // 保存记录
+    saveVisitInfo() {
+      this.$refs.addVisitForm.validate((valid) => {
+        if (valid) {
+          saveSalesVisitInfo(this.addVisitForm).then((res) => {
+            let { code, msg } = res;
+            if (code === 200) {
+              this.$message.success(msg);
+              this.addVisitDialogVisible = false;
+              this.getAllSaleVisitInfo();
+            } else {
+              this.$message.error(msg);
+            }
+          });
+        } else {
+          return false;
+        }
+      });
     },
   },
   components: {
     CustomerSearch,
-    Pagination
+    Pagination,
   },
 };
 </script>

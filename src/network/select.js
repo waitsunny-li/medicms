@@ -35,7 +35,7 @@ export function getDistrict(pid) {
 // 获取语言能力分组
 export function getLanguage() {
   return request({
-    url: '/information',
+    url: '/information/index',
     method: 'get',
     params: {
       category_id: 1
@@ -46,7 +46,7 @@ export function getLanguage() {
 // 获取英语水平分组
 export function getEnglish() {
   return request({
-    url: '/information',
+    url: '/information/index',
     method: 'get',
     params: {
       category_id: 2
@@ -57,7 +57,7 @@ export function getEnglish() {
 // 获取计算机水平分组
 export function getComputer() {
   return request({
-    url: '/information',
+    url: '/information/index',
     method: 'get',
     params: {
       category_id: 3
@@ -68,7 +68,7 @@ export function getComputer() {
 // 获取厨艺水平分组
 export function getCooking() {
   return request({
-    url: '/information',
+    url: '/information/index',
     method: 'get',
     params: {
       category_id: 4
@@ -79,7 +79,7 @@ export function getCooking() {
 // 获取家用电器水平分组
 export function getWiring() {
   return request({
-    url: '/information',
+    url: '/information/index',
     method: 'get',
     params: {
       category_id: 5
@@ -90,7 +90,7 @@ export function getWiring() {
 // 获取岗位水平分组
 export function getJob() {
   return request({
-    url: '/information',
+    url: '/information/index',
     method: 'get',
     params: {
       category_id: 6
@@ -101,7 +101,7 @@ export function getJob() {
 // 获取服务技能水平分组
 export function getKills() {
   return request({
-    url: '/information',
+    url: '/information/index',
     method: 'get',
     params: {
       category_id: 7

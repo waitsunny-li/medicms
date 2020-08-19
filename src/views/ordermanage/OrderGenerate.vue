@@ -64,30 +64,32 @@
                       stripe
                       :data="interviewFormData"
                       style="width: 100%"
-                      height="450px"
+                      height="350px"
                       v-loading="interviewLoading"
                     >
-                      <el-table-column align="center" label="面试日期" prop="time"></el-table-column>
-                      <el-table-column
-                        prop="interviewer_number"
-                        align="center"
-                        label="面试人员编号"
-                        width="120"
-                      ></el-table-column>
-                      <el-table-column align="center" label="姓名" width="100" prop="name">
+                      <el-table-column align="center" label="面试日期" prop="interview_time"></el-table-column>
+
+                      <el-table-column align="center" label="姓名" width="100" prop="staff">
                         <template slot-scope="scope">
                           <el-button
-                            @click="staffInfoBtn(scope.row.staff_info.name, scope.row.staff_info.id)"
+                            @click="staffInfoBtn(scope.row.staff)"
                             type="text"
                             size="mini"
-                          >{{scope.row.staff_info.name}}</el-button>
+                          >{{scope.row.staff.name}}</el-button>
                         </template>
                       </el-table-column>
-                      <el-table-column align="center" label="手机号" prop="tel"></el-table-column>
-                      <el-table-column align="center" label="面试内容" prop="interviewer_content"></el-table-column>
-                      <el-table-column align="center" label="是否面试完成" prop="is_success">
+                      <el-table-column align="center" label="电话" prop="staff.mobile"></el-table-column>
+                      <el-table-column align="center" label="状态">
                         <template slot-scope="scope">
-                          <p v-if="scope.row.is_success">
+                          <p v-if="scope.row.status == 0">面试中</p>
+                          <p v-if="scope.row.status == 1">面试成功</p>
+                          <p v-if="scope.row.status == 2">不通过</p>
+                        </template>
+                      </el-table-column>
+                      <el-table-column align="center" label="面试内容" prop="content"></el-table-column>
+                      <el-table-column align="center" label="是否面试完成" prop="status">
+                        <template slot-scope="scope">
+                          <p v-if="scope.row.status == 1">
                             <i
                               class="el-icon-success"
                               style="font-size: 18px; color: #67C23A;vertical-align: middle;"
@@ -109,8 +111,8 @@
                             type="primary"
                             icon="el-icon-edit"
                             circle
+                            @click="editInterview(scope.row.id)"
                             style="margin-right: 5px"
-                            @click="editInterviewBtn(scope.row.id)"
                           ></el-button>
                           <el-popconfirm
                             confirmButtonText="确定"
@@ -133,7 +135,15 @@
                     </el-table>
 
                     <div class="add-wrap" style="margin-top: 20px; ">
-                      <el-button size="mini">添加面试</el-button>
+                      <el-row>
+                        <el-col :span="2" :offset="22">
+                          <el-button
+                            type="primary"
+                            size="mini"
+                            @click="addInterviewBtn(scope.row.id)"
+                          >添加面试</el-button>
+                        </el-col>
+                      </el-row>
                     </div>
                   </el-tab-pane>
                   <el-tab-pane label="跟进记录" name="third">
@@ -145,14 +155,36 @@
                       height="250px"
                       v-loading="followupLoading"
                     >
-                      <el-table-column prop="time" align="center" label="日期" width="120"></el-table-column>
-                      <el-table-column prop="record" align="center" label="跟单记录情况" width="180"></el-table-column>
-                      <el-table-column prop="recommend" align="center" label="推荐面试人员" width="110"></el-table-column>
-                      <el-table-column prop="interview_content" align="center" label="需求状态"></el-table-column>
-                      <el-table-column prop="interview_content" align="center" label="面试情况"></el-table-column>
+                      <el-table-column prop="create_time" align="center" label="开始时间"></el-table-column>
+                      <el-table-column align="center" label="服务人员" width="180">
+                        <template slot-scope="scope">
+                          <i class="el-icon-user-solid"></i>
+                          {{scope.row.staff.name}}
+                        </template>
+                      </el-table-column>
+                      <el-table-column prop="total_time" align="center" label="时长" width="180">
+                        <template slot-scope="scope">{{scope.row.total_time}}h</template>
+                      </el-table-column>
+                      <el-table-column prop="content" align="center" label="跟单记录情况" width="180"></el-table-column>
+
                       <el-table-column label="操作" align="center">
                         <template slot-scope="scope">
-                          <el-button type="danger" icon="el-icon-delete" size="mini" circle></el-button>
+                          <el-popconfirm
+                            confirmButtonText="确定"
+                            cancelButtonText="不用了"
+                            icon="el-icon-info"
+                            iconColor="red"
+                            title="这一段跟进确定删除吗？"
+                            @onConfirm="followUpDeleteBtn(scope.row.id)"
+                          >
+                            <el-button
+                              slot="reference"
+                              type="danger"
+                              icon="el-icon-delete"
+                              size="mini"
+                              circle
+                            ></el-button>
+                          </el-popconfirm>
                         </template>
                       </el-table-column>
                     </el-table>
@@ -176,55 +208,61 @@
                     >
                       <el-row>
                         <el-col :span="6">
-                          <el-form-item label="日期" prop="time" label-width="50px">
+                          <el-form-item label="开始时间" prop="time" label-width="100px">
                             <el-date-picker
-                              v-model="addFollowUpForm.time"
-                              type="date"
+                              v-model="addFollowUpForm.start_time"
+                              type="datetime"
                               size="mini"
                               placeholder="选择日期"
-                              format="yyyy 年 MM 月 dd 日"
-                              value-format="yyyy-MM-dd"
-                              style="width: 150px"
+                              format="yyyy-MM-dd HH:mm:ss"
+                              value-format="yyyy-MM-dd HH:mm:ss"
+                              style="width: 180px"
                               class="followDate"
                             ></el-date-picker>
                           </el-form-item>
                         </el-col>
                         <el-col :span="8">
-                          <el-form-item label-width="100px" label="推荐面试人员" prop="recommend">
-                            <el-input size="mini" v-model="addFollowUpForm.recommend"></el-input>
-                          </el-form-item>
-                        </el-col>
-                        <el-col :span="10">
-                          <el-form-item label="面试情况" prop="interview_content">
-                            <el-input size="mini" v-model="addFollowUpForm.interview_content"></el-input>
+                          <el-form-item label-width="100px" label="当前服务人员">
+                            <div v-if="scope.row.staff_id == 0">
+                              <el-tag type="danger" effect="dark">暂无服务人员</el-tag>
+                            </div>
+                            <div v-else>
+                              <el-input size="mini" disabled v-model="scope.row.staff.name"></el-input>
+                            </div>
                           </el-form-item>
                         </el-col>
                       </el-row>
                       <el-row>
                         <el-col :span="6">
-                          <el-form-item label="需求状态" prop="state">
-                            <el-select
-                              size="mini"
-                              v-model="addFollowUpForm.state"
-                              placeholder="请选择"
-                            >
-                              <el-option label="跟进中" value="跟进中"></el-option>
-                              <el-option label="撤销" value="撤销"></el-option>
-                              <el-option label="换人" value="换人"></el-option>
-                            </el-select>
+                          <el-form-item label="时长" prop="total_time">
+                            <el-input size="mini" v-model="addFollowUpForm.total_time"></el-input>
                           </el-form-item>
                         </el-col>
                         <el-col :span="17" :offset="1">
-                          <el-form-item label="跟单记录情况" label-width="110px" prop="record">
-                            <el-input type="textarea" v-model="addFollowUpForm.record"></el-input>
+                          <el-form-item label="跟单记录情况" label-width="110px" prop="content">
+                            <el-input
+                              type="textarea"
+                              style="width: 400px"
+                              v-model="addFollowUpForm.content"
+                            ></el-input>
                           </el-form-item>
                         </el-col>
                       </el-row>
                     </el-form>
                     <!-- 保存按钮 -->
                     <el-row>
-                      <el-col :span="5" :offset="22">
-                        <el-button size="mini" type="primary" round>保 存</el-button>
+                      <el-col :span="3" :offset="21">
+                        <div v-if="scope.row.staff_id == 0">
+                          <el-button disabled size="mini" type="primary" round>保 存</el-button>
+                        </div>
+                        <div v-else>
+                          <el-button
+                            size="mini"
+                            type="primary"
+                            round
+                            @click="saveFollowUp(scope.row.id)"
+                          >保 存</el-button>
+                        </div>
                       </el-col>
                     </el-row>
                   </el-tab-pane>
@@ -319,26 +357,37 @@
               label="录入时间"
               :show-overflow-tooltip="true"
             ></el-table-column>
-            <el-table-column align="center" prop="is_success" label="是否完成">
+            <el-table-column align="center" prop="staff_id" label="是否完成">
               <template slot-scope="scope">
-                <div v-if="scope.row.is_success">
-                  <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
+                <div v-if="scope.row.staff_id != 0">
+                  <el-tooltip class="item" effect="dark" content="Top Center 提示文字" placement="top">
+                    <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
+                  </el-tooltip>
                 </div>
-                <div v-else>
-                  <el-button
-                    size="mini"
-                    class="el-icon-s-claim"
-                    type="info"
-                    @click="addSuccessOrder(scope.row.id)"
-                    circle
-                  ></el-button>
-                </div>
+                <div v-else>未完成</div>
               </template>
             </el-table-column>
 
             <!-- 操作 -->
             <el-table-column label="操作" align="center" width="140px">
               <template slot-scope="scope">
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :enterable="false"
+                  content="添加或编辑员工"
+                  placement="top"
+                >
+                  <el-button
+                    @click="addSuccessOrder(scope.row.id)"
+                    size="mini"
+                    type="primary"
+                    class="el-icon-user"
+                    circle
+                    style="margin-right: 10px"
+                  ></el-button>
+                </el-tooltip>
+
                 <el-tooltip
                   class="item"
                   effect="dark"
@@ -408,15 +457,23 @@
       <!-- 内容 -->
       <div class="content">
         <el-form ref="orderSuccessForm" :model="orderSuccessForm">
-          <el-form-item label="是否完成" prop="is_success" label-width="70px">
-            <el-switch size="mini" active-color="#13ce66" v-model="orderSuccessForm.is_success"></el-switch>
-          </el-form-item>
-          <el-form-item label-width="40px" label="编号" prop="staff_number">
-            <el-input size="mini" v-model="orderSuccessForm.staff_number"></el-input>
-          </el-form-item>
-          <el-form-item label-width="40px" label="姓名" prop="name">
-            <el-input size="mini" v-model="orderSuccessForm.name"></el-input>
-          </el-form-item>
+          <el-row>
+            <el-form-item label-width="80px" label="姓名" prop="name">
+              <el-autocomplete
+                v-model="orderSuccessForm.name"
+                :fetch-suggestions="querySearchAsync"
+                size="mini"
+                placeholder="请输入面试人员姓名"
+                @select="handleSelect"
+              ></el-autocomplete>
+            </el-form-item>
+          </el-row>
+
+          <el-row>
+            <el-form-item label-width="80px" label="手机号" prop="mobile">
+              <el-input disabled v-model="orderSuccessForm.mobile" size="mini"></el-input>
+            </el-form-item>
+          </el-row>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
@@ -537,11 +594,11 @@
       </span>
     </el-dialog>
 
-    <!-- 编辑面试 -->
+    <!-- 添加面试 -->
     <el-dialog
-      title="提示"
-      :visible.sync="editInterviewDialogVisible"
-      width="30%"
+      title="添加面试"
+      :visible.sync="addInterviewDialogVisible"
+      width="800px"
       center
       @close="inaterviewhide"
       append-to-body
@@ -555,47 +612,79 @@
         style="width: 100%; margin-top: 10px"
       >
         <el-row>
-          <el-col :span="8">
-            <el-form-item label-width="110px" label="面试人员编号" prop="staff_number">
-              <el-autocomplete
-                v-model="interviewForm.staff_number"
-                :fetch-suggestions="querySearchAsync"
+          <el-col :span="24">
+            <el-form-item label="面试时间" prop="interview_time">
+              <el-date-picker
+                v-model="interviewForm.interview_time"
+                type="datetime"
                 size="mini"
-                placeholder="请输入面试人员编号"
-                @select="handleSelect"
-              ></el-autocomplete>
-            </el-form-item>
-          </el-col>
-          <el-col :span="5">
-            <el-form-item label="姓名" prop="name">
-              <el-input v-model="interviewForm.name" size="mini"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="手机号" prop="mobile">
-              <el-input v-model="interviewForm.mobile" size="mini"></el-input>
-            </el-form-item>
-          </el-col>
-         
-        </el-row>
-        <el-row>
-          <el-col :span="5">
-            <el-form-item label="是否通过" prop="is_success">
-              <el-switch v-model="interviewForm.is_success" active-color="#13ce66"></el-switch>
+                placeholder="选择日期"
+                format="yyyy-MM-dd HH:mm:ss"
+                value-format="yyyy-MM-dd HH:mm:ss"
+              ></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
-            <el-form-item label="面试内容" prop="interviewer_content">
-              <el-input v-model="interviewForm.interviewer_content" type="textarea"></el-input>
+            <el-form-item label="是否通过" prop="status">
+              <el-radio-group v-model="interviewForm.status">
+                <el-radio :label="0">面试中</el-radio>
+                <el-radio :label="1">通过</el-radio>
+                <el-radio :label="2">不通过</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="8">
+            <el-form-item label-width="110px" label="面试人员姓名" prop="name">
+              <el-autocomplete
+                v-model="interviewForm.name"
+                :fetch-suggestions="querySearchAsync"
+                size="mini"
+                placeholder="请输入面试人员姓名"
+                @select="handleSelect"
+              ></el-autocomplete>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8">
+            <el-form-item label="手机号" prop="mobile">
+              <el-input disabled v-model="interviewForm.mobile" size="mini"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="面试记录" prop="content">
+              <el-input v-model="interviewForm.content" type="textarea"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="editInterviewDialogVisible = false">取 消</el-button>
+        <el-button size="mini" @click="addInterviewDialogVisible = false">取 消</el-button>
         <el-button size="mini" type="primary" @click="saveInterviewInfo">保 存</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 编辑状态 -->
+    <el-dialog title="面试结果" :visible.sync="editInterviewDialogVisible" width="30%" center>
+      <el-form ref="editInterviewState" :model="editInterviewState">
+        <el-form-item label="是否通过" prop="status">
+          <el-radio-group v-model="editInterviewState.status">
+            <el-radio :label="0">面试中</el-radio>
+            <el-radio :label="1">通过</el-radio>
+            <el-radio :label="2">不通过</el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="面试记录" prop="content">
+          <el-input v-model="editInterviewState.content" type="textarea"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="editInterviewDialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="saveEditInterview">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -608,6 +697,7 @@ import Pagination from "components/common/pagination/Pagination";
 import OrderInfo from "components/common/table/OrderInfo";
 import { getOneStraffInfo } from "network/humanageRequest";
 import {
+  searchStaffNmae,
   getCustomerInfo,
   saveEditOrderInfo,
   deleteOrderInfo,
@@ -618,6 +708,9 @@ import {
   getFollowUpInfo,
   saveFollowUpInfo,
   getOneCustomerInfo,
+  getOneInterview,
+  updateOneInterview,
+  deleteFollowUp,
 } from "network/orderRequest";
 import { getAllSource } from "network/select";
 export default {
@@ -696,9 +789,9 @@ export default {
       addFirstDialogVisible: false,
       // 订单完成表单
       orderSuccessForm: {
-        id: "",
-        is_success: false,
-        staff_number: "",
+        staff_id: "",
+        customer_id: "",
+        mobile: "",
         name: "",
       },
       // 订单完成规则
@@ -712,123 +805,59 @@ export default {
       currentOrderId: "",
 
       // 面试管理数据
-      interviewFormData: [
-        {
-          id: "1",
-          interviewer_number: "AF1002",
-          staff_info: {
-            id: "1",
-            name: "张小明",
-          },
-          tel: "13955844668",
-          interviewer_content: "是否有洁癖",
-          is_success: false,
-        },
-        {
-          id: "2",
-          interviewer_number: "AF1002",
-          staff_info: {
-            id: "1",
-            name: "张小红",
-          },
-          tel: "13955844668",
-          interviewer_content: "是否有洁癖",
-          is_success: true,
-        },
-        {
-          id: "3",
-          interviewer_number: "AF1002",
-          staff_info: {
-            id: "1",
-            name: "张小爱",
-          },
-          tel: "13955844668",
-          interviewer_content: "是否有洁癖",
-          is_success: true,
-        },
-        {
-          id: "4",
-          interviewer_number: "AF1002",
-          staff_info: {
-            id: "1",
-            name: "小爱同学",
-          },
-          tel: "13955844668",
-          interviewer_content: "是否有洁癖",
-          is_success: true,
-        },
-      ],
+      interviewFormData: [],
       interviewLoading: false,
 
-      // 编辑面试
-      editInterviewDialogVisible: true,
+      // 添加面试
+      addInterviewDialogVisible: false,
       interviewForm: {
+        customer_id: "",
         staff_id: "",
-        interviewer_content: "",
+        content: "",
+        status: "",
+        interview_time: "",
+        name: "",
+      },
+      editInterviewState: {
+        id: "",
+        content: "",
         status: "",
       },
+      editInterviewDialogVisible: false,
       interviewFormRules: {
-        staff_number: [
-          { required: true, message: "请输入员工编号", trigger: "blur" },
+        status: [
+          { required: true, message: "请输入是否通过", trigger: "blur" },
         ],
-        name: [{ required: true, message: "请输入员工姓名", trigger: "blur" }],
-        mobile: [
-          { required: true, message: "请输入员工电话", trigger: "blur" },
+        name: [
+          { required: true, message: "请输入员工姓名", trigger: "change" },
         ],
-        interviewer_content: [
+        content: [
           { required: true, message: "请输入面试内容", trigger: "blur" },
         ],
       },
 
-      interStaff: [
-        { value: "AF12549", name: "赵小爱", mobile: "13955844778" },
-        { value: "AF12365", name: "范进", mobile: "13955844378" },
-      ],
+      searchRults: [],
 
       /**
        * 跟进
        */
       // 获取跟进列表
-      followUpFormData: [
-        {
-          time: "2019-12-12",
-          record: "jjj",
-          recommend: "里晓安",
-          interview_content: "不合格呀",
-        },
-        {
-          time: "2019-02-12",
-          record: "jjj",
-          recommend: "李只想",
-          interview_content: "不合格呀",
-        },
-        {
-          time: "2019-02-12",
-          record: "jjj",
-          recommend: "李只想",
-          interview_content: "不合格呀",
-        },
-        {
-          time: "2019-02-12",
-          record: "jjj",
-          recommend: "李只想",
-          interview_content: "不合格呀",
-        },
-      ],
+      followUpFormData: [],
       followupLoading: false,
       // 添加跟进
       addFollowUpForm: {
-        time: "",
-        record: "",
-        recommend: "",
-        interview_content: "",
-        state: "",
+        customer_id: "",
+        start_time: "",
+        content: "",
+        total_time: "",
       },
       addFollowUpFormRules: {
-        record: [
+        content: [
           { required: true, message: "请输入跟进记录", trigger: "blur" },
         ],
-        state: [{ required: true, message: "请输入需求状态", trigger: "blur" }],
+        total_time: [
+          { required: true, message: "请输入时长", trigger: "blur" },
+        ],
       },
     };
   },
@@ -852,6 +881,7 @@ export default {
         if (res.code === 200) {
           // 获取客户数据
           this.orderList = res.data.data;
+          console.log(res.data.data);
           // 页数赋值
           this.currentPage = res.data.current_page;
           // 总数据条数
@@ -882,7 +912,7 @@ export default {
         if (code === 200) {
           this.$message.success(msg);
           // 重新获取所有订单
-          this.getAllCustomerInfo();
+          this.getAllOrderInfo();
         } else {
           this.$message.error(msg);
         }
@@ -919,13 +949,14 @@ export default {
       if (expandedRows.length == 0) return;
       // 赋值当前点击展开的订单号
       this.currentOrderId = row.id;
+      this.addFollowUpForm.customer_id = row.id;
+
       console.log(row.id);
       // // 获取面试记录
       this.getAllInterviewInfo(row.id);
       // // 获取跟进记录
-      // this.getAllFollowUpInfo(id);
+      this.getAllFollowUpInfo(row.id);
     },
-
 
     // 搜索选中
     handleSelect(item) {
@@ -956,8 +987,8 @@ export default {
     },
 
     // 员工基本详情
-    staffInfoBtn(name, id) {
-      this.staffInfoTitle = `家政员（${name}）的基本信息`;
+    staffInfoBtn(staff) {
+      this.staffInfoTitle = `家政员（${staff.name}）的基本信息`;
       this.staffInfoDialogVisible = true;
     },
 
@@ -966,19 +997,25 @@ export default {
       console.log(id);
       // 显示添加界面
       this.addFirstDialogVisible = true;
-      this.orderSuccessForm.id = id;
+      this.orderSuccessForm.customer_id = id;
     },
 
     // 添加完成订单关闭回调
     addFirstDialogClose() {
       this.$refs.orderSuccessForm.resetFields();
+      this.orderSuccessForm.staff_id = "";
+      this.orderSuccessForm.customer_id = "";
     },
 
     // 保存首位服务人员
     saveFirstStaff() {
+      let filterObj = {};
+      filterObj.customer_id = this.orderSuccessForm.customer_id;
+      filterObj.staff_id = this.orderSuccessForm.staff_id;
       this.$refs.orderSuccessForm.validate((valid) => {
         if (valid) {
-          saveFisrstStaff(this.orderSuccessForm).then((res) => {
+          console.log("jjj");
+          saveFisrstStaff(filterObj).then((res) => {
             let { code, msg } = res;
             if (code === 200) {
               this.$message.success(msg);
@@ -1016,9 +1053,10 @@ export default {
     // 定义获取所有跟进记录的函数
     getAllFollowUpInfo(id) {
       this.followupLoading = true;
-      getFollowUpInfo(id).then((res) => {
+      getFollowUpInfo({ customer_id: id }).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
+          console.log(res);
           this.followUpFormData = data;
           this.followupLoading = false;
         } else {
@@ -1028,16 +1066,26 @@ export default {
       });
     },
 
-    // tabs点击回调
-    tabsClick(options) {
-      // let { index } = options;
-      // if (index == 0) {
-      //   this.getAllInterviewInfo(this.currentOrderId);
-      // }
-      // if (index == 1) {
-      //   this.getAllFollowUpInfo(this.currentOrderId);
-      // }
+    // 编辑面试显示
+    editInterview(id) {
+      console.log(id);
+      getOneInterview(id).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          console.log(data);
+          this.editInterviewState.id = data.id;
+          this.editInterviewState.content = data.content;
+          this.editInterviewState.status = data.status;
+
+          this.editInterviewDialogVisible = true;
+        } else {
+          this.$message.error(msg);
+        }
+      });
     },
+
+    // tabs点击回调
+    tabsClick(options) {},
 
     // 展开面试是回调(展示时开始获取所有面试，和所有跟进)
     interviewShow(id) {
@@ -1050,30 +1098,75 @@ export default {
     },
     // 搜索面试人员
     querySearchAsync(queryString, cb) {
-      console.log(queryString);
-      this.timeout = setTimeout(() => {
-        // 返回地一定要是一个数组，并且数组每个对象都要包含value才能显示在选项框中
-        cb(this.interStaff);
-      }, 3000 * Math.random());
-    },
-    // 编辑面试显示按钮
-    editInterviewBtn(id) {
-      this.editInterviewDialogVisible = true;
+      // 先清空
+      this.searchRults = [];
+      if (!queryString.trim()) return;
+      searchStaffNmae(queryString).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          console.log(data);
+          if (!data) return;
+          data.forEach((item) => {
+            console.log(item);
+            let obj = {};
+            obj.value = item.name;
+            obj.mobile = item.mobile;
+            obj.id = item.id;
+            this.searchRults.push(obj);
+          });
+          cb(this.searchRults);
+        } else {
+          this.$message.error(msg);
+        }
+      });
     },
 
     // 处理面试人员编号框选择事件
     handleSelect(item) {
       console.log(item);
-      this.interviewForm.staff_number = item.value;
-      this.interviewForm.name = item.name;
+      this.interviewForm.name = item.value;
       this.interviewForm.mobile = item.mobile;
+      this.interviewForm.staff_id = item.id;
+
+      this.orderSuccessForm.name = item.value;
+      this.orderSuccessForm.mobile = item.mobile;
+      this.orderSuccessForm.staff_id = item.id;
     },
+
+    // 显示添加面试按钮
+    addInterviewBtn(customer_id) {
+      // 清除搜索操作残留
+      this.interviewForm.name = "";
+      this.interviewForm.mobile = "";
+      this.interviewForm.staff_id = "";
+      this.addInterviewDialogVisible = true;
+      this.interviewForm.customer_id = customer_id;
+      // 获取当前时间
+      this.interviewForm.interview_time = new Date()
+        .toLocaleString("chinese", { hour12: false })
+        .replace(/\//g, "-");
+    },
+
     // 面试删除记录
     interViewDeleteBtn(id) {
       deleteInterview(id).then((res) => {
         let { code, msg } = res;
         if (code === 200) {
           this.$message.success(msg);
+          this.getAllInterviewInfo(this.currentOrderId);
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+    // 保存编辑
+    saveEditInterview() {
+      updateOneInterview(this.editInterviewState).then((res) => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg);
+          this.getAllInterviewInfo(this.currentOrderId);
+          this.editInterviewDialogVisible = false;
         } else {
           this.$message.error(msg);
         }
@@ -1081,13 +1174,21 @@ export default {
     },
     // 保存面试记录
     saveInterviewInfo() {
+      let interviewData = {};
+      interviewData.customer_id = this.interviewForm.customer_id;
+      interviewData.staff_id = this.interviewForm.staff_id;
+      interviewData.interview_time = this.interviewForm.interview_time;
+      interviewData.status = this.interviewForm.status;
+      interviewData.content = this.interviewForm.content;
+
       this.$refs.interviewform.validate((valid) => {
         if (valid) {
-          saveInterview(this.interviewForm).then((res) => {
+          saveInterview(interviewData).then((res) => {
             let { code, msg } = res;
             if (code === 200) {
-              this.$messagew.success(msg);
+              this.$message.success(msg);
               this.getAllInterviewInfo(this.currentOrderId);
+              this.addInterviewDialogVisible = false;
               // 完成后清除旧内容
               this.$refs.interviewform.resetFields();
             } else {
@@ -1105,13 +1206,14 @@ export default {
      * 跟进记录
      */
     // 保存跟进内容
-    saveFollowUpInfo() {
+    saveFollowUp(id) {
+      console.log(id);
       this.$refs.addFollowUpForm.validate((valid) => {
         if (valid) {
           saveFollowUpInfo(this.addFollowUpForm).then((res) => {
             let { code, msg } = res;
             if (code === 200) {
-              this.$messagew.success(msg);
+              this.$message.success(msg);
               this.getAllFollowUpInfo(this.currentOrderId);
               // 完成后清除旧内容
               this.$refs.addFollowUpForm.resetFields();
@@ -1121,6 +1223,19 @@ export default {
           });
         } else {
           return false;
+        }
+      });
+    },
+    // 跟进删除
+    followUpDeleteBtn(id) {
+      console.log(id)
+      deleteFollowUp(id).then((res) => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg);
+          this.getAllFollowUpInfo(this.currentOrderId);
+        } else {
+          this.$message.error(msg);
         }
       });
     },
@@ -1157,8 +1272,8 @@ export default {
     });
 
     // 获取当前时间
-    this.addFollowUpForm.time = new Date()
-      .toLocaleDateString()
+    this.addFollowUpForm.start_time = new Date()
+      .toLocaleString("chinese", { hour12: false })
       .replace(/\//g, "-");
   },
 };

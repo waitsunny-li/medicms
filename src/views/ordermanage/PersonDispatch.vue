@@ -8,7 +8,7 @@
         <!-- 表单 -->
         <el-card class="table-content" :style="{height: screenHeight}">
           <!-- 表单 -->
-          <el-table :data="customerListData" style="width: 100%" border class="user-table-wrap" :height="scrollHeight">
+          <el-table :data="customerListData" style="width: 100%" border class="user-table-wrap" :height="scrollHeight" v-loading="loading">
             <el-table-column prop="name" align="center" label="客户姓名" width="100"></el-table-column>
             <el-table-column align="center" prop="mobile" label="联络电话" width="180">
               <template slot-scope="scope">
@@ -52,39 +52,16 @@
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
+import {
+  getCustomerInfo,
+} from "network/orderRequest";
 export default {
   name: "PersonDispatch",
   data() {
     return {
       // 客户订单
       customerListData: [
-        {
-          id: "1",
-          name: "客户",
-          family_area: "100.25",
-          family_hometown: "安徽安庆",
-          family_address: "家庭住址",
-          service_type: "1",
-          service_other: "其他内容",
-          family_people: {
-            children: 1,
-            old: 2,
-            adlut: 3,
-          },
-          service_content: [],
-          demand_age: "20-30",
-          demand_sex: 0,
-          demand_education: "高中",
-          demand_job: ["育婴师", "管家"],
-          demand_zodiac: "牛",
-          demand_experience: "2-3年",
-          demand_census: "不限",
-          demand_cooking: "川菜",
-          demand_service_skill: [],
-          mobile: "13695604265",
-          state: "已完成",
-          source: "来源",
-        },
+        
       ],
       // 当前页数
       currentPage: 1,
@@ -92,6 +69,7 @@ export default {
       total: null,
       // 每页的条数
       per_page: null,
+      loading: false,
     };
   },
   computed: {
@@ -103,7 +81,31 @@ export default {
     },
   },
   watch: {},
+  created() {
+    this.getAllOrderInfo()
+  },
   methods: {
+    // 定义获取客户需求信息
+    getAllOrderInfo() {
+      this.loading = true;
+      getCustomerInfo().then((res) => {
+        if (res.code === 200) {
+          // 获取客户数据
+          this.customerListData = res.data.data;
+          console.log(res.data.data);
+          // 页数赋值
+          this.currentPage = res.data.current_page;
+          // 总数据条数
+          this.total = res.data.total;
+          // 每页的条
+          this.per_page = res.data.per_page;
+          this.loading = false;
+        } else {
+          this.$message.error(res.msg);
+          this.loading = false;
+        }
+      });
+    },
     // 搜索按钮点击
     searchBtn(searchForm) {
       console.log('人员派出', searchForm)
@@ -163,7 +165,7 @@ export default {
       }
 
       /deep/.el-table__body-wrapper::-webkit-scrollbar {
-        width: 3px;
+        width: 5px;
         height: 10px;
       }
 

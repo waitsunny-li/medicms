@@ -132,6 +132,21 @@
               <!-- 操作 -->
               <el-table-column label="操作" align="center" width="140px">
                 <template slot-scope="scope">
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    content="权限"
+                    :enterable="false"
+                    placement="top"
+                  >
+                    <el-button
+                      size="mini"
+                      type="primary"
+                      icon="el-icon-s-custom"
+                      @click="showPowerBtn(scope.row.id)"
+                      circle
+                    ></el-button>
+                  </el-tooltip>
                   <el-button
                     size="mini"
                     type="primary"
@@ -233,6 +248,51 @@
         <el-button v-else size="mini" type="primary" @click="saveEditRoleInfo">编 辑</el-button>
       </span>
     </el-dialog>
+
+    <!-- 查看添加权限 -->
+    <el-dialog title="权限列表" :visible.sync="powerDialogVisible" width="600px" center>
+      <div class="power-content">
+        <el-checkbox
+          :indeterminate="isIndeterminate"
+          v-model="checkAll"
+          @change="handleCheckAllChange"
+        >全选</el-checkbox>
+        <div style="margin: 15px 0;"></div>
+        <el-checkbox-group v-model="checkedPowers" @change="handleCheckedPwersChange">
+          <el-collapse v-model="activeNames" @change="handleChange">
+            <el-collapse-item
+              v-for="powerItemObj in powers"
+              :key="powerItemObj.controller"
+              :title="powerItemObj.controller"
+              name="1"
+            >
+              <el-checkbox
+                v-for="power in powerItemObj.menu"
+                :label="power.id"
+                :key="power.id"
+                border
+                size="mini"
+                style="margin: 10px"
+              >{{power.name}}</el-checkbox>
+            </el-collapse-item>
+          </el-collapse>
+          <!-- <div v-for="powerItemObj in powers" :key="powerItemObj.controller">
+            <el-checkbox
+              v-for="power in powerItemObj.menu"
+              :label="power.id"
+              :key="power.id"
+              border
+              size="mini"
+              style="margin: 10px"
+            >{{power.name}}</el-checkbox>
+          </div>-->
+        </el-checkbox-group>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="powerDialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="powerDialogVisible = false">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -250,6 +310,8 @@ import {
   getOneRoleInfo,
   updateRoleInfo,
   deleteRoleInfo,
+  getAllPower,
+  getRolePower,
 } from "network/systemroles";
 export default {
   name: "SysManage",
@@ -310,6 +372,17 @@ export default {
       addDialogVisible: false,
 
       /**
+       * 查看权限
+       */
+      powerDialogVisible: false,
+
+      checkAll: false,
+      checkedPowers: [],
+      powers: [],
+      isIndeterminate: true,
+      activeNames: ["1"],
+
+      /**
        * 添加管理员的验证
        */
       formRules: {
@@ -337,6 +410,17 @@ export default {
       let { code, data, msg } = res;
       if (code === 200) {
         this.roleIdList = data;
+      } else {
+        this.$message.error(msg);
+      }
+    });
+
+    // 获取全部权限
+    getAllPower().then((res) => {
+      let { code, data, msg } = res;
+      if (code === 200) {
+        this.powers = data;
+        console.log(data);
       } else {
         this.$message.error(msg);
       }
@@ -376,6 +460,40 @@ export default {
         }
       });
     },
+
+    // 显示权限
+    showPowerBtn(id) {
+      getRolePower(id).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          let numbers = data ? data.map(item => {
+            return parseInt(item)
+          }) : []
+          this.checkedPowers = data;
+          console.log(numbers)
+          this.powerDialogVisible = true;
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+    handleChange() {
+      return false;
+    },
+
+    // 选择权限
+    handleCheckAllChange(val) {
+      console.log(val);
+      this.checkedPowers = val ? this.powers : [];
+      this.isIndeterminate = false;
+    },
+    handleCheckedPwersChange(value) {
+      let checkedCount = value.length;
+      this.checkAll = checkedCount === this.powers.length;
+      this.isIndeterminate =
+        checkedCount > 0 && checkedCount < this.powers.length;
+    },
+
     // 清除操作
     clearBtn() {
       this.$refs.searchForm.resetFields();
@@ -442,15 +560,15 @@ export default {
 
     // 删除用户按钮
     userDeleteBtn(id) {
-      deleteUserInfo(id).then(res => {
-        let {code, msg} = res
-        if(code === 200) {
-          this.$message.success(msg)
-          this.getAllUserListData()
-        }else {
-          this.$message.error(msg)
+      deleteUserInfo(id).then((res) => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg);
+          this.getAllUserListData();
+        } else {
+          this.$message.error(msg);
         }
-      })
+      });
     },
 
     // 保存管理员信息
@@ -537,15 +655,15 @@ export default {
 
     // 角色删除
     roleDeleteBtn(id) {
-      deleteRoleInfo(id).then(res => {
-        let {code, msg} = res
-        if(code === 200) {
-          this.$message.success(msg)
-          this.getAllRoleListData()
-        }else {
-          this.$message.error(msg)
+      deleteRoleInfo(id).then((res) => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg);
+          this.getAllRoleListData();
+        } else {
+          this.$message.error(msg);
         }
-      })
+      });
     },
 
     // 用户添加关闭回调
@@ -576,6 +694,18 @@ export default {
 
 <style lang='less' scoped>
 .search {
+}
+.power-content {
+  height: 500px;
+  overflow-y: auto;
+}
+.power-content::-webkit-scrollbar {
+  width: 5px;
+  height: 10px;
+}
+.power-content::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 20px;
 }
 
 .search-wrap {

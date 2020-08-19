@@ -122,7 +122,7 @@
 <script>
 import feedbackSearch from "components/common/search/feedbackSearch";
 import Pagination from "components/common/pagination/Pagination";
-import { saveComplaint, getComplaint } from "network/feedbackRequest";
+import { saveComplaint, getComplaint, deleteComplaint } from "network/feedbackRequest";
 export default {
   name: "Feedback",
   data() {
@@ -248,6 +248,15 @@ export default {
     // 删除
     deleteSuccess(id) {
       console.log(id);
+      deleteComplaint(id).then(res => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg);
+          this.getAllComplaints();
+        } else {
+          this.$message.error(msg);
+        }
+      })
     },
   },
   components: {

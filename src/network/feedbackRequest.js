@@ -18,3 +18,14 @@ export function saveComplaint(data) {
     data: data
   })
 }
+
+// 删除反馈
+export function deleteComplaint(id) {
+  return request({
+    url: "/complaint/delete",
+    method: "get",
+    params: {
+      id: id
+    }
+  })
+}

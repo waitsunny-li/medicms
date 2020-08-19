@@ -117,16 +117,16 @@ export default {
             path: "/home/salesvisit",
             icon: "icon el-icon-refresh",
           },
-          {
-            navname: "订单延期",
-            path: "/home/orderdelay",
-            icon: "icon el-icon-date",
-          },
-          {
-            navname: "订单续签",
-            path: "/home/orderrenewal",
-            icon: "icon el-icon-finished",
-          },
+          // {
+          //   navname: "订单延期",
+          //   path: "/home/orderdelay",
+          //   icon: "icon el-icon-date",
+          // },
+          // {
+          //   navname: "订单续签",
+          //   path: "/home/orderrenewal",
+          //   icon: "icon el-icon-finished",
+          // },
         ],
         [
           {

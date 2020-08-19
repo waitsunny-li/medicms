@@ -107,3 +107,22 @@ export function deleteRoleInfo(id) {
     }
   }) 
 }
+
+// 获取所有权限
+export function getAllPower() {
+  return request({
+    url: "/permission/index",
+    method: "get",
+  }) 
+}
+
+// 获取指定角色的所有权限
+export function getRolePower(id) {
+  return request({
+    url: "/role/access_list",
+    method: "get",
+    params: {
+      role_id: id
+    }
+  }) 
+}

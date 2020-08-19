@@ -1986,9 +1986,6 @@ export default {
       }
     });
 
-    // 初始化赋值添加操作
-    this.staffForm = this.addUserForm;
-
     // 获取当前时间
     this.staffForm.in_time = new Date()
       .toLocaleDateString()

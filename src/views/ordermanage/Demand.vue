@@ -24,7 +24,7 @@
             :height="scrollHeight"
             v-loading="loading"
             border
-            :default-sort = "{prop: 'create_time', order: 'descending'}"
+            :default-sort="{prop: 'create_time', order: 'descending'}"
           >
             <!-- 选择 -->
             <el-table-column type="selection" width="55"></el-table-column>
@@ -138,7 +138,14 @@
                 <p v-if="scope.row.state == 4">取消</p>
               </template>
             </el-table-column>
-            <el-table-column width="130px" :show-overflow-tooltip="true" align="center" sortable prop="create_time" label="录入时间"></el-table-column>
+            <el-table-column
+              width="130px"
+              :show-overflow-tooltip="true"
+              align="center"
+              sortable
+              prop="create_time"
+              label="录入时间"
+            ></el-table-column>
             <!-- 操作 -->
             <el-table-column label="操作" align="center" width="140px">
               <template slot-scope="scope">
@@ -200,7 +207,21 @@
       >
         <el-row>
           <el-col :span="24" class="title-home">
-            <i class="el-icon-s-home"></i> 家庭情况
+            <el-col :span="15">
+              <i class="el-icon-s-home"></i> 家庭情况
+            </el-col>
+            <el-col :span="6" :offset="3">
+              <el-form-item label="状态" prop="state">
+                <el-select size="mini" v-model="form.state" placeholder="请选择">
+                  <el-option label="面试中" :value="0"></el-option>
+                  <el-option label="进行中" :value="1"></el-option>
+                  <el-option label="结束" :value="3"></el-option>
+                  <el-option label="取消" :value="4"></el-option>
+                  <el-option label="暂停" :value="5"></el-option>
+
+                </el-select>
+              </el-form-item>
+            </el-col>
           </el-col>
         </el-row>
         <el-row>
@@ -551,7 +572,7 @@ export default {
         demand_service_skill: [],
         demand_salary: "",
         mobile: "",
-        // state: "",
+        state: "",
         source_id: "",
       },
       // 工资起止
@@ -644,6 +665,9 @@ export default {
         demand_census: [
           { required: true, message: "请输入员工籍贯", trigger: "blur" },
         ],
+        demand_service_skill: [
+          { required: true, message: "请输入服务技能", trigger: "blur" },
+        ],
         demand_sex: [
           { required: true, message: "请输入员工性别", trigger: "blur" },
         ],
@@ -654,6 +678,8 @@ export default {
         mobile: [
           { required: true, message: "请输入家庭手机号", trigger: "blur" },
         ],
+        source_id: [{ required: true, message: "请输入来源", trigger: "blur" }],
+        state: [{ required: true, message: "请输入状态", trigger: "blur" }],
       },
     };
   },
@@ -735,6 +761,7 @@ export default {
         if (res.code === 200) {
           // 获取客户数据
           this.customers = res.data.data;
+          console.log(res.data.data);
           // 页数赋值
           this.currentPage = res.data.current_page;
           // 总数据条数
@@ -848,19 +875,32 @@ export default {
 
     // 选择删除
     selectDeleteBtn() {
-      if (this.selected.length == 0) {
-        this.$message.error("请选择要删除的客户");
-      } else {
-        deleteCustomer(this.selected).then((res) => {
-          let { code, msg } = res;
-          if (code === 200) {
-            this.$message.success(msg);
-            this.getAllCustomerInfo();
+      this.$confirm("此操作将永久删除客户, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          if (this.selected.length == 0) {
+            this.$message.error("请选择要删除的客户");
           } else {
-            this.$message.error(msg);
+            deleteCustomer(this.selected).then((res) => {
+              let { code, msg } = res;
+              if (code === 200) {
+                this.$message.success(msg);
+                this.getAllCustomerInfo();
+              } else {
+                this.$message.error(msg);
+              }
+            });
           }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除",
+          });
         });
-      }
     },
 
     // 表格删除
@@ -985,6 +1025,7 @@ export default {
 
 .title-home {
   padding: 10px 10px;
+  height: 50px;
   font-size: 16px;
   margin-bottom: 20px;
   font-weight: 700;

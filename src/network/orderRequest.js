@@ -2,6 +2,18 @@ import {
   request
 } from './request'
 
+// 搜索待岗员工
+export function searchStaffNmae(keyword) {
+  return request({
+    url: "/staff/waiting",
+    method: "get",
+    params: {
+      keyword: keyword
+    }
+  })
+}
+
+
 /**
  * 用户需求
  */
@@ -91,9 +103,9 @@ export function saveEditOrderInfo(data) {
 // 删除订单
 export function deleteOrderInfo(id) {
   return request({
-    url: "",
-    method: "post",
-    data: {
+    url: "/customer/delete",
+    method: "get",
+    params: {
       id: id
     }
   })
@@ -101,7 +113,7 @@ export function deleteOrderInfo(id) {
 // 保存首位服务人员
 export function saveFisrstStaff(data) {
   return request({
-    url: "",
+    url: "/customer/add_or_replace",
     method: "post",
     data: data
   })
@@ -109,11 +121,29 @@ export function saveFisrstStaff(data) {
 // 删除面试记录
 export function deleteInterview(id) {
   return request({
-    url: "",
-    method: "post",
-    data: {
+    url: "/interview/delete",
+    method: "get",
+    params: {
       id: id
     }
+  })
+}
+// 编辑获取单个面试记录
+export function getOneInterview(id) {
+  return request({
+    url: "/interview/edit",
+    method: "get",
+    params: {
+      id: id
+    }
+  })
+}
+// 更新单个面试记录
+export function updateOneInterview(data) {
+  return request({
+    url: "/interview/update",
+    method: "post",
+    data: data
   })
 }
 // 获取该订单的所有面试
@@ -128,12 +158,13 @@ export function getInterviewInfo(idObj) {
   })
 }
 // 获取该订单中的所有跟进
-export function getFollowUpInfo(id) {
+export function getFollowUpInfo(idObj) {
   return request({
-    url: "",
-    method: "post",
-    data: {
-      id: id
+    url: "/follow_up/index",
+    method: "get",
+    params: {
+      customer_id: idObj.customer_id ? idObj.customer_id : "",
+      staff_id: idObj.staff_id ? idObj.staff_id : ""
     }
   })
 }
@@ -148,9 +179,19 @@ export function saveInterview(data) {
 // 保存跟进内容
 export function saveFollowUpInfo(data) {
   return request({ 
-    url: "",
+    url: "/follow_up/save",
     method: "post",
     data: data
+  })
+}
+// 删除跟进记录
+export function deleteFollowUp(id) {
+  return request({
+    url: "/follow_up/delete",
+    method: "get",
+    params: {
+      id: id
+    }
   })
 }
 

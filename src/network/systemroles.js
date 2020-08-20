@@ -126,3 +126,12 @@ export function getRolePower(id) {
     }
   }) 
 }
+
+// 更新指定角色的所有权限
+export function updateRolePower(data) {
+  return request({
+    url: "/role/access",
+    method: "post",
+    data: data
+  }) 
+}

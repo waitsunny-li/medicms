@@ -283,32 +283,38 @@
     >
       <el-tabs>
         <el-tab-pane class="interview" label="已面试的">
-          <el-table stripe :data="interviewFormData" style="width: 100%" height="400px">
-            <el-table-column align="center" label="面试日期" prop="time"></el-table-column>
-            <el-table-column align="center" label="订单号" prop="order_number">
+          <el-table
+            stripe
+            :data="interviewFormData"
+            style="width: 100%"
+            height="400px"
+            v-loading="interviewedLoading"
+          >
+            <el-table-column align="center" label="面试日期" prop="interview_time" width="150px"></el-table-column>
+            <el-table-column align="center" label="订单号" prop="customer_id">
               <template slot-scope="scope">
                 <el-button
-                  @click="showOrderInfo(scope.row.order_number)"
+                  @click="showOrderInfo(scope.row.customer_id)"
                   type="text"
-                >{{scope.row.order_number}}</el-button>
+                >{{scope.row.customer_id}}</el-button>
               </template>
             </el-table-column>
             <el-table-column align="center" label="客户名" prop="time"></el-table-column>
-            <el-table-column align="center" label="面试内容" prop="interviewer_content"></el-table-column>
-            <el-table-column align="center" label="是否面试完成" prop="is_success">
+            <el-table-column align="center" label="面试内容" prop="content"></el-table-column>
+            <el-table-column align="center" label="是否面试完成">
               <template slot-scope="scope">
-                <p v-if="scope.row.is_success">
+                <p v-if="scope.row.status == 0">面试中</p>
+                <p v-if="scope.row.status == 1">
                   <i
                     class="el-icon-success"
-                    style="font-size: 18px; color: #67C23A;vertical-align: middle;"
-                  ></i>
-                  已通过
+                    style="font-size: 18px; color: #67C23A;vertical-align: middle; margin-right: 5px"
+                  ></i>通过
                 </p>
-                <p v-else>
+                <p v-if="scope.row.status == 2">
                   <i
-                    style="font-size: 18px; color: #F56C6C;vertical-align: middle;"
+                    style="font-size: 18px; color: #F56C6C;vertical-align: middle;margin-right: 5px"
                     class="el-icon-error"
-                  ></i> 未通过
+                  ></i>不通过
                 </p>
               </template>
             </el-table-column>
@@ -363,6 +369,7 @@ import OrderInfo from "components/common/table/OrderInfo";
 import Pagination from "components/common/pagination/Pagination";
 import eventVue from "common/eventVue";
 import { requestUserListDate } from "network/humanageRequest";
+import { getInterviewInfo, getOneCustomerInfo } from "network/orderRequest";
 export default {
   name: "StaffQuery",
   data() {
@@ -383,72 +390,8 @@ export default {
       staffOrderTitle: "",
 
       // 已面试过的
-      interviewFormData: [
-        {
-          id: "1",
-          time: "2012-08-09",
-          order_number: "AF1002",
-          customer_name: "王大德",
-          interviewer_content: "是否有洁癖",
-          is_success: true,
-        },
-        {
-          id: "2",
-          time: "2012-08-09",
-          order_number: "AF1002",
-          customer_name: "王基德",
-          interviewer_content: "是否有洁癖",
-          is_success: false,
-        },
-        {
-          id: "3",
-          time: "2012-08-09",
-          order_number: "AF1002",
-          customer_name: "王美德",
-          interviewer_content: "是否有洁癖",
-          is_success: false,
-        },
-        {
-          id: "4",
-          time: "2012-08-09",
-          order_number: "AF1002",
-          customer_name: "王之德",
-          interviewer_content: "是否有洁癖",
-          is_success: false,
-        },
-        {
-          id: "5",
-          time: "2012-08-09",
-          order_number: "AF1002",
-          customer_name: "王之德",
-          interviewer_content: "是否有洁癖",
-          is_success: false,
-        },
-        {
-          id: "6",
-          time: "2012-08-09",
-          order_number: "AF1002",
-          customer_name: "王之德",
-          interviewer_content: "是否有洁癖",
-          is_success: false,
-        },
-        {
-          id: "4",
-          time: "2012-08-09",
-          order_number: "AF1002",
-          customer_name: "王之德",
-          interviewer_content: "是否有洁癖",
-          is_success: false,
-        },
-        {
-          id: "4",
-          time: "2012-08-09",
-          order_number: "AF1002",
-          customer_name: "王之德",
-          interviewer_content: "是否有洁癖",
-          is_success: false,
-        },
-      ],
+      interviewFormData: [],
+      interviewedLoading: false,
       // 已服务过的
       serviceDFormData: [
         {
@@ -533,7 +476,7 @@ export default {
   methods: {
     // 搜索按钮
     searchBtn(searchForm) {
-      console.log(searchForm)
+      console.log(searchForm);
     },
     // 定义请求用户列表数据
     getUserData() {
@@ -564,23 +507,54 @@ export default {
       // console.log(currentpage);
     },
 
+    // 定义获取该员工所有的面试记录
+    getAllStaffInterviewInfo(staff_id) {
+      this.interviewedLoading = true;
+      getInterviewInfo({ staff_id: staff_id }).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          console.log(data ? data : []);
+          this.interviewFormData = data ? data : [];
+          // 关闭等待
+          this.interviewedLoading = false;
+        } else {
+          this.$message.error(res.msg);
+          this.interviewedLoading = true;
+        }
+      });
+    },
+
     // 显示该员工的所有订单
     orderDisplayBtn(name, id) {
       this.staffOrderTitle = `（${name}）的全部订单`;
       this.staffOrderDialogVisible = true;
+
+      this.getAllStaffInterviewInfo(id);
     },
 
     // 展示该订单号
-    showOrderInfo(order_number) {
-      console.log(order_number);
-      this.orderInfoTitle = `（${order_number}）订单的基本信息`
-      this.orderInfoDialogVisible = true
+    showOrderInfo(customer_id) {
+      this.orderInfoLoading = true
+      getOneCustomerInfo(customer_id).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          console.log(data);
+          this.orderInfo = data;
+
+          this.orderInfoTitle = `（${data.name}）订单的基本信息`;
+          this.orderInfoDialogVisible = true;
+          this.orderInfoLoading = false;
+        } else {
+          this.$message.error(msg);
+          this.orderInfoLoading = false;
+        }
+      });
     },
   },
   components: {
     Search,
     OrderInfo,
-    Pagination
+    Pagination,
   },
   created() {
     this.getUserData();

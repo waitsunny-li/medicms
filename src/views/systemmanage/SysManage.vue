@@ -252,11 +252,6 @@
     <!-- 查看添加权限 -->
     <el-dialog title="权限列表" :visible.sync="powerDialogVisible" width="600px" center>
       <div class="power-content">
-        <el-checkbox
-          :indeterminate="isIndeterminate"
-          v-model="checkAll"
-          @change="handleCheckAllChange"
-        >全选</el-checkbox>
         <div style="margin: 15px 0;"></div>
         <el-checkbox-group v-model="checkedPowers" @change="handleCheckedPwersChange">
           <el-collapse v-model="activeNames" @change="handleChange">
@@ -276,21 +271,11 @@
               >{{power.name}}</el-checkbox>
             </el-collapse-item>
           </el-collapse>
-          <!-- <div v-for="powerItemObj in powers" :key="powerItemObj.controller">
-            <el-checkbox
-              v-for="power in powerItemObj.menu"
-              :label="power.id"
-              :key="power.id"
-              border
-              size="mini"
-              style="margin: 10px"
-            >{{power.name}}</el-checkbox>
-          </div>-->
         </el-checkbox-group>
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="powerDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="powerDialogVisible = false">确 定</el-button>
+        <el-button size="mini" type="primary" @click="updateRolePowerInfo">保 存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -312,6 +297,7 @@ import {
   deleteRoleInfo,
   getAllPower,
   getRolePower,
+  updateRolePower,
 } from "network/systemroles";
 export default {
   name: "SysManage",
@@ -376,11 +362,13 @@ export default {
        */
       powerDialogVisible: false,
 
-      checkAll: false,
       checkedPowers: [],
       powers: [],
-      isIndeterminate: true,
       activeNames: ["1"],
+      updatePowerForm: {
+        permission_id: [],
+        role_id: "",
+      },
 
       /**
        * 添加管理员的验证
@@ -420,7 +408,6 @@ export default {
       let { code, data, msg } = res;
       if (code === 200) {
         this.powers = data;
-        console.log(data);
       } else {
         this.$message.error(msg);
       }
@@ -463,15 +450,35 @@ export default {
 
     // 显示权限
     showPowerBtn(id) {
+      // 清除操作
+      this.updatePowerForm.permission_id = [];
+      this.updatePowerForm.role_id = "";
+
+      this.updatePowerForm.role_id = id;
       getRolePower(id).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          let numbers = data ? data.map(item => {
-            return parseInt(item)
-          }) : []
-          this.checkedPowers = data;
-          console.log(numbers)
+          let numbers = data
+            ? data.map((item) => {
+                return parseInt(item);
+              })
+            : [];
+          this.checkedPowers = numbers;
           this.powerDialogVisible = true;
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+
+    // 更新指定角色中的权限
+    updateRolePowerInfo() {
+      this.updatePowerForm.permission_id = this.checkedPowers;
+      updateRolePower(this.updatePowerForm).then((res) => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg)
+          this.powerDialogVisible = false
         } else {
           this.$message.error(msg);
         }
@@ -481,12 +488,6 @@ export default {
       return false;
     },
 
-    // 选择权限
-    handleCheckAllChange(val) {
-      console.log(val);
-      this.checkedPowers = val ? this.powers : [];
-      this.isIndeterminate = false;
-    },
     handleCheckedPwersChange(value) {
       let checkedCount = value.length;
       this.checkAll = checkedCount === this.powers.length;

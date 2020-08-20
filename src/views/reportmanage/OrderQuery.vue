@@ -81,15 +81,17 @@
               width="100"
             >
               <template slot-scope="scope">
-                <p v-if="scope.row.service_type == 1">长期</p>
-                <p v-if="scope.row.service_type == 2">短期</p>
+                <p v-if="scope.row.service_type == 0">{{scope.row.service_other}}</p>
+                <p v-if="scope.row.service_type == 1">全日住家型</p>
+                <p v-if="scope.row.service_type == 2">日间照料型</p>
+                <p v-if="scope.row.service_type == 3">计时收费型</p>
               </template>
             </el-table-column>
             <el-table-column
               align="center"
-              prop="service_other"
-              label="需要服务"
+              prop="service_content"
               :show-overflow-tooltip="true"
+              label="需要服务"
             ></el-table-column>
             <el-table-column width="180" align="center" label="家庭成员">
               <template
@@ -109,16 +111,29 @@
               min-width="180"
               :show-overflow-tooltip="true"
             ></el-table-column>
-            <el-table-column align="center" prop="source" label="来源" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column align="center" prop="is_success" label="是否完成">
+            <el-table-column
+              align="center"
+              prop="source_id"
+              label="来源"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="scope">
-                <div v-if="scope.row.is_success">
-                  <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
+                <div v-for="item in source" :key="item.id">
+                  <div
+                    style="overflow: hidden;
+                      text-overflow: ellipsis;
+                      white-space: nowrap; height: 30px"
+                    v-if="scope.row.source_id == item.id"
+                  >{{item.name}}</div>
                 </div>
-                <div v-else>
-                  <i style="color:#F56C6C; font-size: 28px" class="el-icon-circle-close"></i>
-                </div>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <p v-if="scope.row.state == 0">面试中</p>
+                <p v-if="scope.row.state == 1">进行中</p>
+                <p v-if="scope.row.state == 3">结束</p>
+                <p v-if="scope.row.state == 4">取消</p>
               </template>
             </el-table-column>
             <!-- 操作 -->
@@ -170,35 +185,45 @@
     />
 
     <!-- 面试记录 -->
-    <el-dialog :title="interviewTitle" :visible.sync="interviewDialogVisible" width="870px" center>
+    <el-dialog
+      :title="interviewTitle"
+      :visible.sync="interviewDialogVisible"
+      width="870px"
+      center
+      v-loading="interviewedLoading"
+    >
       <div class="interview-content">
         <el-table stripe :data="interviewFormData" style="width: 100%" height="400px">
-          <el-table-column prop="time" align="center" label="面试时间" width="100"></el-table-column>
-          <el-table-column prop="interviewer_number" align="center" label="面试人员编号" width="120"></el-table-column>
-          <el-table-column align="center" label="姓名" width="100" prop="name">
+          <el-table-column prop="interview_time" align="center" label="面试时间" width="150px"></el-table-column>
+          <el-table-column prop="staff_id" align="center" label="面试人员编号" width="120"></el-table-column>
+          <el-table-column align="center" label="姓名" width="100">
             <template slot-scope="scope">
               <el-button
-                @click="staffInfoBtn(scope.row.staff_info.name, scope.row.staff_info.id)"
+                @click="staffInfoBtn(scope.row.staff)"
                 type="text"
-              >{{scope.row.staff_info.name}}</el-button>
+              >{{scope.row.staff.name}}</el-button>
             </template>
           </el-table-column>
-          <el-table-column align="center" label="手机号" prop="tel"></el-table-column>
-          <el-table-column align="center" label="面试内容" prop="interviewer_content"></el-table-column>
-          <el-table-column align="center" label="是否面试完成" prop="is_success">
+          <el-table-column align="center" label="手机号" prop="tel">
             <template slot-scope="scope">
-              <p v-if="scope.row.is_success">
+              {{scope.row.staff.mobile}}
+            </template>
+          </el-table-column>
+          <el-table-column align="center" label="面试内容" prop="content"></el-table-column>
+          <el-table-column align="center" label="是否面试完成" prop="status">
+            <template slot-scope="scope">
+              <p v-if="scope.row.status == 0">面试中</p>
+              <p v-if="scope.row.status == 1">
                 <i
                   class="el-icon-success"
-                  style="font-size: 18px; color: #67C23A;vertical-align: middle;"
-                ></i>
-                已通过
+                  style="font-size: 18px; color: #67C23A;vertical-align: middle; margin-right: 5px"
+                ></i>通过
               </p>
-              <p v-else>
+              <p v-if="scope.row.status == 2">
                 <i
-                  style="font-size: 18px; color: #F56C6C;vertical-align: middle;"
+                  style="font-size: 18px; color: #F56C6C;vertical-align: middle;margin-right: 5px"
                   class="el-icon-error"
-                ></i> 未通过
+                ></i>不通过
               </p>
             </template>
           </el-table-column>
@@ -207,21 +232,21 @@
     </el-dialog>
 
     <!-- 查看跟进记录 -->
-    <el-dialog :title="followUpTitle" :visible.sync="followUpDialogVisible" width="870px" center>
+    <el-dialog :title="followUpTitle" :visible.sync="followUpDialogVisible" width="800px" center v-loading="followupLoading">
       <div class="followup-content">
         <el-table :data="followUpFormData" stripe style="width: 100%" height="400px">
-          <el-table-column prop="time" align="center" label="日期" width="120"></el-table-column>
-          <el-table-column prop="record" align="center" label="跟单记录情况" width="180"></el-table-column>
-          <el-table-column prop="state" align="center" label="需求状态"></el-table-column>
-          <el-table-column prop="recommend" align="center" label="推荐面试人员" width="110">
+          <el-table-column prop="start_time" align="center" label="日期" width="150"></el-table-column>
+          <el-table-column prop="total_time" align="center" label="时长" width="180"></el-table-column>
+          
+          <el-table-column prop="recommend" align="center" label="当前服务人员" width="110">
             <template slot-scope="scope">
               <el-button
-                @click="staffInfoBtn(scope.row.recommend.name, scope.row.recommend.id)"
+                @click="staffInfoBtn(scope.row.staff)"
                 type="text"
-              >{{scope.row.recommend.name}}</el-button>
+              >{{scope.row.staff.name}}</el-button>
             </template>
           </el-table-column>
-          <el-table-column prop="interview_content" align="center" label="面试情况"></el-table-column>
+          <el-table-column prop="content" align="center" :show-overflow-tooltip="true" label="跟单记录情况" ></el-table-column>
         </el-table>
       </div>
     </el-dialog>
@@ -255,71 +280,18 @@ import CustomerSearch from "components/common/search/CustomerSearch";
 import StaffInfo from "components/common/table/StaffInfo";
 import Pagination from "components/common/pagination/Pagination";
 import OrderInfo from "components/common/table/OrderInfo";
+import {
+  getInterviewInfo,
+  getOneCustomerInfo,
+  getCustomerInfo,
+  getFollowUpInfo
+} from "network/orderRequest";
+import { getAllSource } from "network/select";
 export default {
   name: "OrderQuery",
   data() {
     return {
-      orderList: [
-        {
-          id: "1",
-          name: "徐子真",
-          family_area: "100.25",
-          family_hometown: "安徽安庆",
-          family_address: "家庭住址",
-          service_type: "1",
-          service_other: "其他内容",
-          family_people: {
-            children: 1,
-            old: 2,
-            adlut: 3,
-          },
-          service_content: [],
-          demand_age: "20-30",
-          demand_sex: 0,
-          demand_education: "高中",
-          demand_job: ["育婴师", "管家"],
-          demand_zodiac: "牛",
-          demand_experience: "2-3年",
-          demand_census: "不限",
-          demand_cooking: "川菜",
-          demand_service_skill: [],
-          mobile: "13695604265",
-          state: "0",
-          source: "来源",
-
-          // 订单是否完成
-          is_success: true,
-        },
-        {
-          id: "2",
-          name: "胡大侠",
-          family_area: "100.25",
-          family_hometown: "安徽安庆",
-          family_address: "家庭住址",
-          service_type: "1",
-          service_other: "其他内容",
-          family_people: {
-            children: 1,
-            old: 2,
-            adlut: 3,
-          },
-          service_content: [],
-          demand_age: "20-30",
-          demand_sex: 0,
-          demand_education: "高中",
-          demand_job: ["育婴师", "管家"],
-          demand_zodiac: "12000 / 26天",
-          demand_experience: "2-3年",
-          demand_census: "不限",
-          demand_cooking: "川菜",
-          demand_service_skill: [],
-          mobile: "13695604265",
-          state: "0",
-          source: "来源",
-          // 订单是否完成
-          is_success: false,
-        },
-      ],
+      orderList: [],
       // 当前页数
       currentPage: 1,
       // 总数据条数
@@ -328,78 +300,13 @@ export default {
       per_page: null,
       // 是否加载
       loading: false,
+      source: [],
 
       // 订单的面试记录显示
       interviewDialogVisible: false,
+      interviewedLoading: false,
       interviewTitle: "",
-      interviewFormData: [
-        {
-          id: "1",
-          interviewer_number: "AF1002",
-          staff_info: {
-            id: "1",
-            name: "张小明",
-          },
-          tel: "13955844668",
-          interviewer_content: "是否有洁癖",
-          is_success: false,
-        },
-        {
-          id: "2",
-          interviewer_number: "AF1002",
-          staff_info: {
-            id: "1",
-            name: "张小红",
-          },
-          tel: "13955844668",
-          interviewer_content: "是否有洁癖",
-          is_success: true,
-        },
-        {
-          id: "3",
-          interviewer_number: "AF1002",
-          staff_info: {
-            id: "19",
-            name: "张小爱",
-          },
-          tel: "13955844668",
-          interviewer_content: "是否有洁癖",
-          is_success: true,
-        },
-        {
-          id: "4",
-          interviewer_number: "AF1002",
-          staff_info: {
-            id: "15",
-            name: "小爱同学",
-          },
-          tel: "13955844668",
-          interviewer_content: "是否有洁癖",
-          is_success: true,
-        },
-        {
-          id: "6",
-          interviewer_number: "AF1002",
-          staff_info: {
-            id: "10",
-            name: "小明同学",
-          },
-          tel: "13955844668",
-          interviewer_content: "是否有洁癖",
-          is_success: false,
-        },
-        {
-          id: "7",
-          interviewer_number: "AF1002",
-          staff_info: {
-            id: "125",
-            name: "小白同学",
-          },
-          tel: "13955844668",
-          interviewer_content: "是否有洁癖",
-          is_success: false,
-        },
-      ],
+      interviewFormData: [],
 
       // 员工信息显示
       staffInfoDialogVisible: false,
@@ -411,93 +318,13 @@ export default {
       orderInfoDialogVisible: false,
       orderInfoTitle: "",
       orderInfoLoading: false,
-      orderInfo: {
-        id: "1",
-        name: "徐子真",
-        family_area: "100.25",
-        family_hometown: "安徽安庆",
-        family_address: "家庭住址",
-        service_type: "1",
-        service_other: "其他内容",
-        family_people: {
-          children: 1,
-          old: 2,
-          adlut: 3,
-        },
-        service_content: "",
-        demand_age: "20-30",
-        demand_sex: 0,
-        demand_education: "高中",
-        demand_job: ["育婴师", "管家"],
-        demand_zodiac: "牛",
-        demand_experience: "2-3年",
-        demand_census: "不限",
-        demand_cooking: "川菜",
-        demand_service_skill: [],
-        mobile: "13695604265",
-        state: "0",
-        source: "来源",
-
-        // 订单是否完成
-        is_success: true,
-      },
+      orderInfo: {},
 
       // 跟进查看
       followUpDialogVisible: false,
+      followupLoading: false,
       followUpTitle: "",
       followUpFormData: [
-        {
-          time: "2019-12-12",
-          record: "jjj",
-          recommend: {},
-          state: "跟进中",
-          interview_content: "",
-        },
-        {
-          time: "2019-02-12",
-          record: "jjj",
-          recommend: {
-            id: "1",
-            name: "李只想",
-          },
-          state: "换人",
-          interview_content: "不合格呀",
-        },
-        {
-          time: "2019-02-12",
-          record: "jjj",
-          recommend: {
-            id: "1",
-            name: "李用想",
-          },
-          state: "换人",
-          interview_content: "合格啊",
-        },
-        {
-          time: "2019-02-12",
-          record: "jjj",
-          recommend: {},
-          state: "跟进中",
-          interview_content: "",
-        },
-        {
-          time: "2019-02-12",
-          record: "jjj",
-          recommend: {
-            id: "1",
-            name: "李美丽",
-          },
-          state: "换人",
-
-          interview_content: "不合格呀",
-        },
-        {
-          time: "2019-02-12",
-          record: "jjj",
-          recommend: {},
-          state: "换人",
-          interview_content: "合格呀",
-        },
       ],
     };
   },
@@ -510,10 +337,76 @@ export default {
     },
   },
   watch: {},
+  created() {
+    this.getAllCustomerInfo();
+
+    // 获取需求来源
+    getAllSource().then((res) => {
+      let { code, data, msg } = res;
+      if (code === 200) {
+        this.source = data;
+      } else {
+        this.$message.error(msg);
+      }
+    });
+  },
   methods: {
+    // 定义获取客户需求信息
+    getAllCustomerInfo() {
+      this.loading = true;
+      getCustomerInfo().then((res) => {
+        if (res.code === 200) {
+          // 获取客户数据
+          this.orderList = res.data.data;
+          // 页数赋值
+          this.currentPage = res.data.current_page;
+          // 总数据条数
+          this.total = res.data.total;
+          // 每页的条
+          this.per_page = res.data.per_page;
+          this.loading = false;
+        } else {
+          this.$message.error(res.msg);
+          this.loading = false;
+        }
+      });
+    },
+
+    // 定义获取该订单所有的面试记录
+    getAllStaffInterviewInfo(customer_id) {
+      this.interviewedLoading = true;
+      getInterviewInfo({ customer_id: customer_id }).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          this.interviewFormData = data ? data : [];
+          // 关闭等待
+          this.interviewedLoading = false;
+        } else {
+          this.$message.error(res.msg);
+          this.interviewedLoading = true;
+        }
+      });
+    },
+
+    // 定义获取所有跟进记录的函数
+    getAllFollowUpInfo(customer_id) {
+      this.followupLoading = true;
+      getFollowUpInfo({ customer_id: customer_id }).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          console.log(res);
+          this.followUpFormData = data;
+          this.followupLoading = false;
+        } else {
+          this.$message.error(msg);
+          this.followupLoading = false;
+        }
+      });
+    },
+
     // 搜索按钮
     searchBtn(searchForm) {
-      console.log(searchForm)
+      console.log(searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
@@ -522,26 +415,41 @@ export default {
 
     // 面试记录按钮事件
     interviewDisplayBtn(id) {
-      this.interviewTitle = `订单号（${id}）的面试记录`
+      this.getAllStaffInterviewInfo(id);
+      this.interviewTitle = `订单号（${id}）的面试记录`;
       this.interviewDialogVisible = true;
     },
 
     // 查看单人的信息
-    staffInfoBtn(name, id) {
-      console.log(name, id);
-      this.staffInfoTitle = `家政员（${name}）的基本信息`;
+    staffInfoBtn(staffInfo) {
+      this.staffInfo = staffInfo
+      this.staffInfoTitle = `家政员（${staffInfo.name}）的基本信息`;
       this.staffInfoDialogVisible = true;
     },
     // 查看订单详情
     orderInfoBtn(name, id) {
-      console.log(name, id);
+      this.orderInfoLoading = true;
+
       // 发送请求
-      this.orderInfoTitle = `（${name}）订单的基本信息`;
-      this.orderInfoDialogVisible = true;
+      getOneCustomerInfo(id).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          console.log(data);
+          this.orderInfo = data;
+
+          this.orderInfoTitle = `（${name}）订单的基本信息`;
+          this.orderInfoDialogVisible = true;
+          this.orderInfoLoading = false;
+        } else {
+          this.$message.error(msg);
+          this.orderInfoLoading = false;
+        }
+      });
     },
 
     // 查看跟进
     lookFollowUp(id) {
+      this.getAllFollowUpInfo(id)
       this.followUpTitle = `订单号（${id}）的跟进情况`;
       this.followUpDialogVisible = true;
     },
@@ -550,7 +458,7 @@ export default {
     CustomerSearch,
     StaffInfo,
     OrderInfo,
-    Pagination
+    Pagination,
   },
 };
 </script>

@@ -15,7 +15,10 @@
             :height="scrollHeight"
             v-loading="loading"
             border
+            :default-sort="{prop: 'create_time', order: 'descending'}"
           >
+            <!-- 选择 -->
+            <el-table-column type="selection" width="55"></el-table-column>
             <!-- 展示 -->
             <el-table-column type="expand">
               <template slot-scope="scope">
@@ -27,7 +30,7 @@
                 </p>
                 <el-form label-position="center" inline class="demo-table-expand">
                   <el-form-item label="年龄">
-                    <span>{{ scope.row.demand_age }}</span>
+                    <span>{{ scope.row.demand_age }}岁以下</span>
                   </el-form-item>
                   <el-form-item label="籍贯">
                     <span>{{ scope.row.demand_census }}</span>
@@ -46,22 +49,22 @@
                     <span>{{ scope.row.demand_education }}</span>
                   </el-form-item>
                   <el-form-item label="服务技能">
-                    <span>{{ scope.row.demand_service_skill }}</span>
+                    <span>{{ scope.row.demand_service_skill.join('，') }}</span>
                   </el-form-item>
                   <el-form-item label="工资">
-                    <span>10000 / 26天</span>
+                    <span>{{scope.row.demand_salary}} / 月</span>
                   </el-form-item>
                   <el-form-item label="家政从业经验">
                     <span>{{ scope.row.demand_experience }}</span>
                   </el-form-item>
                   <el-form-item label="厨艺">
-                    <span>{{ scope.row.demand_cooking }}</span>
+                    <span>{{ scope.row.demand_cooking.join('，') }}</span>
                   </el-form-item>
                 </el-form>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="name" label="姓名" width="100"></el-table-column>
-            <el-table-column align="center" prop="family_hometown" label="家庭成员籍贯" min-width="100"></el-table-column>
+            <el-table-column align="center" prop="family_hometown" label="家庭成员籍贯" min-width="110"></el-table-column>
             <el-table-column
               class="identify"
               align="center"
@@ -71,11 +74,18 @@
               width="100"
             >
               <template slot-scope="scope">
-                <p v-if="scope.row.service_type == 1">长期</p>
-                <p v-if="scope.row.service_type == 2">短期</p>
+                <p v-if="scope.row.service_type == 0">{{scope.row.service_other}}</p>
+                <p v-if="scope.row.service_type == 1">全日住家型</p>
+                <p v-if="scope.row.service_type == 2">日间照料型</p>
+                <p v-if="scope.row.service_type == 3">计时收费型</p>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="service_other" label="需要服务"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="service_content"
+              :show-overflow-tooltip="true"
+              label="需要服务"
+            ></el-table-column>
             <el-table-column width="180" align="center" label="家庭成员">
               <template
                 slot-scope="scope"
@@ -91,10 +101,42 @@
               align="center"
               prop="family_address"
               label="现居住地址"
+              min-width="120"
               :show-overflow-tooltip="true"
             ></el-table-column>
-            <el-table-column align="center" prop="source" label="来源" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="source_id"
+              label="来源"
+              :show-overflow-tooltip="true"
+            >
+              <template slot-scope="scope">
+                <div v-for="item in source" :key="item.id">
+                  <div
+                    style="overflow: hidden;
+                      text-overflow: ellipsis;
+                      white-space: nowrap; height: 30px"
+                    v-if="scope.row.source_id == item.id"
+                  >{{item.name}}</div>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <p v-if="scope.row.state == 0">面试中</p>
+                <p v-if="scope.row.state == 1">进行中</p>
+                <p v-if="scope.row.state == 3">结束</p>
+                <p v-if="scope.row.state == 4">取消</p>
+              </template>
+            </el-table-column>
+            <el-table-column
+              width="130px"
+              :show-overflow-tooltip="true"
+              align="center"
+              sortable
+              prop="create_time"
+              label="录入时间"
+            ></el-table-column>
           </el-table>
         </el-card>
       </el-col>
@@ -113,66 +155,13 @@
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
+import { getCustomerInfo } from "network/orderRequest";
+import { getAllSource } from "network/select";
 export default {
   name: "CustomQuery",
   data() {
     return {
-      customers: [
-        {
-          id: "1",
-          name: "客户",
-          family_area: "100.25",
-          family_hometown: "安徽安庆",
-          family_address: "家庭住址",
-          service_type: "1",
-          service_other: "其他内容",
-          family_people: {
-            children: 1,
-            old: 2,
-            adlut: 3,
-          },
-          service_content: [],
-          demand_age: "20-30",
-          demand_sex: 0,
-          demand_education: "高中",
-          demand_job: ["育婴师", "管家"],
-          demand_zodiac: "牛",
-          demand_experience: "2-3年",
-          demand_census: "不限",
-          demand_cooking: "川菜",
-          demand_service_skill: [],
-          mobile: "13695604265",
-          state: "0",
-          source: "来源",
-        },
-        {
-          id: "2",
-          name: "客户",
-          family_area: "100.25",
-          family_hometown: "安徽安庆",
-          family_address: "家庭住址",
-          service_type: "1",
-          service_other: "其他内容",
-          family_people: {
-            children: 1,
-            old: 2,
-            adlut: 3,
-          },
-          service_content: [],
-          demand_age: "20-30",
-          demand_sex: 0,
-          demand_education: "高中",
-          demand_job: ["育婴师", "管家"],
-          demand_zodiac: "牛",
-          demand_experience: "2-3年",
-          demand_census: "不限",
-          demand_cooking: "川菜",
-          demand_service_skill: [],
-          mobile: "13695604265",
-          state: "0",
-          source: "来源",
-        },
-      ],
+      customers: [],
       // 当前页数
       currentPage: 1,
       // 总数据条数
@@ -181,6 +170,8 @@ export default {
       per_page: null,
       // 等待加载
       loading: false,
+      // 来源
+      source: []
     };
   },
   computed: {
@@ -192,10 +183,44 @@ export default {
     },
   },
   watch: {},
+  created() {
+    this.getAllCustomerInfo();
+
+    // 获取需求来源
+    getAllSource().then((res) => {
+      let { code, data, msg } = res;
+      if (code === 200) {
+        this.source = data;
+      } else {
+        this.$message.error(msg);
+      }
+    });
+  },
   methods: {
+    // 定义获取客户需求信息
+    getAllCustomerInfo() {
+      this.loading = true;
+      getCustomerInfo().then((res) => {
+        if (res.code === 200) {
+          // 获取客户数据
+          this.customers = res.data.data;
+          console.log(res.data.data);
+          // 页数赋值
+          this.currentPage = res.data.current_page;
+          // 总数据条数
+          this.total = res.data.total;
+          // 每页的条
+          this.per_page = res.data.per_page;
+          this.loading = false;
+        } else {
+          this.$message.error(res.msg);
+          this.loading = false;
+        }
+      });
+    },
     // 搜索按钮
     searchBtn(searchForm) {
-      console.log(searchForm)
+      console.log(searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
@@ -204,7 +229,7 @@ export default {
   },
   components: {
     CustomerSearch,
-    Pagination
+    Pagination,
   },
 };
 </script>

@@ -21,16 +21,16 @@
                 {{scope.row.mobile}}
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="time" label="时间" width="180"></el-table-column>
+            <el-table-column align="center" prop="complaint_time" label="时间" width="180"></el-table-column>
             <el-table-column
               align="center"
               prop="content"
               label="投诉事件"
               :show-overflow-tooltip="true"
             ></el-table-column>
-            <el-table-column align="center" prop="is_solved" label="是否解决" width="100">
+            <el-table-column align="center" prop="is_status" label="是否解决" width="100">
               <template slot-scope="scope">
-                <div v-if="scope.row.is_solved">
+                <div v-if="scope.row.is_status">
                   <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
                 </div>
                 <div v-else>
@@ -38,9 +38,9 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="is_dispatch" label="是否分配" width="100">
+            <el-table-column align="center" prop="is_assign" label="是否分配" width="100">
               <template slot-scope="scope">
-                <div v-if="scope.row.is_dispatch">已分配</div>
+                <div v-if="scope.row.is_assign">已分配</div>
                 <div v-else>未分配</div>
               </template>
             </el-table-column>
@@ -105,42 +105,24 @@
 <script>
 import feedbackSearch from "components/common/search/feedbackSearch";
 import Pagination from "components/common/pagination/Pagination";
+import {feedMixin} from "common/promixin"
 export default {
   name: "Handle",
+  mixins: [feedMixin],
   data() {
     return {
       // 这里应该是未分配的投诉
-      feedFormData: [
-        {
-          id: "1",
-          name: "小红时",
-          mobile: "13955844668",
-          time: "2020-05-12",
-          is_dispatch: true,
-          is_solved: true, // 是否解决
-          content: "你们家的阿姨态度恶劣，鸠占鹊巢！",
-          rate: 5,
-        },
-        {
-          id: "2",
-          name: "小轰鸣",
-          mobile: "13955844668",
-          time: "2020-08-12",
-          is_dispatch: true,
-          is_solved: false, // 是否解决
-          content: "你们家的阿姨态度恶劣，鸠占鹊巢！",
-          rate: 2,
-        },
-      ],
+      // feedFormData: [
+      // ],
 
-      // 当前页数
-      currentPage: 1,
-      // 总数据条数
-      total: null,
-      // 每页的条数
-      per_page: null,
-      // 是否加载
-      loading: false,
+      // // 当前页数
+      // currentPage: 1,
+      // // 总数据条数
+      // total: null,
+      // // 每页的条数
+      // per_page: null,
+      // // 是否加载
+      // loading: false,
       // 评分颜色和辅助文字
       texts: ["极差", "失望", "一般", "满意", "非常满意"],
       colors: ["#99A9BF", "#F7BA2A", "#FF9900"],

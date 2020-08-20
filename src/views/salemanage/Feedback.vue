@@ -123,21 +123,12 @@
 import feedbackSearch from "components/common/search/feedbackSearch";
 import Pagination from "components/common/pagination/Pagination";
 import { saveComplaint, getComplaint, deleteComplaint } from "network/feedbackRequest";
+import {feedMixin} from "common/promixin"
 export default {
   name: "Feedback",
+  mixins: [feedMixin],
   data() {
     return {
-      feedFormData: [
-      ],
-
-      // 当前页数
-      currentPage: 1,
-      // 总数据条数
-      total: null,
-      // 每页的条数
-      per_page: null,
-      // 是否加载
-      loading: false,
       // 显示新增投诉框
       addFeedDialogVisible: false,
       // 新增投诉
@@ -178,28 +169,7 @@ export default {
   },
   watch: {},
   methods: {
-    // 获取投诉列表
-    getAllComplaints() {
-      this.loading = true
-      getComplaint().then((res) => {
-        let { code, data, msg } = res;
-        console.log(data)
-        if (code === 200) {
-          // 获取客户数据
-          this.feedFormData = data.data;
-          // 页数赋值
-          this.currentPage = data.current_page;
-          // 总数据条数
-          this.total = data.total;
-          // 每页的条
-          this.per_page = data.per_page;
-          this.loading = false;
-        } else {
-          this.$message.error(msg);
-          this.loading = true
-        }
-      });
-    },
+   
     // 搜索按钮
     searchBtn(searchForm) {
       console.log("客户反馈", searchForm);
@@ -264,7 +234,6 @@ export default {
     Pagination,
   },
   created() {
-    this.getAllComplaints()
   },
 };
 </script>

@@ -67,23 +67,23 @@ export function updateCustomer(data) {
  * 手动分配
  */
 // 分配员工名搜索
-export function searchNameStaff(name) {
+export function searchNameTeacher(name) {
   return request({
-    url: "",
-    method: "post",
-    data: {
-      name: name
+    url: "/user/match_teacher",
+    method: "get",
+    params: {
+      keyword: name
     }
   })
 }
-// 客户分配给员工
-export function distributeStaff(cusid, staid) {
+// 客户分配给匹配老师
+export function distributeTeacher(customer_id, user_id) {
   return request({
-    url: "",
+    url: "customer/match",
     method: "post",
     data: {
-      cusid,
-      staid
+      customer_id: customer_id,
+      user_id: user_id
     }
   })
 }
@@ -170,7 +170,7 @@ export function getFollowUpInfo(idObj) {
 }
 // 保存面试记录
 export function saveInterview(data) {
-  return request({ 
+  return request({
     url: "/interview/save",
     method: "post",
     data: data
@@ -178,7 +178,7 @@ export function saveInterview(data) {
 }
 // 保存跟进内容
 export function saveFollowUpInfo(data) {
-  return request({ 
+  return request({
     url: "/follow_up/save",
     method: "post",
     data: data
@@ -194,13 +194,21 @@ export function deleteFollowUp(id) {
     }
   })
 }
+// 编辑合同
+export function editcontract(data) {
+  return request({
+    url: "/contract/save",
+    method: "post",
+    data: data
+  })
+}
 
 /**
  * 销售回访
  */
 // 获取回访记录
 export function getSalesVisitInfo() {
-  return request({ 
+  return request({
     url: "/visit/index",
     method: "get",
   })
@@ -208,7 +216,7 @@ export function getSalesVisitInfo() {
 
 // 保存回访记录
 export function saveSalesVisitInfo(data) {
-  return request({ 
+  return request({
     url: "/visit/save",
     method: "post",
     data: data

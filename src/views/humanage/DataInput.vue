@@ -714,10 +714,17 @@
                 <el-col :span="15">
                   <el-form-item label="户口地址" class="registration_address" prop="census_id">
                     <el-cascader
+                      v-if="isDisplaySave"
                       v-model="staffForm.census_id"
                       size="mini"
-                      :placeholder="census_text"
                       :props="census_data"
+                    ></el-cascader>
+                    <el-cascader
+                      v-else
+                      v-model="staffForm.census_id"
+                      size="mini"
+                      :props="census_data"
+                      :placeholder="staffForm.census_text"
                     ></el-cascader>
                   </el-form-item>
                 </el-col>
@@ -759,10 +766,17 @@
                 <el-col :span="15">
                   <el-form-item label="现居地址" class="registration_address" prop="now_id">
                     <el-cascader
-                      :placeholder="now_text"
+                      v-if="isDisplaySave"
                       size="mini"
                       v-model="staffForm.now_id"
                       :props="census_data"
+                    ></el-cascader>
+                    <el-cascader
+                      v-else
+                      size="mini"
+                      v-model="staffForm.now_id"
+                      :props="census_data"
+                      :placeholder="staffForm.now_text"
                     ></el-cascader>
                   </el-form-item>
                 </el-col>
@@ -990,7 +1004,8 @@
               <el-col :span="5">
                 <el-form-item label="户口类型" prop="census_type">
                   <el-select size="mini" v-model="staffForm.census_type" placeholder="请选择">
-                    <el-option label="农村户口" value="非农村户口"></el-option>
+                    <el-option label="农村户口" value="农村户口"></el-option>
+                    <el-option label="非农村户口" value="非农村户口"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -1247,10 +1262,9 @@ export default {
         weight: "",
         urgent_name: "",
         urgent_mobile: "",
-        language: "",
+        language: [],
         self_evaluation: "",
         agreement_amount: "", // 安置协议
-        // is_print: "", //
         political_status: "",
         marital_status: "",
         now_id: [],
@@ -1258,9 +1272,9 @@ export default {
         health: "",
         english: "",
         computer: "",
-        cooking: "",
-        service_skills: "",
-        device: "",
+        cooking: [],
+        service_skills: [],
+        device: [],
         job: [],
 
         // 工作经历
@@ -1294,7 +1308,7 @@ export default {
       addUserRules: {
         name: [{ required: true, message: "请输入员工姓名", trigger: "blur" }],
         nation: [{ required: true, message: "请输入民族", trigger: "blur" }],
-        sex: [{ required: true, message: "请输入员工性别", trigger: "change" }],
+        // sex: [{ required: true, message: "请输入员工性别", trigger: "change" }],
         mobile: [{ required: true, message: "请输入电话", trigger: "blur" }],
         identity: [
           { required: true, message: "请输入员工身份证号", trigger: "blur" },
@@ -1308,12 +1322,12 @@ export default {
         urgent_mobile: [
           { required: true, message: "请输入紧急电话", trigger: "blur" },
         ],
-        political_status: [
-          { required: true, message: "请输入政治面貌", trigger: "change" },
-        ],
-        marital_status: [
-          { required: true, message: "请输入婚姻状况", trigger: "change" },
-        ],
+        // political_status: [
+        //   { required: true, message: "请输入政治面貌", trigger: "change" },
+        // ],
+        // marital_status: [
+        //   { required: true, message: "请输入婚姻状况", trigger: "change" },
+        // ],
         census_id: [
           { required: true, message: "请输入户口地址", trigger: "change" },
         ],
@@ -1340,7 +1354,6 @@ export default {
           if (level === 0) {
             // 获取省
             getProvince().then((res) => {
-              // console.log(res.data);
               const nodes = res.data.map((item) => ({
                 value: item.id,
                 label: item.name,
@@ -1352,7 +1365,6 @@ export default {
           // 获取市
           if (level === 1) {
             getCity(node.value).then((res) => {
-              // console.log(res.data);
               const nodes = res.data.map((item) => ({
                 value: item.id,
                 label: item.name,
@@ -1364,7 +1376,6 @@ export default {
           // 获取县
           if (level === 2) {
             getDistrict(node.value).then((res) => {
-              // console.log(res.data);
               const nodes = res.data.map((item) => ({
                 value: item.id,
                 label: item.name,
@@ -1438,18 +1449,18 @@ export default {
     },
 
     /**
-     * 
+     *
      */
-    census_text() {
-      return this.staffForm.census_text
-        ? this.staffForm.census_text.join("")
-        : "请输入省市县";
-    },
-    now_text() {
-      return this.staffForm.now_text
-        ? this.staffForm.now_text.join("")
-        : "请输入省市县";
-    },
+    // census_text() {
+    //   return this.staffForm.census_text
+    //     ? this.staffForm.census_text.join("")
+    //     : "请输入省市县";
+    // },
+    // now_text() {
+    //   return this.staffForm.now_text
+    //     ? this.staffForm.now_text.join("")
+    //     : "请输入省市县";
+    // },
   },
   components: {
     Search,
@@ -1464,7 +1475,6 @@ export default {
           if (res.code === 200) {
             console.log(res.data);
             this.userList = res.data.data;
-            // console.log(res.data)
             this.currentPage = res.data.current_page;
             this.total = parseInt(res.data.total);
             this.per_page = res.data.per_page;
@@ -1503,7 +1513,6 @@ export default {
       // 获取图片
       getOneStaffImage(id).then((res) => {
         if (res.code === 200) {
-          console.log(res.data);
           let data = res.data;
           // pictureData赋值（防止保存图片错误，使数据丢失）
           this.pictureData.staff_id = data.staff_id;
@@ -1546,7 +1555,7 @@ export default {
     addStaffBtn() {
       this.addUserFormVisible = true;
       this.title = "新增员工";
-      this.staffForm = {}
+      this.staffForm = {};
 
       // 发送事件（默认入职时间为当前时间）
       // eventVue.$emit("addstaffevent");
@@ -1562,7 +1571,6 @@ export default {
 
     // 添加按钮关闭回调
     closeAddDialog() {
-      console.log("关闭添加员工框的回调");
       this.$refs.addForm.resetFields();
     },
 
@@ -1584,7 +1592,6 @@ export default {
           this.$message.error(res.msg);
         }
       });
-      console.log(ids);
     },
 
     // 选择删除按钮
@@ -1598,7 +1605,6 @@ export default {
           .then(() => {
             // 确认操作
             deleteStaff(this.selected).then((res) => {
-              console.log(res);
               if (res.code === 200) {
                 // 提示删除成功
                 this.$message.success(res.msg);
@@ -1636,8 +1642,11 @@ export default {
       this.isDisplaySave = false;
       getOneStraffInfo(id).then((res) => {
         if (res.code === 200) {
-          console.log(res.data);
           this.staffForm = res.data;
+          this.staffForm.now_id = [];
+          this.staffForm.census_id = [];
+          this.staffForm.census_text = res.data.census_text.join("/");
+          this.staffForm.now_text = res.data.now_text.join("/");
         } else {
           this.$message.warning(res.msg);
         }
@@ -1650,7 +1659,6 @@ export default {
       getEventInfo(staff_id).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(data);
           this.eventData = data;
         } else {
           this.$message.error(msg);
@@ -1696,7 +1704,6 @@ export default {
     },
     // 身份证上传
     handleIdentyRemove(file, fileList) {
-      console.log(file.url);
       let index = this.pictureData.identity.indexOf(file.url);
       this.pictureData.identity.splice(index, 1);
     },
@@ -1708,7 +1715,6 @@ export default {
       this.$message.warning("最多上传2张！");
     },
     handleIdentySuccess(res, file, fileList) {
-      console.log(file);
       this.transforPicData("identity", file);
     },
     // 体检证件
@@ -1830,7 +1836,7 @@ export default {
      */
     cancelAddStaff() {
       this.$refs.addForm.resetFields();
-      this.addUserFormVisible = false
+      this.addUserFormVisible = false;
     },
     // 添加工作经历按钮
     addWorkBtn() {
@@ -1890,7 +1896,7 @@ export default {
           this.cancelAddStaff();
           // 更新数据
           // eventVue.$emit("saveUpdateStaff");
-          this.getUserData()
+          this.getUserData();
         } else {
           this.$message.error(res.msg);
         }

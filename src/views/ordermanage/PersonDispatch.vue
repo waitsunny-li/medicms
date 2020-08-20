@@ -17,10 +17,12 @@
               </template>
             </el-table-column>
             <el-table-column align="center" prop="family_address" label="地址" width="180"></el-table-column>
-            <el-table-column align="center" prop="service_type" label="服务类型" width="100">
+            <el-table-column align="center" prop="service_type" label="服务类型" width="150">
               <template slot-scope="scope">
-                <p v-if="scope.row.service_type == 1">长期</p>
-                <p v-if="scope.row.service_type == 2">短期</p>
+                <p v-if="scope.row.service_type == 0">{{scope.row.service_other}}</p>
+                <p v-if="scope.row.service_type == 1">全日住家型</p>
+                <p v-if="scope.row.service_type == 2">日间照料型</p>
+                <p v-if="scope.row.service_type == 3">计时收费型</p>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="family_people" label="家庭成员">
@@ -28,7 +30,14 @@
                 slot-scope="scope"
               >{{scope.row.family_people.children}}小孩，{{scope.row.family_people.adlut}}成人，{{scope.row.family_people.old}}老人</template>
             </el-table-column>
-            <el-table-column align="center" prop="state" label="状态"></el-table-column>
+            <el-table-column align="center" prop="state" label="状态">
+              <template slot-scope="scope">
+                <p v-if="scope.row.state == 0">面试中</p>
+                <p v-if="scope.row.state == 1">进行中</p>
+                <p v-if="scope.row.state == 3">结束</p>
+                <p v-if="scope.row.state == 4">取消</p>
+              </template>
+            </el-table-column>
             <el-table-column align="center" label="操作">
               <template slot-scope="scope">
                 <el-button type="primary" size="mini" @click="printDispatchBtn">查看派出单</el-button>

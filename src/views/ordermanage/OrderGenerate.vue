@@ -360,7 +360,7 @@
             <el-table-column align="center" prop="staff_id" label="是否完成">
               <template slot-scope="scope">
                 <div v-if="scope.row.staff_id != 0">
-                  <el-tooltip class="item" effect="dark" content="Top Center 提示文字" placement="top">
+                  <el-tooltip class="item" effect="dark" :content="scope.row.staff.name" placement="top">
                     <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
                   </el-tooltip>
                 </div>
@@ -384,7 +384,7 @@
                     type="primary"
                     class="el-icon-user"
                     circle
-                    style="margin-right: 10px"
+                    style="margin-right: 5px"
                   ></el-button>
                 </el-tooltip>
 
@@ -392,7 +392,7 @@
                   class="item"
                   effect="dark"
                   :enterable="false"
-                  content="编辑订单"
+                  content="编辑合同"
                   placement="top"
                 >
                   <el-button
@@ -482,12 +482,12 @@
       </span>
     </el-dialog>
 
-    <!-- 编辑订单 -->
+    <!-- 编辑合同 -->
     <el-dialog
       :title="editCustomerTitle"
       :visible.sync="editDialogVisible"
       @close="editDialogClose"
-      width="900px"
+      width="800px"
       center
     >
       <div class="content">
@@ -495,14 +495,7 @@
           <!-- 主体 -->
           <div class="content-wrap">
             <el-row>
-              <el-col :span="4">
-                <el-form-item label="状态" prop="state">
-                  <el-select size="mini" v-model="form.state" placeholder="请选择">
-                    <el-option label="服务中" value="服务中"></el-option>
-                  </el-select>
-                </el-form-item>
-              </el-col>
-              <el-col :span="5">
+              <el-col :span="6" :offset="1">
                 <el-form-item label="身份证" prop="identity">
                   <el-input size="mini" v-model="form.identity" placeholder="请输入"></el-input>
                 </el-form-item>
@@ -515,7 +508,7 @@
               <el-col :span="9">
                 <el-form-item label="合同起止" class="registration_address" prop="contrace_start_end">
                   <el-date-picker
-                    style="width: 310px"
+                    style="width: 290px"
                     size="mini"
                     v-model="form.contrace_start_end"
                     type="daterange"
@@ -529,7 +522,7 @@
             </el-row>
 
             <el-row>
-              <el-col :span="4">
+              <el-col :span="4" :offset="1">
                 <el-form-item label="合同费" prop="contract_cost">
                   <el-input size="mini" v-model="form.contract_cost"></el-input>
                 </el-form-item>
@@ -547,32 +540,23 @@
                   <el-input size="mini" v-model="form.now_wages"></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="9">
-                <el-col :span="12">
-                  <el-form-item label="家政员提成" prop="staff_percentage">
+              <el-col :span="7">
+                <el-col :span="24">
+                  <el-form-item label="家政员提成" prop="staff_percentage" style="width: 170px">
                     <el-input size="mini" v-model="form.staff_percentage"></el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="12">
-                  <el-form-item label="签合同时工资" prop="contract_wages" class="contract_wages">
-                    <el-input size="mini" v-model="form.contract_wages"></el-input>
-                  </el-form-item>
-                </el-col>
+                
               </el-col>
             </el-row>
 
             <el-row>
-              <el-col :span="12">
-                <el-form-item label="家庭情况备注" class="registration_address" prop="family_remarks">
-                  <el-input
-                    style="width: 515px"
-                    size="mini"
-                    v-model="form.family_remarks"
-                    type="textarea"
-                  ></el-input>
-                </el-form-item>
+              <el-col :span="6" :offset="1">
+                <el-form-item label="上班地址" prop="second_contacter">
+                    <el-input size="mini" v-model="form.second_contacter" placeholder="请输入上班地址"></el-input>
+                  </el-form-item>
               </el-col>
-              <el-col :span="9" :offset="3">
+              <el-col :span="9">
                 <el-col :span="12">
                   <el-form-item label="第二联系人" prop="second_contacter">
                     <el-input size="mini" v-model="form.second_contacter" placeholder="请输入姓名"></el-input>
@@ -583,6 +567,24 @@
                     <el-input size="mini" v-model="form.second_contact_tel"></el-input>
                   </el-form-item>
                 </el-col>
+              </el-col>
+              <el-col :span="5">
+                  <el-form-item label="签合同时工资" prop="contract_wages" style="width: 190px" class="contract_wages">
+                    <el-input size="mini"  v-model="form.contract_wages"></el-input>
+                  </el-form-item>
+                </el-col>
+            </el-row>
+
+            <el-row>
+              <el-col :span="12" :offset="1">
+                <el-form-item label="家庭情况备注" class="registration_address" prop="family_remarks">
+                  <el-input
+                    style="width: 515px"
+                    size="mini"
+                    v-model="form.family_remarks"
+                    type="textarea"
+                  ></el-input>
+                </el-form-item>
               </el-col>
             </el-row>
           </div>
@@ -921,7 +923,7 @@ export default {
 
     // 编辑显示
     editBtn(name, id) {
-      this.editCustomerTitle = `编辑客户（${name}）的订单`;
+      this.editCustomerTitle = `编辑客户（${name}）的合同`;
       this.editDialogVisible = true;
     },
 
@@ -1228,7 +1230,7 @@ export default {
     },
     // 跟进删除
     followUpDeleteBtn(id) {
-      console.log(id)
+      console.log(id);
       deleteFollowUp(id).then((res) => {
         let { code, msg } = res;
         if (code === 200) {

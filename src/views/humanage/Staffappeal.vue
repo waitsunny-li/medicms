@@ -56,6 +56,12 @@
                   size="mini"
                   @click="lookAppealBtn(scope.row.id, scope.row.name)"
                 >查看申诉</el-button>
+                <el-button
+                  type="primary"
+                  icon="el-icon-plus"
+                  size="mini"
+                  @click="addAppealBtn(scope.row.id)"
+                ></el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -71,8 +77,27 @@
       @handlecurrentchange="handleCurrentChange"
     />
 
+    <!-- 添加操作 -->
+    <el-dialog title="添加申诉内容" :visible.sync="addDialogVisible" width="30%" center>
+      <el-form ref="form" :model="form" label-width="80px">
+        <el-form-item label="申诉内容">
+          <el-input v-model="form.content" type="textarea" style="height
+          100px"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="addDialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="saveAppealInfo">保 存</el-button>
+      </span>
+    </el-dialog>
+
     <!-- 查看培训记录 -->
-    <el-dialog :title="staff_name + '的申诉记录'" :visible.sync="assessDialogVisible" width="800px" center>
+    <el-dialog
+      :title="staff_name + '的申诉记录'"
+      :visible.sync="assessDialogVisible"
+      width="800px"
+      center
+    >
       <!-- 表单内容 -->
       <el-table
         height="500"
@@ -83,32 +108,28 @@
         v-loading="showTrainLoading"
       >
         <el-table-column prop="start_end" align="center" label="日期" width="180">
-          <template slot-scope="scope">{{scope.row.time.join(' ~ ')}}</template>
+          <template slot-scope="scope">{{scope.row.create_time}}</template>
         </el-table-column>
-        <el-table-column prop="project" align="center" label="事件类型" width="180"></el-table-column>
         <el-table-column prop="content" :show-overflow-tooltip="true" align="center" label="事件内容"></el-table-column>
-        <el-table-column prop="address" align="center" label="考核评价">
+        <el-table-column align="center" label="状态" width="180">
           <template slot-scope="scope">
-            <div v-if="scope.row.is_by == 0">未审核</div>
-            <div v-else-if="scope.row.is_by == 1">
-              <el-tooltip class="item" effect="dark" :content="scope.row.assess_content" placement="top">
-                <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
-              </el-tooltip>
-            </div>
-            <div v-else>
-              <i style="color:#F56C6C; font-size: 28px" class="el-icon-circle-close"></i>
-            </div>
+            <p v-if="scope.row.status == 0">
+              <el-tag size="mini" type="info" effect="dark">未审核</el-tag>
+            </p>
+            <p v-if="scope.row.status == 1">
+              <i style="color:#67C23A; font-size: 22px; margin-right: 5px" class="el-icon-success"></i>通过
+            </p>
+            <p v-if="scope.row.status == 2">
+              <i style="color:#F56C6C; font-size: 22px;margin-right: 5px" class="el-icon-circle-close"></i>拒绝
+            </p>
           </template>
         </el-table-column>
+
         <!-- 操作 -->
         <el-table-column label="操作" fixed="right" align="center" width="200">
           <template slot-scope="scope">
-            <div v-if="scope.row.is_by == 0">
-              <el-button
-                type="primary"
-                size="mini"
-                @click="assessOperation(scope.row.id, scope.row.staff_id)"
-              >考核评价</el-button>
+            <div v-if="1">
+              <el-button type="primary" size="mini" @click="appealOperation(scope.row.id)">审核</el-button>
             </div>
             <div v-else>已审核完成</div>
           </template>
@@ -116,36 +137,20 @@
       </el-table>
     </el-dialog>
 
-    <!-- 评价操作 -->
+    <!-- 审核操作 -->
     <el-dialog
       center
       width="30%"
-      title="评价"
-      :visible.sync="evaluateVisible"
+      title="审核"
+      :visible.sync="changeAppealVisible"
       append-to-body
       @close="evaluateVisibleClose"
     >
       <!-- 表单 -->
-      <el-form
-        ref="evaluateForm"
-        :rules="evaluateFormRules"
-        :model="evaluateForm"
-        label-width="80px"
-      >
-        <el-form-item label="是否通过" prop="is_by">
-          <el-radio v-model="evaluateForm.is_by" label="1">通过</el-radio>
-          <el-radio v-model="evaluateForm.is_by" label="2">未通过</el-radio>
-        </el-form-item>
-        <el-form-item label="评价内容" prop="assess_content">
-          <el-input type="textarea" v-model="evaluateForm.assess_content"></el-input>
-        </el-form-item>
-        <el-form-item label="员工状态" prop="status" class="person_state">
-          <el-select size="mini" v-model="evaluateForm.status" placeholder="员工状态">
-            <el-option label="培训" value="1"></el-option>
-            <el-option label="待岗" value="3"></el-option>
-            <el-option label="离职" value="4"></el-option>
-            <el-option label="黑名单" value="5"></el-option>
-          </el-select>
+      <el-form ref="appealChangeForm" :model="appealChangeForm" label-width="80px">
+        <el-form-item label="是否通过" prop="status">
+          <el-radio v-model="appealChangeForm.status" label="1">通过</el-radio>
+          <el-radio v-model="appealChangeForm.status" label="2">未通过</el-radio>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -160,10 +165,11 @@
 import Search from "components/common/search/Search";
 import Pagination from "components/common/pagination/Pagination";
 import {
-  requestUserListDate,
-  getTrainingsData,
-  saveAssessment,
   searchAppointStaff,
+  getEventInfo,
+  getAppeal,
+  saveAppeal,
+  changeAppeal,
 } from "network/humanageRequest";
 export default {
   name: "Staffappeal",
@@ -179,35 +185,32 @@ export default {
       // 每页的条数
       per_page: null,
       // 评价表单
-      evaluateForm: {
-        id: "",
-        is_by: "",
-        assess_content: "",
-        status: "1",
-      },
       // 培训记录等待
       showTrainLoading: false,
-
-      // 显示考核内容
+      // 查看
       assessDialogVisible: false,
+
+      // 显示修改状态内容
+      changeAppealVisible: false,
       // 是否显示评价操作
       evaluateVisible: false,
       // 员工名字
       staff_name: "",
-      // 当前操作的员工id
       currentStaffId: "",
+
+      // 添加申诉
+      addDialogVisible: false,
+      addAppealForm: {
+        staff_id: "",
+        content: "",
+      },
+      form: {},
 
       // 显示培训记录
       assessData: [],
-
-      /**
-       * 以下是验证规则
-       */
-      evaluateFormRules: {
-        assess_content: [
-          { required: true, message: "请输入评价内容", trigger: "blur" },
-        ],
-        is_by: [{ required: true, message: "请输入是否通过", trigger: "blur" }],
+      appealChangeForm: {
+        id: "",
+        status: "",
       },
     };
   },
@@ -232,7 +235,7 @@ export default {
     // 定义请求用户列表数据
     getStaffData() {
       this.loading = true;
-      requestUserListDate()
+      searchAppointStaff(5)
         .then((res) => {
           if (res.code === 200) {
             this.staffList = res.data.data;
@@ -255,11 +258,11 @@ export default {
       console.log(currentpage);
     },
 
-    // 定义一个获取当前用户所有的培训记录
-    getAllTrainingsData(staff_id) {
+    // 定义一个获取当前用户所有的事件记录
+    getAllAppealData(staff_id) {
       this.showTrainLoading = true;
       // 先请求数据
-      getTrainingsData(staff_id).then((res) => {
+      getAppeal(staff_id).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
           console.log(data);
@@ -272,46 +275,67 @@ export default {
       });
     },
 
+    // 添加申诉
+    addAppealBtn(staff_id) {
+      this.addDialogVisible = true;
+      this.form = this.addAppealForm;
+      this.form.staff_id = staff_id;
+    },
+
     // 查看申诉记录按钮
     lookAppealBtn(id, name) {
       this.staff_name = name;
       this.assessDialogVisible = true;
+      this.currentStaffId = id
       // 先请求数据
-      this.getAllTrainingsData(id);
+      this.getAllAppealData(id);
     },
 
-    // 考核操作评价显示
-    assessOperation(id, staff_id) {
-      this.evaluateForm.id = id;
-      // 赋值当前员工的id
-      this.currentStaffId = staff_id;
-      this.evaluateVisible = true;
+    // 保存申诉
+    saveAppealInfo() {
+      if (this.addAppealForm.content.trim() == "") {
+        this.$message.error("请输入申述内容！");
+      } else {
+        saveAppeal(this.addAppealForm).then((res) => {
+          let { code, msg } = res;
+          if (code === 200) {
+            this.$message.success(msg);
+            this.addDialogVisible = false;
+          } else {
+            this.$message.error(msg);
+          }
+        });
+      }
     },
 
-    // 保存评价
+    // 修改申诉状态操作评价显示
+    appealOperation(id) {
+      this.appealChangeForm.id = id;
+      this.changeAppealVisible = true;
+    },
+
+    // 保存改变后的状态
     saveEvaluate() {
-      this.$refs.evaluateForm.validate((valid) => {
-        if (valid) {
-          saveAssessment(this.evaluateForm).then((res) => {
-            let { code, msg } = res;
-            if (code === 200) {
-              this.$message.success(msg);
-              // 关闭评价框
-              this.evaluateVisible = false;
-              this.getAllTrainingsData(this.currentStaffId);
-              this.getStaffData();
-            } else {
-              this.$message.error(msg);
-            }
-          });
-        } else {
-          return false;
-        }
-      });
+      if (this.appealChangeForm.status != "") {
+        changeAppeal(this.appealChangeForm).then((res) => {
+          let { code, msg } = res;
+          if (code === 200) {
+            this.$message.success(msg);
+            // 关闭评价框
+            this.changeAppealVisible = false;
+            this.getAllAppealData(this.currentStaffId);
+            this.getStaffData();
+          } else {
+            this.$message.error(msg);
+          }
+        });
+      } else {
+        this.$message.error('请输入状态！');
+      }
     },
     // 评价框关闭自动回调
     evaluateVisibleClose() {
-      this.$refs.evaluateForm.resetFields();
+      this.appealChangeForm.status = "";
     },
   },
   created() {
@@ -325,44 +349,42 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.assessment {
-  .table-content {
-    margin-top: 10px;
-    border-top: 2px solid #75cbf4;
-    box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1);
-    position: relative;
-    height: 700px;
+.table-content {
+  margin-top: 10px;
+  border-top: 2px solid #75cbf4;
+  box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+  height: 700px;
 
-    .pagination {
-      position: absolute;
-      bottom: 50px;
-      width: 100%;
-      display: flex;
-      justify-content: center;
+  .pagination {
+    position: absolute;
+    bottom: 50px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+.user-table-wrap {
+  margin-top: 20px;
+
+  /deep/.el-table__body-wrapper {
+    overflow-x: hidden;
+
+    /deep/.expand-row {
+      border-bottom: 1px solid #f1f1f1;
+      padding: 10px 0;
     }
   }
 
-  .user-table-wrap {
-    margin-top: 20px;
+  /deep/.el-table__body-wrapper::-webkit-scrollbar {
+    width: 4px;
+    height: 10px;
+  }
 
-    /deep/.el-table__body-wrapper {
-      overflow-x: hidden;
-
-      /deep/.expand-row {
-        border-bottom: 1px solid #f1f1f1;
-        padding: 10px 0;
-      }
-    }
-
-    /deep/.el-table__body-wrapper::-webkit-scrollbar {
-      width: 4px;
-      height: 10px;
-    }
-
-    /deep/.el-table__body-wrapper::-webkit-scrollbar-thumb {
-      background-color: #ccc;
-      border-radius: 20px;
-    }
+  /deep/.el-table__body-wrapper::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
   }
 }
 </style>

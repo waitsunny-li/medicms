@@ -258,7 +258,7 @@
             <el-collapse-item
               v-for="powerItemObj in powers"
               :key="powerItemObj.controller"
-              :title="powerItemObj.controller"
+              :title="powerItemObj.controller_text"
               name="1"
             >
               <el-checkbox

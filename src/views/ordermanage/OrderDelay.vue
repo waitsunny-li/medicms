@@ -29,7 +29,7 @@
                 </p>
                 <el-form label-position="center" inline class="demo-table-expand">
                   <el-form-item label="年龄">
-                    <span>{{ scope.row.demand_age }}</span>
+                    <span>{{ scope.row.demand_age }}岁以下</span>
                   </el-form-item>
                   <el-form-item label="籍贯">
                     <span>{{ scope.row.demand_census }}</span>
@@ -48,17 +48,16 @@
                     <span>{{ scope.row.demand_education }}</span>
                   </el-form-item>
                   <el-form-item label="服务技能">
-                    <span>{{ scope.row.demand_service_skill.join(',') }}</span>
+                    <span>{{ scope.row.demand_service_skill.join('，') }}</span>
                   </el-form-item>
-                  <el-form-item label="厨艺">
-                    <span>{{ scope.row.demand_cooking }}</span>
+                  <el-form-item label="工资">
+                    <span>{{scope.row.demand_salary}} / 月</span>
                   </el-form-item>
                   <el-form-item label="家政从业经验">
                     <span>{{ scope.row.demand_experience }}</span>
                   </el-form-item>
-
-                  <el-form-item label="工资待遇">
-                    <span>12000 / 26天</span>
+                  <el-form-item label="厨艺">
+                    <span>{{ scope.row.demand_cooking.join('，') }}</span>
                   </el-form-item>
                 </el-form>
               </template>
@@ -81,13 +80,15 @@
               width="100"
             >
               <template slot-scope="scope">
-                <p v-if="scope.row.service_type == 1">长期</p>
-                <p v-if="scope.row.service_type == 2">短期</p>
+                <p v-if="scope.row.service_type == 0">{{scope.row.service_other}}</p>
+                <p v-if="scope.row.service_type == 1">全日住家型</p>
+                <p v-if="scope.row.service_type == 2">日间照料型</p>
+                <p v-if="scope.row.service_type == 3">计时收费型</p>
               </template>
             </el-table-column>
             <el-table-column
               align="center"
-              prop="service_other"
+              prop="service_content"
               label="需要服务"
               :show-overflow-tooltip="true"
             ></el-table-column>
@@ -109,14 +110,41 @@
               :show-overflow-tooltip="true"
               width="120px"
             ></el-table-column>
-            <el-table-column align="center" prop="source" label=" 现役服务员" width="100px"  :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="source"
+              label=" 现役服务员"
+              width="100px"
+              :show-overflow-tooltip="true"
+            >
+              <template slot-scope="scope">
+                <div v-if="scope.row.staff_id != 0">
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    :content="scope.row.staff.mobile"
+                    placement="top"
+                  ><p>{{scope.row.staff.name}}</p></el-tooltip>
+                </div>
+                <div v-else>暂无服务人员</div>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <p v-if="scope.row.state == 0">面试中</p>
+                <p v-if="scope.row.state == 1">进行中</p>
+                <p v-if="scope.row.state == 3">结束</p>
+                <p v-if="scope.row.state == 4">取消</p>
+              </template>
+            </el-table-column>
             <el-table-column align="center" prop="is_success" label="是否完成">
               <template slot-scope="scope">
-                <div v-if="scope.row.is_success">
-                  <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
+                <div v-if="scope.row.staff_id != 0">
+                  <el-tooltip class="item" effect="dark" content="Top Center 提示文字" placement="top">
+                    <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
+                  </el-tooltip>
                 </div>
-                <div v-else></div>
+                <div v-else>未完成</div>
               </template>
             </el-table-column>
             <!-- 操作 -->
@@ -129,12 +157,7 @@
                   content="批准"
                   placement="top"
                 >
-                  <el-button
-                    size="mini"
-                    type="primary"
-                    icon="el-icon-finished"
-                    circle
-                  ></el-button>
+                  <el-button size="mini" type="primary" icon="el-icon-finished" circle></el-button>
                 </el-tooltip>
 
                 <el-tooltip
@@ -144,12 +167,7 @@
                   content="恢复"
                   placement="top"
                 >
-                  <el-button
-                    type="success"
-                    icon="el-icon-refresh"
-                    size="mini"
-                    circle
-                  ></el-button>
+                  <el-button type="success" icon="el-icon-refresh" size="mini" circle></el-button>
                 </el-tooltip>
               </template>
             </el-table-column>
@@ -171,72 +189,13 @@
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
+import { getCustomerInfo } from "network/orderRequest";
 export default {
   name: "OrderDelay",
   data() {
     return {
       // 订单列表
-      orderList: [
-        {
-          id: "1",
-          name: "徐子真",
-          family_area: "100.25",
-          family_hometown: "安徽安庆",
-          family_address: "家庭住址",
-          service_type: "1",
-          service_other: "其他内容",
-          family_people: {
-            children: 1,
-            old: 2,
-            adlut: 3,
-          },
-          service_content: [],
-          demand_age: "20-30",
-          demand_sex: 0,
-          demand_education: "高中",
-          demand_job: ["育婴师", "管家"],
-          demand_zodiac: "牛",
-          demand_experience: "2-3年",
-          demand_census: "不限",
-          demand_cooking: "川菜",
-          demand_service_skill: [],
-          mobile: "13695604265",
-          state: "0",
-          source: "来源",
-
-          // 订单是否完成
-          is_success: true,
-        },
-        {
-          id: "2",
-          name: "胡大侠",
-          family_area: "100.25",
-          family_hometown: "安徽安庆",
-          family_address: "家庭住址",
-          service_type: "1",
-          service_other: "其他内容",
-          family_people: {
-            children: 1,
-            old: 2,
-            adlut: 3,
-          },
-          service_content: [],
-          demand_age: "20-30",
-          demand_sex: 0,
-          demand_education: "高中",
-          demand_job: ["育婴师", "管家"],
-          demand_zodiac: "12000 / 26天",
-          demand_experience: "2-3年",
-          demand_census: "不限",
-          demand_cooking: "川菜",
-          demand_service_skill: [],
-          mobile: "13695604265",
-          state: "0",
-          source: "来源",
-          // 订单是否完成
-          is_success: false,
-        },
-      ],
+      orderList: [],
       // 当前页数
       currentPage: 1,
       // 总数据条数
@@ -257,11 +216,34 @@ export default {
       return this.$store.state.screenHeight - 290 + "px";
     },
   },
-  watch: {},
+  created() {
+    this.getAllOrderInfo();
+  },
   methods: {
+    // 定义获取客户需求信息
+    getAllOrderInfo() {
+      this.loading = true;
+      getCustomerInfo().then((res) => {
+        if (res.code === 200) {
+          // 获取客户数据
+          this.orderList = res.data.data;
+          console.log(res.data.data);
+          // 页数赋值
+          this.currentPage = res.data.current_page;
+          // 总数据条数
+          this.total = res.data.total;
+          // 每页的条
+          this.per_page = res.data.per_page;
+          this.loading = false;
+        } else {
+          this.$message.error(res.msg);
+          this.loading = false;
+        }
+      });
+    },
     // 搜索按钮点击
     searchBtn(searchForm) {
-      console.log('订单延迟', searchForm)
+      console.log("订单延迟", searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
@@ -270,7 +252,7 @@ export default {
   },
   components: {
     CustomerSearch,
-    Pagination
+    Pagination,
   },
 };
 </script>

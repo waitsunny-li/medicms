@@ -7,7 +7,13 @@
 
         <el-card class="table-content" :style="{height: screenHeight}">
           <!-- 表单 -->
-          <el-table :data="feedFormData" style="width: 100%" border class="user-table-wrap" :height="scrollHeight">
+          <el-table
+            :data="feedFormData"
+            style="width: 100%"
+            border
+            class="user-table-wrap"
+            :height="scrollHeight"
+          >
             <el-table-column prop="name" align="center" label="客户姓名" width="180"></el-table-column>
             <el-table-column align="center" prop="mobile" label="联络电话" width="180">
               <template slot-scope="scope">
@@ -15,11 +21,16 @@
                 {{scope.row.mobile}}
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="time" label="时间" width="180"></el-table-column>
-            <el-table-column align="center" prop="content" :show-overflow-tooltip="true" label="投诉事件"></el-table-column>
-            <el-table-column align="center" prop="is_solved" label="是否解决" width="180">
+            <el-table-column align="center" prop="complaint_time" label="时间" width="180"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="content"
+              :show-overflow-tooltip="true"
+              label="投诉事件"
+            ></el-table-column>
+            <el-table-column align="center" prop="is_status" label="是否解决" width="180">
               <template slot-scope="scope">
-                <div v-if="scope.row.is_solved">
+                <div v-if="scope.row.is_status">
                   <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
                 </div>
                 <div v-else>
@@ -27,9 +38,9 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="is_dispatch" label="是否分配" width="180">
+            <el-table-column align="center" prop="is_assign" label="是否分配" width="180">
               <template slot-scope="scope">
-                <div v-if="scope.row.is_dispatch">已分配</div>
+                <div v-if="scope.row.is_assign">已分配</div>
                 <div v-else>未分配</div>
               </template>
             </el-table-column>
@@ -94,31 +105,12 @@
 <script>
 import feedbackSearch from "components/common/search/feedbackSearch";
 import Pagination from "components/common/pagination/Pagination";
+import { feedMixin } from "common/promixin";
 export default {
   name: "SaleDistribute",
+  mixins: [feedMixin],
   data() {
     return {
-      // 这里应该是未分配的投诉
-      feedFormData: [
-        {
-          id: "1",
-          name: "小红时",
-          mobile: "13955844668",
-          time: "2020-05-12",
-          is_dispatch: false,
-          is_solved: false, // 是否解决
-          content: "你们家的阿姨态度恶劣，鸠占鹊巢！",
-        },
-      ],
-
-      // 当前页数
-      currentPage: 1,
-      // 总数据条数
-      total: null,
-      // 每页的条数
-      per_page: null,
-      // 是否加载
-      loading: false,
       // 显示新增投诉框
       addFeedDialogVisible: false,
       // 新增投诉
@@ -154,7 +146,7 @@ export default {
   methods: {
     // 搜索按钮
     searchBtn(searchForm) {
-      console.log("分派", searchForm)
+      console.log("分派", searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
@@ -177,7 +169,7 @@ export default {
   },
   components: {
     feedbackSearch,
-    Pagination
+    Pagination,
   },
 };
 </script>

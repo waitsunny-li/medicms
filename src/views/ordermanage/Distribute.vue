@@ -27,7 +27,7 @@
                 </p>
                 <el-form label-position="center" inline class="demo-table-expand">
                   <el-form-item label="年龄">
-                    <span>{{ scope.row.demand_age }}</span>
+                    <span>{{ scope.row.demand_age }}岁以下</span>
                   </el-form-item>
                   <el-form-item label="籍贯">
                     <span>{{ scope.row.demand_census }}</span>
@@ -46,22 +46,22 @@
                     <span>{{ scope.row.demand_education }}</span>
                   </el-form-item>
                   <el-form-item label="服务技能">
-                    <span>{{ scope.row.demand_service_skill }}</span>
+                    <span>{{ scope.row.demand_service_skill.join('，') }}</span>
                   </el-form-item>
-                  <el-form-item label="生肖">
-                    <span>{{ scope.row.demand_zodiac }}</span>
+                  <el-form-item label="工资">
+                    <span>{{scope.row.demand_salary}} / 月</span>
                   </el-form-item>
                   <el-form-item label="家政从业经验">
                     <span>{{ scope.row.demand_experience }}</span>
                   </el-form-item>
                   <el-form-item label="厨艺">
-                    <span>{{ scope.row.demand_cooking }}</span>
+                    <span>{{ scope.row.demand_cooking.join('，') }}</span>
                   </el-form-item>
                 </el-form>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="name" label="姓名" width="100"></el-table-column>
-            <el-table-column align="center" prop="family_hometown" label="家庭成员籍贯"></el-table-column>
+            <el-table-column align="center" prop="family_hometown" min-width="110" label="家庭成员籍贯"></el-table-column>
             <el-table-column
               class="identify"
               align="center"
@@ -71,11 +71,18 @@
               width="100"
             >
               <template slot-scope="scope">
-                <p v-if="scope.row.service_type == 1">长期</p>
-                <p v-if="scope.row.service_type == 2">短期</p>
+                <p v-if="scope.row.service_type == 0">{{scope.row.service_other}}</p>
+                <p v-if="scope.row.service_type == 1">全日住家型</p>
+                <p v-if="scope.row.service_type == 2">日间照料型</p>
+                <p v-if="scope.row.service_type == 3">计时收费型</p>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="service_other" label="需要服务"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="service_content"
+              label="需要服务"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
             <el-table-column width="180" align="center" label="家庭成员">
               <template
                 slot-scope="scope"
@@ -92,9 +99,28 @@
               prop="family_address"
               label="现居住地址"
               :show-overflow-tooltip="true"
+              min-width="120"
             ></el-table-column>
-            <el-table-column align="center" prop="source" label="来源" :show-overflow-tooltip="true"></el-table-column>
-            <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true"></el-table-column>
+            <el-table-column align="center" prop="source" label="来源" :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <div v-for="item in source" :key="item.id">
+                  <div
+                    style="overflow: hidden;
+                      text-overflow: ellipsis;
+                      white-space: nowrap; height: 30px"
+                    v-if="scope.row.source_id == item.id"
+                  >{{item.name}}</div>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <p v-if="scope.row.state == 0">面试中</p>
+                <p v-if="scope.row.state == 1">进行中</p>
+                <p v-if="scope.row.state == 3">结束</p>
+                <p v-if="scope.row.state == 4">取消</p>
+              </template>
+            </el-table-column>
             <!-- 操作 -->
             <el-table-column label="操作" align="center" width="140px">
               <template slot-scope="scope">
@@ -130,44 +156,39 @@
     />
 
     <!-- 显示分配员工列表 -->
-    <el-dialog title="分配" :visible.sync="distributeDialogVisible" @close="distributeDislogClose" width="580px" center>
+    <el-dialog
+      title="分配"
+      :visible.sync="distributeDialogVisible"
+      @close="distributeDislogClose"
+      width="580px"
+      center
+    >
       <div class="dis-content">
         <el-input
           size="mini"
           placeholder="请输入要分配的员工姓名"
           v-model="queryStaffName"
           class="input-with-select"
+          @keyup.native.enter="queryStaffBtn"
         >
           <el-button slot="append" icon="el-icon-search" @click="queryStaffBtn"></el-button>
         </el-input>
         <!-- 返回查询结果 -->
         <el-table
           class="queryStaffTable"
-          :data="defalutStaffData"
+          :data="defalutTeacherData"
           style="width: 100%"
           :highlight-current-row="true"
           height="260"
           v-loading="distributeLoading"
         >
-          <el-table-column align="center" prop="number" label="编号" width="90"></el-table-column>
-          <el-table-column align="center" prop="name" label="姓名" width="90"></el-table-column>
-          <el-table-column align="center" prop="mobile" label="手机号"></el-table-column>
-          <el-table-column align="center" prop="person_state" label="状态">
-            <template slot-scope="scope">
-              <p v-if="scope.row.person_state == 1">培训</p>
-              <p v-else-if="scope.row.person_state == 2">考核</p>
-              <p v-else-if="scope.row.person_state == 3">待岗</p>
-              <p v-else-if="scope.row.person_state == 4">离职</p>
-              <p v-else-if="scope.row.person_state == 5">黑名单</p>
-              <p v-else-if="scope.row.person_state == 6">在岗</p>
-              <p v-else-if="scope.row.person_state == 7">离职(下单)</p>
-              <p v-else>错误</p>
-            </template>
-          </el-table-column>
+          <el-table-column align="center" prop="id" label="编号" width="90"></el-table-column>
+          <el-table-column align="center" prop="create_time" label="录入时间"></el-table-column>
+          <el-table-column align="center" prop="username" label="姓名" width="90"></el-table-column>
+          
           <el-table-column label="操作" align="center" width="100px">
             <template slot-scope="scope">
-              <el-button @click="distributeSheBtn" size="mini" v-if="scope.row.sex == 1">分配给他</el-button>
-              <el-button @click="distributeSheBtn(scope.row.name)" v-else size="mini">分配给她</el-button>
+              <el-button @click="distributeSheBtn(scope.row.username, scope.row.id)" size="mini">分配</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -181,69 +202,15 @@ import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
 import {
   getCustomerInfo,
-  searchNameStaff,
-  distributeStaff,
+  distributeTeacher,
+  searchNameTeacher,
 } from "network/orderRequest";
+import { getAllSource } from "network/select";
 export default {
   name: "Distribute",
   data() {
     return {
-      customers: [
-        {
-          id: "1",
-          name: "客户",
-          family_area: "100.25",
-          family_hometown: "安徽安庆",
-          family_address: "家庭住址",
-          service_type: "1",
-          service_other: "其他内容",
-          family_people: {
-            children: 1,
-            old: 2,
-            adlut: 3,
-          },
-          service_content: [],
-          demand_age: "20-30",
-          demand_sex: 0,
-          demand_education: "高中",
-          demand_job: ["育婴师", "管家"],
-          demand_zodiac: "牛",
-          demand_experience: "2-3年",
-          demand_census: "不限",
-          demand_cooking: "川菜",
-          demand_service_skill: [],
-          mobile: "13695604265",
-          state: "0",
-          source: "来源",
-        },
-        {
-          id: "2",
-          name: "客户",
-          family_area: "100.25",
-          family_hometown: "安徽安庆",
-          family_address: "家庭住址",
-          service_type: "1",
-          service_other: "其他内容",
-          family_people: {
-            children: 1,
-            old: 2,
-            adlut: 3,
-          },
-          service_content: [],
-          demand_age: "20-30",
-          demand_sex: 0,
-          demand_education: "高中",
-          demand_job: ["育婴师", "管家"],
-          demand_zodiac: "牛",
-          demand_experience: "2-3年",
-          demand_census: "不限",
-          demand_cooking: "川菜",
-          demand_service_skill: [],
-          mobile: "13695604265",
-          state: "0",
-          source: "来源",
-        },
-      ],
+      customers: [],
       // 当前页数
       currentPage: 1,
       // 总数据条数
@@ -254,44 +221,14 @@ export default {
       loading: false,
       // 显示分配员工列表
       distributeDialogVisible: false,
-      // 分配loading
-      distributeLoading: false,
       // 目前显示的客户id
       currentCustomId: "",
       // 要查询的员工姓名
       queryStaffName: "",
+      source: [],
 
-      // 默认查询员工数据
-      defalutStaffData: [
-        {
-          id: "12",
-          number: "13648",
-          name: "王张红",
-          mobile: "13955877669",
-          person_state: 3,
-        },
-        {
-          id: "21",
-          number: "13648",
-          name: "王红",
-          mobile: "13955877669",
-          person_state: 3,
-        },
-        {
-          id: "31",
-          number: "13648",
-          name: "李菲菲",
-          mobile: "13955877669",
-          person_state: 3,
-        },
-        {
-          id: "41",
-          number: "13648",
-          name: "张小燕",
-          mobile: "13955877669",
-          person_state: 3,
-        },
-      ],
+      defalutTeacherData: [],
+      distributeLoading: false,
       // 选中的员工
       currentSelectStaff: {
         id: "1",
@@ -309,6 +246,19 @@ export default {
     },
   },
   watch: {},
+  created() {
+    this.getAllCustomerInfo();
+
+    // 获取需求来源
+    getAllSource().then((res) => {
+      let { code, data, msg } = res;
+      if (code === 200) {
+        this.source = data;
+      } else {
+        this.$message.error(msg);
+      }
+    });
+  },
   methods: {
     // 定义获取客户需求信息
     getAllCustomerInfo() {
@@ -316,7 +266,13 @@ export default {
       getCustomerInfo().then((res) => {
         if (res.code === 200) {
           // 获取客户数据
-          this.customers = res.data;
+          this.customers = res.data.data;
+          // 页数赋值
+          this.currentPage = res.data.current_page;
+          // 总数据条数
+          this.total = res.data.total;
+          // 每页的条
+          this.per_page = res.data.per_page;
           this.loading = false;
         } else {
           this.$message.error(res.msg);
@@ -337,36 +293,40 @@ export default {
     distributeBtn(id) {
       this.currentCustomId = id;
       this.distributeDialogVisible = true;
+      this.searchTeacherInfo()
+    },
+
+    // 自定义搜索匹配老师数据
+    searchTeacherInfo(name) {
+      searchNameTeacher(this.queryStaffName).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          this.defalutTeacherData = data.slice(0,10);
+        } else {
+          this.$message.error(msg);
+        }
+      });
     },
 
     // 点击搜索按钮事件
     queryStaffBtn() {
       console.log(this.queryStaffName);
       this.distributeDialogVisible = true;
-      searchNameStaff(this.queryStaffName).then((res) => {
-        let { code, data, msg } = res;
-        if (code === 200) {
-          this.defalutStaffData = data;
-          this.defalutStaffData = false;
-        } else {
-          this.$message.error(msg);
-          this.distributeDialogVisible = false;
-        }
-      });
+      this.searchTeacherInfo(this.queryStaffName)
     },
 
     // 分配给他
-    distributeSheBtn(name) {
-      this.$confirm("是否要将此客户分配给" + name, "提示", {
+    distributeSheBtn(name, user_id) {
+      this.$confirm("是否要将此客户分配给匹配老师" + name, "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
-          distributeStaff(cusid, staid).then((res) => {
+          distributeTeacher(this.currentCustomId, user_id).then((res) => {
             let { code, msg } = res;
             if (code === 200) {
-              this.$message.success(msg)
+              this.$message.success(msg);
               // 关闭分配弹框
               this.distributeDialogVisible = false;
             } else {
@@ -384,8 +344,8 @@ export default {
 
     // 分配弹框关门回调
     distributeDislogClose() {
-      this.queryStaffName = ""
-    }
+      this.queryStaffName = "";
+    },
   },
   components: {
     CustomerSearch,

@@ -176,3 +176,34 @@ export function saveAssessment(data) {
     data: data
   })
 }
+
+/**
+ * 员工申诉
+ */
+// 员工申诉列表
+export function getAppeal(id) {
+  return request({
+    url: "/appeal/index",
+    method: "get",
+    params: {
+      staff_id: id
+    }
+  })
+}
+// 添加员工申诉
+export function saveAppeal(data) {
+  return request({
+    url: "/appeal/save",
+    method: "post",
+    data: data
+  })
+}
+// 修改员工申诉
+export function changeAppeal(data) {
+  return request({
+    url: "/appeal/status",
+    method: "post",
+    data: data
+  })
+}
+

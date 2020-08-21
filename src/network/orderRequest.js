@@ -18,10 +18,11 @@ export function searchStaffNmae(keyword) {
  * 用户需求
  */
 // 获取所有客户需求等信息
-export function getCustomerInfo() {
+export function searchCustomerInfo(searchform) {
   return request({
     url: "/customer/index",
     method: "get",
+    params: searchform
   })
 }
 // 添加客户需求数据
@@ -103,7 +104,7 @@ export function saveEditOrderInfo(data) {
 // 删除订单
 export function deleteOrderInfo(id) {
   return request({
-    url: "/customer/delete",
+    url: "/customer/cancel",
     method: "get",
     params: {
       id: id
@@ -195,13 +196,44 @@ export function deleteFollowUp(id) {
   })
 }
 // 编辑合同
-export function editcontract(data) {
+export function saveEditContract(data) {
   return request({
     url: "/contract/save",
     method: "post",
     data: data
   })
 }
+// 通过pass
+export function spassOrder(customer_id) {
+  return request({
+    url: "/contract/pass",
+    method: "post",
+    data: {
+      customer_id: customer_id
+    }
+  })
+}
+
+// 暂停
+export function pauseOrder(data) {
+  return request({
+    url: "/customer/pause",
+    method: "post",
+    data: data
+  })
+}
+
+// 恢复订单
+export function restoreOrder(customer_id) {
+  return request({
+    url: "/customer/restore",
+    method: "post",
+    data: {
+      customer_id: customer_id
+    }
+  })
+}
+
 
 /**
  * 销售回访

@@ -3,14 +3,14 @@
     <el-row>
       <el-col :span="24">
         <!-- 搜索框 -->
-        <search></search>
+        <search @searchbtn="searchBtn"></search>
 
         <!-- 表单 -->
         <div class="user-table">
           <el-card class="user-table-card" :style="{height: screenHeight}">
             <!-- 公共操作 -->
             <el-row>
-              <el-col :span="24">
+              <el-col :span="22">
                 <el-button type="primary" icon="el-icon-plus" size="mini" @click="addStaffBtn">新增</el-button>
                 <el-button
                   type="danger"
@@ -20,6 +20,14 @@
                 >删除</el-button>
                 <el-button type="warning" icon="el-icon-printer" size="mini">打印</el-button>
                 <el-button type="success" icon="el-icon-share" size="mini">分享</el-button>
+              </el-col>
+              <el-col :span="2">
+                <el-button
+                  type="success"
+                  icon="el-icon-goblet-square-full"
+                  @click="birthdayBtn"
+                  size="mini"
+                >生日提醒</el-button>
               </el-col>
             </el-row>
 
@@ -1152,6 +1160,8 @@
         </div>
       </div>
     </el-dialog>
+
+    <!-- 生日提醒 -->
   </div>
 </template>
 
@@ -1169,6 +1179,8 @@ import {
   getOneStaffImage,
   saveStaffInfo,
   updateStraffInfo,
+  searchAppointStaff,
+  getStaffBirthday,
 } from "network/humanageRequest";
 
 import {
@@ -1188,6 +1200,9 @@ export default {
   name: "DataInput",
   data() {
     return {
+      // 搜索字段
+      searchForm: {},
+
       // 用户列表数据
       userList: [],
       // 是否显示用户
@@ -1300,6 +1315,10 @@ export default {
           },
         ],
       },
+
+      // 编辑保存，修复bug
+      editnow_id: [],
+      editcensus_id: [],
 
       // 添加用户的
       staffForm: {},
@@ -1447,47 +1466,59 @@ export default {
     scrollHeight() {
       return this.$store.state.screenHeight - 290 + "px";
     },
-
-    /**
-     *
-     */
-    // census_text() {
-    //   return this.staffForm.census_text
-    //     ? this.staffForm.census_text.join("")
-    //     : "请输入省市县";
-    // },
-    // now_text() {
-    //   return this.staffForm.now_text
-    //     ? this.staffForm.now_text.join("")
-    //     : "请输入省市县";
-    // },
   },
   components: {
     Search,
     Pagination,
   },
   methods: {
+    // 生日提醒
+    birthdayBtn() {
+      getStaffBirthday().then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          console.log(res);
+        } else {
+          return false;
+        }
+      });
+      this.$notify({
+        duration: 0,
+        title: "HTML 片段",
+        dangerouslyUseHTMLString: true,
+        message: "<strong>这是 <i>HTML</i> 片段</strong>",
+      });
+    },
+
+    // 定义搜索数据函数
+    searchAppointData(options) {
+      searchAppointStaff(options).then((res) => {
+        let { code, data, msg } = res;
+        if (res.code === 200) {
+          console.log(res.data);
+          this.userList = data.data;
+          this.currentPage = data.current_page;
+          this.total = data.total;
+          this.per_page = data.per_page;
+
+          // 关闭等待
+          this.loading = false;
+        } else {
+          this.$message.error(res.msg);
+        }
+      });
+    },
+
+    searchBtn(val) {
+      console.log(val);
+      this.searchForm = val;
+      this.searchAppointData(this.searchForm);
+    },
+
     // 定义请求用户列表数据
     getUserData() {
       this.loading = true;
-      requestUserListDate()
-        .then((res) => {
-          if (res.code === 200) {
-            console.log(res.data);
-            this.userList = res.data.data;
-            this.currentPage = res.data.current_page;
-            this.total = parseInt(res.data.total);
-            this.per_page = res.data.per_page;
-
-            // 关闭等待
-            this.loading = false;
-          } else {
-            this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          return;
-        });
+      this.searchAppointData(this.searchForm);
     },
     //
     popoverHiden() {
@@ -1576,7 +1607,8 @@ export default {
 
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      console.log(currentpage);
+      this.searchForm.page = currentpage;
+      this.searchAppointData(this.searchForm);
     },
 
     // 点击表单中的删除按钮
@@ -1643,6 +1675,9 @@ export default {
       getOneStraffInfo(id).then((res) => {
         if (res.code === 200) {
           this.staffForm = res.data;
+          this.editnow_id = res.data.now_id;
+          this.editcensus_id = res.data.census_id;
+
           this.staffForm.now_id = [];
           this.staffForm.census_id = [];
           this.staffForm.census_text = res.data.census_text.join("/");
@@ -1889,6 +1924,14 @@ export default {
 
     // 编辑保存
     editSaveStaffBtn() {
+      // 修复bug
+      if (!this.staffForm.now_id) {
+        this.staffForm.now_id = this.editnow_id;
+      }
+      if (!this.staffForm.census_id) {
+        this.staffForm.census_id = this.editcensus_id;
+      }
+
       updateStraffInfo(this.staffForm).then((res) => {
         if (res.code === 200) {
           this.$message.success(res.msg);
@@ -1916,11 +1959,6 @@ export default {
     // eventVue.$on("saveUpdateStaff", (val) => {
     //   this.getUserData();
     // });
-
-    // 监听员工的搜索
-    eventVue.$on("searchstaff", (val) => {
-      console.log("user-table中的搜索");
-    });
 
     // 获取省
     getProvince().then((res) => {
@@ -1998,7 +2036,7 @@ export default {
       .replace(/\//g, "-");
   },
   destroyed() {
-    eventVue.$off("searchstaff");
+    // eventVue.$off("searchstaff");
   },
 };
 </script>

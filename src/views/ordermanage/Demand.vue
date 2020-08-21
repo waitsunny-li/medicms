@@ -132,10 +132,12 @@
             </el-table-column>
             <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                <p v-if="scope.row.state == 0">面试中</p>
-                <p v-if="scope.row.state == 1">进行中</p>
-                <p v-if="scope.row.state == 3">结束</p>
-                <p v-if="scope.row.state == 4">取消</p>
+                <p v-if="scope.row.state == 0">审核中</p>
+                <p v-if="scope.row.state == 1">待进行</p>
+                <p v-if="scope.row.state == 2">订单进行中</p>
+                <p v-if="scope.row.state == 3">已完成</p>
+                <p v-if="scope.row.state == 4">已取消</p>
+                <p v-if="scope.row.state == 5">暂停中</p>
               </template>
             </el-table-column>
             <el-table-column
@@ -209,18 +211,6 @@
           <el-col :span="24" class="title-home">
             <el-col :span="15">
               <i class="el-icon-s-home"></i> 家庭情况
-            </el-col>
-            <el-col :span="6" :offset="3">
-              <el-form-item label="状态" prop="state">
-                <el-select size="mini" v-model="form.state" placeholder="请选择">
-                  <el-option label="面试中" :value="0"></el-option>
-                  <el-option label="进行中" :value="1"></el-option>
-                  <el-option label="结束" :value="3"></el-option>
-                  <el-option label="取消" :value="4"></el-option>
-                  <el-option label="暂停" :value="5"></el-option>
-
-                </el-select>
-              </el-form-item>
             </el-col>
           </el-col>
         </el-row>
@@ -517,7 +507,7 @@ import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
 import { getAllSelects, getAllSource } from "network/select";
 import {
-  getCustomerInfo,
+  searchCustomerInfo,
   saveCustomerInfo,
   getOneCustomerInfo,
   deleteCustomer,
@@ -527,6 +517,7 @@ export default {
   name: "Demand",
   data() {
     return {
+      searchForm: {},
       customers: [],
       // 当前页数
       currentPage: 1,
@@ -754,10 +745,9 @@ export default {
     });
   },
   methods: {
-    // 定义获取客户需求信息
-    getAllCustomerInfo() {
-      this.loading = true;
-      getCustomerInfo().then((res) => {
+    // 定义搜索获取信息
+    getSearchInfoData(options) {
+      searchCustomerInfo(options).then((res) => {
         if (res.code === 200) {
           // 获取客户数据
           this.customers = res.data.data;
@@ -775,14 +765,21 @@ export default {
         }
       });
     },
+    // 定义获取客户需求信息
+    getAllCustomerInfo() {
+      this.loading = true;
+      this.getSearchInfoData(this.searchForm)
+    },
 
     // 搜索按钮点击
-    searchBtn(searchForm) {
-      console.log("需求录入", searchForm);
+    searchBtn(val) {
+      this.searchForm = val
+      this.getSearchInfoData(this.searchForm)
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      console.log(currentpage);
+      this.searchForm.page = currentpage
+      this.getSearchInfoData(this.searchForm)
     },
 
     // 添加客户需求

@@ -8,7 +8,7 @@
         <!-- 表单 -->
         <el-card class="table-content" :style="{height: screenHeight}">
           <el-table
-            :data="staffList"
+            :data="userList"
             v-loading="loading"
             border
             style="width: 100%"
@@ -120,7 +120,10 @@
               <i style="color:#67C23A; font-size: 22px; margin-right: 5px" class="el-icon-success"></i>通过
             </p>
             <p v-if="scope.row.status == 2">
-              <i style="color:#F56C6C; font-size: 22px;margin-right: 5px" class="el-icon-circle-close"></i>拒绝
+              <i
+                style="color:#F56C6C; font-size: 22px;margin-right: 5px"
+                class="el-icon-circle-close"
+              ></i>拒绝
             </p>
           </template>
         </el-table-column>
@@ -175,9 +178,10 @@ export default {
   name: "Staffappeal",
   data() {
     return {
+      searchForm: { person_state: 5 },
       // 加载中
       loading: true,
-      staffList: [],
+      userList: [],
       // 当前页数
       currentPage: 1,
       // 总数据条数
@@ -228,34 +232,40 @@ export default {
   },
   watch: {},
   methods: {
-    // 搜索按钮
-    searchBtn() {
-      console.log("考核评价");
+    // 定义搜索数据函数
+    searchAppointData(options) {
+      searchAppointStaff(options).then((res) => {
+        let { code, data, msg } = res;
+        if (res.code === 200) {
+          console.log(res.data);
+          this.userList = data.data;
+          this.currentPage = data.current_page;
+          this.total = data.total;
+          this.per_page = data.per_page;
+
+          // 关闭等待
+          this.loading = false;
+        } else {
+          this.$message.error(res.msg);
+        }
+      });
+    },
+
+    searchBtn(val) {
+      console.log(val);
+      this.searchForm = val;
+      this.searchAppointData(this.searchForm);
     },
     // 定义请求用户列表数据
     getStaffData() {
       this.loading = true;
-      searchAppointStaff(5)
-        .then((res) => {
-          if (res.code === 200) {
-            this.staffList = res.data.data;
-            this.currentPage = res.data.current_page;
-            this.total = parseInt(res.data.total);
-            this.per_page = res.data.per_page;
-            // 关闭等待
-            this.loading = false;
-          } else {
-            this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          return;
-        });
+      this.searchAppointData(this.searchForm)
     },
 
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      console.log(currentpage);
+      this.searchForm.page = currentpage;
+      this.searchAppointData(this.searchForm);
     },
 
     // 定义一个获取当前用户所有的事件记录
@@ -286,7 +296,7 @@ export default {
     lookAppealBtn(id, name) {
       this.staff_name = name;
       this.assessDialogVisible = true;
-      this.currentStaffId = id
+      this.currentStaffId = id;
       // 先请求数据
       this.getAllAppealData(id);
     },
@@ -330,7 +340,7 @@ export default {
           }
         });
       } else {
-        this.$message.error('请输入状态！');
+        this.$message.error("请输入状态！");
       }
     },
     // 评价框关闭自动回调

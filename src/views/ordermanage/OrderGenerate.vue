@@ -10,7 +10,7 @@
           <!-- 表单内容 -->
           <!-- 表单 -->
           <el-table
-            :data="orderList"
+            :data="customers"
             class="user-table-wrap"
             style="width: 100%"
             :height="scrollHeight"
@@ -81,9 +81,12 @@
                       <el-table-column align="center" label="电话" prop="staff.mobile"></el-table-column>
                       <el-table-column align="center" label="状态">
                         <template slot-scope="scope">
-                          <p v-if="scope.row.status == 0">面试中</p>
-                          <p v-if="scope.row.status == 1">面试成功</p>
-                          <p v-if="scope.row.status == 2">不通过</p>
+                          <p v-if="scope.row.state == 0">审核中</p>
+                          <p v-if="scope.row.state == 1">待进行</p>
+                          <p v-if="scope.row.state == 2">订单进行中</p>
+                          <p v-if="scope.row.state == 3">已完成</p>
+                          <p v-if="scope.row.state == 4">已取消</p>
+                          <p v-if="scope.row.state == 5">暂停中</p>
                         </template>
                       </el-table-column>
                       <el-table-column align="center" label="面试内容" prop="content"></el-table-column>
@@ -278,7 +281,7 @@
                 >{{scope.row.id}}</el-button>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="name" label="名字" width="100">
+            <el-table-column align="center" prop="name" label="名字">
               <template slot-scope="scope">
                 <div class="name-wrap">
                   <span style="margin-left: 10px">{{scope.row.name}}</span>
@@ -286,7 +289,20 @@
               </template>
             </el-table-column>
 
-            <el-table-column align="center" prop="family_hometown" label="家庭成员籍贯" min-width="110"></el-table-column>
+            <el-table-column align="center" prop="mobile" label="手机号">
+              <template slot-scope="scope">
+                <el-tooltip class="item" effect="dark" :content="scope.row.mobile" placement="top">
+                  <i class="el-icon-phone" style="color: red;font-size: 20px"></i>
+                </el-tooltip>
+              </template>
+            </el-table-column>
+
+            <el-table-column
+              align="center"
+              prop="family_hometown"
+              label="家庭成员籍贯"
+              :show-overflow-tooltip="true"
+            ></el-table-column>
             <el-table-column
               class="identify"
               align="center"
@@ -308,22 +324,16 @@
               :show-overflow-tooltip="true"
               label="需要服务"
             ></el-table-column>
-            <el-table-column width="180" align="center" label="家庭成员">
+            <el-table-column :show-overflow-tooltip="true" align="center" label="家庭成员">
               <template
                 slot-scope="scope"
               >{{scope.row.family_people.children}}小孩，{{scope.row.family_people.adlut}}成人，{{scope.row.family_people.old}}老人</template>
             </el-table-column>
-            <el-table-column align="center" prop="mobile" width="150px" label="手机号">
-              <template slot-scope="scope">
-                <i class="el-icon-phone" style="color: red"></i>
-                {{scope.row.mobile}}
-              </template>
-            </el-table-column>
+
             <el-table-column
               align="center"
               prop="family_address"
               label="现居住地址"
-              min-width="120"
               :show-overflow-tooltip="true"
             ></el-table-column>
             <el-table-column
@@ -345,10 +355,12 @@
             </el-table-column>
             <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                <p v-if="scope.row.state == 0">面试中</p>
-                <p v-if="scope.row.state == 1">进行中</p>
-                <p v-if="scope.row.state == 3">结束</p>
-                <p v-if="scope.row.state == 4">取消</p>
+                <p v-if="scope.row.state == 0">审核中</p>
+                <p v-if="scope.row.state == 1">待进行</p>
+                <p v-if="scope.row.state == 2">订单进行中</p>
+                <p v-if="scope.row.state == 3">已完成</p>
+                <p v-if="scope.row.state == 4">已取消</p>
+                <p v-if="scope.row.state == 5">暂停中</p>
               </template>
             </el-table-column>
             <el-table-column
@@ -360,7 +372,12 @@
             <el-table-column align="center" prop="staff_id" label="是否完成">
               <template slot-scope="scope">
                 <div v-if="scope.row.staff_id != 0">
-                  <el-tooltip class="item" effect="dark" :content="scope.row.staff.name" placement="top">
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    :content="scope.row.staff.name"
+                    placement="top"
+                  >
                     <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
                   </el-tooltip>
                 </div>
@@ -369,58 +386,134 @@
             </el-table-column>
 
             <!-- 操作 -->
-            <el-table-column label="操作" align="center" width="140px">
+            <el-table-column label="操作" width="110px" align="center">
               <template slot-scope="scope">
-                <el-tooltip
-                  class="item"
-                  effect="dark"
-                  :enterable="false"
-                  content="添加或编辑员工"
-                  placement="top"
-                >
-                  <el-button
-                    @click="addSuccessOrder(scope.row.id)"
-                    size="mini"
-                    type="primary"
-                    class="el-icon-user"
-                    circle
-                    style="margin-right: 5px"
-                  ></el-button>
-                </el-tooltip>
+                <el-popover placement="left" trigger="click">
+                  <div class="click-content">
+                    <el-tooltip
+                      class="item"
+                      effect="dark"
+                      :enterable="false"
+                      content="编辑员工"
+                      placement="top"
+                    >
+                      <el-button
+                        @click="addSuccessOrder(scope.row.staff_id, scope.row.id)"
+                        size="mini"
+                        type="primary"
+                        class="el-icon-user"
+                        circle
+                        style="margin-left: 5px"
+                      ></el-button>
+                    </el-tooltip>
 
-                <el-tooltip
-                  class="item"
-                  effect="dark"
-                  :enterable="false"
-                  content="编辑合同"
-                  placement="top"
-                >
-                  <el-button
-                    @click="editBtn(scope.row.name, scope.row.id)"
-                    size="mini"
-                    type="primary"
-                    class="el-icon-edit"
-                    circle
-                    style="margin-right: 10px"
-                  ></el-button>
-                </el-tooltip>
+                    <el-tooltip
+                      class="item"
+                      effect="dark"
+                      :enterable="false"
+                      content="编辑合同"
+                      placement="top"
+                    >
+                      <el-button
+                        @click="editBtn(scope.row.name, scope.row.id, scope.row.contract)"
+                        size="mini"
+                        type="info"
+                        class="el-icon-edit"
+                        circle
+                        style="margin-right: 5px"
+                      ></el-button>
+                    </el-tooltip>
 
-                <el-popconfirm
-                  confirmButtonText="好的"
-                  cancelButtonText="不用了"
-                  icon="el-icon-info"
-                  iconColor="red"
-                  title="您确定要永久删除该订单吗？"
-                  @onConfirm="formDeleteBtn(scope.row.id)"
-                >
+                    <el-tooltip
+                      class="item"
+                      effect="dark"
+                      :enterable="false"
+                      content="取消订单"
+                      placement="top"
+                    >
+                      <el-popconfirm
+                        confirmButtonText="好的"
+                        cancelButtonText="不用了"
+                        icon="el-icon-info"
+                        iconColor="red"
+                        title="您确定要取消该订单吗？"
+                        @onConfirm="formDeleteBtn(scope.row.id)"
+                      >
+                        <el-button
+                          type="danger"
+                          icon="el-icon-delete"
+                          size="mini"
+                          circle
+                          slot="reference"
+                        ></el-button>
+                      </el-popconfirm>
+                    </el-tooltip>
+
+                    <el-popover placement="bottom" trigger="click">
+                      <el-form ref="pauseOrderForm" :model="pauseOrderForm" label-width="80px">
+                        <el-row>
+                          <el-col :span="18">
+                            <el-form-item label="暂停日期">
+                              <el-date-picker
+                                v-model="pauseOrderForm.pause_time"
+                                type="date"
+                                placeholder="选择日期"
+                                format="yyyy-MM-dd"
+                                value-format="yyyy-MM-dd"
+                                size="mini"
+                                style="width: 130px"
+                              ></el-date-picker>
+                            </el-form-item>
+                          </el-col>
+                          <el-col :span="5" :offset="1" style=" margin-top: 8px;">
+                            <el-button @click="savePauseOrderInfo" type="primary" size="mini">保 存</el-button>
+                          </el-col>
+                        </el-row>
+                      </el-form>
+                      <el-tooltip
+                        class="item"
+                        effect="dark"
+                        :enterable="false"
+                        content="暂停"
+                        placement="top"
+                        slot="reference"
+                      >
+                        <el-button
+                          @click="stopBtn(scope.row.id)"
+                          size="mini"
+                          type="warning"
+                          class="el-icon-video-pause"
+                          circle
+                          style="margin-left: 5px"
+                        ></el-button>
+                      </el-tooltip>
+                    </el-popover>
+
+                    <el-tooltip
+                      class="item"
+                      effect="dark"
+                      :enterable="false"
+                      content="审核"
+                      placement="top"
+                    >
+                      <el-button
+                        @click="examineBtn(scope.row.id)"
+                        size="mini"
+                        type="success"
+                        class="el-icon-finished"
+                        circle
+                        style="margin-left: 5px"
+                      ></el-button>
+                    </el-tooltip>
+                  </div>
                   <el-button
-                    type="danger"
-                    icon="el-icon-delete"
-                    size="mini"
-                    circle
                     slot="reference"
-                  ></el-button>
-                </el-popconfirm>
+                    size="mini"
+                    type="primary"
+                    icon="el-icon-s-operation"
+                    plain
+                  >功能</el-button>
+                </el-popover>
               </template>
             </el-table-column>
           </el-table>
@@ -448,7 +541,7 @@
 
     <!-- 完成订单时添加员工姓名和编号 -->
     <el-dialog
-      title="添加首次服务员工"
+      title="编辑服务员工"
       :visible.sync="addFirstDialogVisible"
       width="400px"
       @close="addFirstDialogClose"
@@ -459,26 +552,21 @@
         <el-form ref="orderSuccessForm" :model="orderSuccessForm">
           <el-row>
             <el-form-item label-width="80px" label="姓名" prop="name">
-              <el-autocomplete
-                v-model="orderSuccessForm.name"
-                :fetch-suggestions="querySearchAsync"
-                size="mini"
-                placeholder="请输入面试人员姓名"
-                @select="handleSelect"
-              ></el-autocomplete>
-            </el-form-item>
-          </el-row>
-
-          <el-row>
-            <el-form-item label-width="80px" label="手机号" prop="mobile">
-              <el-input disabled v-model="orderSuccessForm.mobile" size="mini"></el-input>
+              <el-select v-model="orderSuccessForm.staff_id" placeholder="请选择面试人员姓名">
+                <el-option
+                  v-for="item in orderInterviewer"
+                  :key="item.id"
+                  :label="item.staff.name"
+                  :value="item.staff_id"
+                ></el-option>
+              </el-select>
             </el-form-item>
           </el-row>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="addFirstDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="saveFirstStaff">保 存</el-button>
+        <el-button @click="addFirstDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="saveFirstStaff">保 存</el-button>
       </span>
     </el-dialog>
 
@@ -491,26 +579,32 @@
       center
     >
       <div class="content">
-        <el-form :inline="true" ref="form" :model="form" :rules="formRules" class="add-user-form">
+        <el-form
+          :inline="true"
+          ref="form"
+          :model="editForm"
+          :rules="formRules"
+          class="add-user-form"
+        >
           <!-- 主体 -->
           <div class="content-wrap">
             <el-row>
               <el-col :span="6" :offset="1">
                 <el-form-item label="身份证" prop="identity">
-                  <el-input size="mini" v-model="form.identity" placeholder="请输入"></el-input>
+                  <el-input size="mini" v-model="editForm.identity" placeholder="请输入"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label="合同号" prop="contract_number">
-                  <el-input size="mini" v-model="form.contract_number" placeholder="请输入"></el-input>
+                <el-form-item label="合同号" prop="num">
+                  <el-input size="mini" v-model="editForm.num" placeholder="请输入"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="9">
-                <el-form-item label="合同起止" class="registration_address" prop="contrace_start_end">
+                <el-form-item label="合同起止" class="registration_address" prop="start_time">
                   <el-date-picker
                     style="width: 290px"
                     size="mini"
-                    v-model="form.contrace_start_end"
+                    v-model="editForm.start_time"
                     type="daterange"
                     range-separator="至"
                     start-placeholder="开始日期"
@@ -523,65 +617,75 @@
 
             <el-row>
               <el-col :span="4" :offset="1">
-                <el-form-item label="合同费" prop="contract_cost">
-                  <el-input size="mini" v-model="form.contract_cost"></el-input>
+                <el-form-item label="合同费" prop="spend">
+                  <el-input size="mini" v-model="editForm.spend"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="5">
-                <el-form-item label="保险单位" prop="insurance_unit">
-                  <el-select v-model="form.insurance_unit" size="mini">
+                <el-form-item label="保险单位" prop="is_insurance">
+                  <el-select v-model="editForm.is_insurance" size="mini">
                     <el-option label="有" value="1"></el-option>
                     <el-option label="无" value="0"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
-                <el-form-item label="现在工资" prop="now_wages">
-                  <el-input size="mini" v-model="form.now_wages"></el-input>
+                <el-form-item label="现在工资" prop="now_salary">
+                  <el-input size="mini" v-model="editForm.now_salary"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="7">
                 <el-col :span="24">
-                  <el-form-item label="家政员提成" prop="staff_percentage" style="width: 170px">
-                    <el-input size="mini" v-model="form.staff_percentage"></el-input>
+                  <el-form-item label="家政员提成" prop="commission" style="width: 170px">
+                    <el-input size="mini" v-model="editForm.commission"></el-input>
                   </el-form-item>
                 </el-col>
-                
               </el-col>
             </el-row>
 
             <el-row>
               <el-col :span="6" :offset="1">
-                <el-form-item label="上班地址" prop="second_contacter">
-                    <el-input size="mini" v-model="form.second_contacter" placeholder="请输入上班地址"></el-input>
-                  </el-form-item>
+                <el-form-item label="上班地址" prop="work_address">
+                  <el-input size="mini" v-model="editForm.work_address" placeholder="请输入上班地址"></el-input>
+                </el-form-item>
               </el-col>
               <el-col :span="9">
                 <el-col :span="12">
-                  <el-form-item label="第二联系人" prop="second_contacter">
-                    <el-input size="mini" v-model="form.second_contacter" placeholder="请输入姓名"></el-input>
+                  <el-form-item label="第二联系人" prop="name">
+                    <el-input size="mini" v-model="editForm.name" placeholder="请输入姓名"></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="第二联系人电话" prop="second_contact_tel" class="contract_wages">
-                    <el-input size="mini" v-model="form.second_contact_tel"></el-input>
+                  <el-form-item label="第二联系人电话" prop="phone" class="contract_wages">
+                    <el-input size="mini" v-model="editForm.phone"></el-input>
                   </el-form-item>
                 </el-col>
               </el-col>
               <el-col :span="5">
-                  <el-form-item label="签合同时工资" prop="contract_wages" style="width: 190px" class="contract_wages">
-                    <el-input size="mini"  v-model="form.contract_wages"></el-input>
-                  </el-form-item>
-                </el-col>
+                <el-form-item
+                  label="签合同时工资"
+                  prop="sign_salary"
+                  style="width: 190px"
+                  class="contract_wages"
+                >
+                  <el-input size="mini" v-model="editForm.sign_salary"></el-input>
+                </el-form-item>
+              </el-col>
             </el-row>
 
             <el-row>
-              <el-col :span="12" :offset="1">
-                <el-form-item label="家庭情况备注" class="registration_address" prop="family_remarks">
+              <el-col :span="6" :offset="1">
+                <el-form-item label="工作时间" class="registration_address" prop="work_time">
+                  <el-input size="mini" v-model="editForm.work_time"></el-input>
+                </el-form-item>
+              </el-col>
+
+              <el-col :span="11">
+                <el-form-item label="家庭情况备注" class="registration_address" prop="remark">
                   <el-input
-                    style="width: 515px"
+                    style="width: 512px"
                     size="mini"
-                    v-model="form.family_remarks"
+                    v-model="editForm.remark"
                     type="textarea"
                   ></el-input>
                 </el-form-item>
@@ -592,7 +696,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="editDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="saveEditOrder">保 存</el-button>
+        <el-button size="mini" type="primary" @click="saveEditContractInfo">保 存</el-button>
       </span>
     </el-dialog>
 
@@ -700,8 +804,7 @@ import OrderInfo from "components/common/table/OrderInfo";
 import { getOneStraffInfo } from "network/humanageRequest";
 import {
   searchStaffNmae,
-  getCustomerInfo,
-  saveEditOrderInfo,
+  searchCustomerInfo,
   deleteOrderInfo,
   saveFisrstStaff,
   deleteInterview,
@@ -713,14 +816,18 @@ import {
   getOneInterview,
   updateOneInterview,
   deleteFollowUp,
+  saveEditContract,
+  spassOrder,
+  pauseOrder,
 } from "network/orderRequest";
 import { getAllSource } from "network/select";
 export default {
   name: "OrderGenerate",
   data() {
     return {
+      searchForm: {},
       // 订单列表
-      orderList: [],
+      customers: [],
       // 单个订单信息
       orderInfo: {},
       // 当前页数
@@ -752,49 +859,51 @@ export default {
       editDialogVisible: false,
       editCustomerTitle: "",
       editForm: {
+        customer_id: "",
         identity: "",
-        state: "",
-        contract_number: "",
-        contrace_start_end: [],
-        contrace_period: "", // 合同期可能是计算得出
-        contract_cost: "",
-        insurance_unit: "", // 保险单位
-        second_contacter: "", //
-        second_contact_tel: "", //
-        staff_percentage: "",
-        family_remarks: "",
-        now_wages: "",
-        contract_wages: "",
+        start_time: [],
+        work_time: "",
+        work_address: "",
+        spend: "",
+        num: "",
+        is_insurance: "",
+        now_salary: "",
+        commission: "",
+        sign_salary: "",
+        remark: "",
+        name: "",
+        phone: "",
       },
       formRules: {
-        state: [{ required: true, message: "请输入状态", trigger: "blur" }],
-        identity: [
-          { required: true, message: "请输入身份证", trigger: "blur" },
+        // identity: [
+        //   { required: true, message: "请输入身份证", trigger: "blur" },
+        // ],
+        num: [{ required: true, message: "请输入合同号", trigger: "blur" }],
+        work_address: [
+          { required: true, message: "请输入上班地址", trigger: "blur" },
         ],
-        contract_number: [
-          { required: true, message: "请输入合同号", trigger: "blur" },
-        ],
-        contrace_start_end: [
+        start_time: [
           { required: true, message: "请输入合同起止", trigger: "blur" },
         ],
-        second_contacter: [
+        work_time: [
+          { required: true, message: "请输入工作时间", trigger: "blur" },
+        ],
+        name: [
           { required: true, message: "请输入第二联系人", trigger: "blur" },
         ],
-        second_contact_tel: [
+        phone: [
           { required: true, message: "请输入第二联系人电话", trigger: "blur" },
         ],
       },
-      // 默认表单
-      form: {},
 
       // 添加首次服务员工
       addFirstDialogVisible: false,
+      // 订单的所有面试人员
+      orderInterviewer: [],
       // 订单完成表单
       orderSuccessForm: {
         staff_id: "",
         customer_id: "",
-        mobile: "",
-        name: "",
       },
       // 订单完成规则
       orderSuccessRules: {
@@ -805,6 +914,11 @@ export default {
       },
       // 当前所点击的订单号id
       currentOrderId: "",
+      // 暂停订单时间
+      pauseOrderForm: {
+        customer_id: "",
+        pause_time: "",
+      },
 
       // 面试管理数据
       interviewFormData: [],
@@ -876,13 +990,12 @@ export default {
   },
   watch: {},
   methods: {
-    // 定义获取客户需求信息
-    getAllOrderInfo() {
-      this.loading = true;
-      getCustomerInfo().then((res) => {
+    // 定义搜索获取信息
+    getSearchInfoData(options) {
+      searchCustomerInfo(options).then((res) => {
         if (res.code === 200) {
           // 获取客户数据
-          this.orderList = res.data.data;
+          this.customers = res.data.data;
           console.log(res.data.data);
           // 页数赋值
           this.currentPage = res.data.current_page;
@@ -897,13 +1010,20 @@ export default {
         }
       });
     },
+    // 定义获取客户需求信息
+    getAllOrderInfo() {
+      this.loading = true;
+      this.getSearchInfoData(this.searchForm);
+    },
     // 搜索按钮点击
-    searchBtn(searchForm) {
-      console.log("订单列表", searchForm);
+    searchBtn(val) {
+      this.searchForm = val;
+      this.getSearchInfoData(this.searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      console.log(currentpage);
+      this.searchForm.page = currentpage;
+      this.getSearchInfoData(this.searchForm);
     },
 
     // 是否删除该订单
@@ -921,17 +1041,88 @@ export default {
       });
     },
 
+    // 暂停
+    stopBtn(order_id) {
+      this.pauseOrderForm.customer_id = order_id
+      this.pauseOrderForm.pause_time = new Date()
+      .toLocaleDateString()
+      .replace(/\//g, "-");
+    },
+
+    // 保存暂停时间
+    savePauseOrderInfo() {
+      pauseOrder(this.pauseOrderForm).then(res => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg);
+          // 重新获取所有订单
+          this.getAllOrderInfo();
+        } else {
+          this.$message.error(msg);
+        }
+      })
+    },
+
+    // 审核是否完成
+    examineBtn(order_id) {
+      this.$confirm("该订单是否确认通过？", "审核订单", {
+        distinguishCancelAndClose: true,
+        cancelButtonText: "不通过",
+        confirmButtonText: "通过",
+      })
+        .then(() => {
+          spassOrder(order_id).then((res) => {
+            let { code, msg } = res;
+            if (code === 200) {
+              this.$message.success(msg);
+              this.getAllOrderInfo();
+            } else {
+              this.$message.error(msg);
+            }
+          });
+        })
+        .catch((action) => {
+          deleteOrderInfo(order_id).then((res) => {
+            let { code, msg } = res;
+            if (code === 200) {
+              this.$message.success(msg);
+              // 重新获取所有订单
+              this.getAllOrderInfo();
+            } else {
+              this.$message.error(msg);
+            }
+          });
+        });
+    },
+
     // 编辑显示
-    editBtn(name, id) {
+    editBtn(name, id, contract) {
+      if(contract) {
+        this.editForm.customer_id = contract.customer_id
+        this.editForm.identity = contract.identity
+        this.editForm.start_time = contract.start_time
+        this.editForm.work_time = contract.work_time
+        this.editForm.work_address = contract.work_address
+        this.editForm.spend = contract.spend
+        this.editForm.num = contract.num
+        this.editForm.is_insurance = contract.is_insurance
+        this.editForm.now_salary = contract.now_salary
+        this.editForm.commission = contract.commission
+        this.editForm.sign_salary = contract.sign_salary
+        this.editForm.remark = contract.remark
+        this.editForm.name = contract.name
+        this.editForm.phone = contract.phone
+      }
       this.editCustomerTitle = `编辑客户（${name}）的合同`;
       this.editDialogVisible = true;
+      this.editForm.customer_id = id;
     },
 
     // 保存编辑订单
-    saveEditOrder() {
+    saveEditContractInfo() {
       this.$refs.form.validate((valid) => {
         if (valid) {
-          saveEditOrderInfo(this.form).then((res) => {
+          saveEditContract(this.editForm).then((res) => {
             let { code, msg } = res;
             if (code === 200) {
               this.$message.success(msg);
@@ -995,11 +1186,24 @@ export default {
     },
 
     // 添加完成订单
-    addSuccessOrder(id) {
-      console.log(id);
+    addSuccessOrder(staff_id, order_id) {
       // 显示添加界面
       this.addFirstDialogVisible = true;
-      this.orderSuccessForm.customer_id = id;
+      this.orderSuccessForm.customer_id = order_id;
+      this.orderSuccessForm.staff_id = staff_id;
+
+      getInterviewInfo({ customer_id: order_id }).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          if (data) {
+            this.orderInterviewer = data;
+          } else {
+            this.$message.error("无面试人员！请添加！");
+          }
+        } else {
+          this.$message.error(msg);
+        }
+      });
     },
 
     // 添加完成订单关闭回调
@@ -1011,13 +1215,9 @@ export default {
 
     // 保存首位服务人员
     saveFirstStaff() {
-      let filterObj = {};
-      filterObj.customer_id = this.orderSuccessForm.customer_id;
-      filterObj.staff_id = this.orderSuccessForm.staff_id;
       this.$refs.orderSuccessForm.validate((valid) => {
         if (valid) {
-          console.log("jjj");
-          saveFisrstStaff(filterObj).then((res) => {
+          saveFisrstStaff(this.orderSuccessForm).then((res) => {
             let { code, msg } = res;
             if (code === 200) {
               this.$message.success(msg);
@@ -1087,7 +1287,7 @@ export default {
     },
 
     // tabs点击回调
-    tabsClick(options) {},
+    tabsClick() {},
 
     // 展开面试是回调(展示时开始获取所有面试，和所有跟进)
     interviewShow(id) {
@@ -1130,9 +1330,9 @@ export default {
       this.interviewForm.mobile = item.mobile;
       this.interviewForm.staff_id = item.id;
 
-      this.orderSuccessForm.name = item.value;
-      this.orderSuccessForm.mobile = item.mobile;
-      this.orderSuccessForm.staff_id = item.id;
+      // this.orderSuccessForm.name = item.value;
+      // this.orderSuccessForm.mobile = item.mobile;
+      // this.orderSuccessForm.staff_id = item.id;
     },
 
     // 显示添加面试按钮

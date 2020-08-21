@@ -281,18 +281,19 @@
 import Search from "components/common/search/Search";
 import Pagination from "components/common/pagination/Pagination";
 import {
-  requestUserListDate,
   getTrainingsData,
   saveTrainingsData,
   getOneTrainingInfo,
   updateTrainingInfo,
   deleteTrainingInfo,
+  searchAppointStaff,
 } from "network/humanageRequest";
 import { getProvince, getCity, getDistrict, getJob } from "network/select";
 export default {
   name: "Training",
   data() {
     return {
+      searchForm: {},
       // 等待
       loading: true,
       // 用户列表数据
@@ -358,34 +359,38 @@ export default {
   watch: {
   },
   methods: {
-    // 搜索按钮
-    searchBtn(searchForm) {
-      console.log(searchForm);
-      console.log("培训记录");
+    // 定义搜索数据函数
+    searchAppointData(options) {
+      searchAppointStaff(options).then((res) => {
+        let { code, data, msg } = res;
+        if (res.code === 200) {
+          this.userList = data.data;
+          this.currentPage = data.current_page;
+          this.total = data.total;
+          this.per_page = data.per_page;
+
+          // 关闭等待
+          this.loading = false;
+        } else {
+          this.$message.error(res.msg);
+        }
+      });
+    },
+
+    searchBtn(val) {
+      this.searchForm = val;
+      this.searchAppointData(this.searchForm)
     },
     // 定义请求用户列表数据
     getUserData() {
       this.loading = true;
-      requestUserListDate()
-        .then((res) => {
-          if (res.code === 200) {
-            this.userList = res.data.data;
-            this.currentPage = res.data.current_page;
-            this.total = parseInt(res.data.total);
-            this.per_page = res.data.per_page;
-            this.loading = false;
-          } else {
-            this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          return;
-        });
+      this.searchAppointData(this.searchForm)
     },
 
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      console.log(currentpage);
+      this.searchForm.page = currentpage;
+      this.searchAppointData(this.searchForm)
     },
 
     // 获取该员工的所有培训数据

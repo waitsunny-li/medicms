@@ -8,7 +8,14 @@
         <!-- 表单 -->
         <el-card class="table-content" :style="{height: screenHeight}">
           <!-- 表单 -->
-          <el-table :data="customerListData" style="width: 100%" border class="user-table-wrap" :height="scrollHeight" v-loading="loading">
+          <el-table
+            :data="customers"
+            style="width: 100%"
+            border
+            class="user-table-wrap"
+            :height="scrollHeight"
+            v-loading="loading"
+          >
             <el-table-column prop="name" align="center" label="客户姓名" width="100"></el-table-column>
             <el-table-column align="center" prop="mobile" label="联络电话" width="180">
               <template slot-scope="scope">
@@ -32,10 +39,12 @@
             </el-table-column>
             <el-table-column align="center" prop="state" label="状态">
               <template slot-scope="scope">
-                <p v-if="scope.row.state == 0">面试中</p>
-                <p v-if="scope.row.state == 1">进行中</p>
-                <p v-if="scope.row.state == 3">结束</p>
-                <p v-if="scope.row.state == 4">取消</p>
+                <p v-if="scope.row.state == 0">审核中</p>
+                <p v-if="scope.row.state == 1">待进行</p>
+                <p v-if="scope.row.state == 2">订单进行中</p>
+                <p v-if="scope.row.state == 3">已完成</p>
+                <p v-if="scope.row.state == 4">已取消</p>
+                <p v-if="scope.row.state == 5">暂停中</p>
               </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
@@ -61,17 +70,14 @@
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
-import {
-  getCustomerInfo,
-} from "network/orderRequest";
+import { searchCustomerInfo } from "network/orderRequest";
 export default {
   name: "PersonDispatch",
   data() {
     return {
+      searchForm: {},
       // 客户订单
-      customerListData: [
-        
-      ],
+      customers: [],
       // 当前页数
       currentPage: 1,
       // 总数据条数
@@ -91,16 +97,15 @@ export default {
   },
   watch: {},
   created() {
-    this.getAllOrderInfo()
+    this.getAllOrderInfo();
   },
   methods: {
-    // 定义获取客户需求信息
-    getAllOrderInfo() {
-      this.loading = true;
-      getCustomerInfo().then((res) => {
+    // 定义搜索获取信息
+    getSearchInfoData(options) {
+      searchCustomerInfo(options).then((res) => {
         if (res.code === 200) {
           // 获取客户数据
-          this.customerListData = res.data.data;
+          this.customers = res.data.data;
           console.log(res.data.data);
           // 页数赋值
           this.currentPage = res.data.current_page;
@@ -113,15 +118,24 @@ export default {
           this.$message.error(res.msg);
           this.loading = false;
         }
+      }).catch(err => {
+        this.$message.error('服务器炸了！')
       });
     },
+    // 定义获取客户需求信息
+    getAllOrderInfo() {
+      this.loading = true;
+      this.getSearchInfoData(this.searchForm);
+    },
     // 搜索按钮点击
-    searchBtn(searchForm) {
-      console.log('人员派出', searchForm)
+    searchBtn(val) {
+      this.searchForm = val
+      this.getSearchInfoData(this.searchForm)
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      // console.log(currentpage);
+      this.searchForm.page = currentpage
+      this.getSearchInfoData(this.searchForm)
     },
 
     // 打印派出单
@@ -147,7 +161,7 @@ export default {
   },
   components: {
     CustomerSearch,
-    Pagination
+    Pagination,
   },
 };
 </script>

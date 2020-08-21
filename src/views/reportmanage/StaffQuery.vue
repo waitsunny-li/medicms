@@ -368,12 +368,13 @@ import Search from "components/common/search/Search";
 import OrderInfo from "components/common/table/OrderInfo";
 import Pagination from "components/common/pagination/Pagination";
 import eventVue from "common/eventVue";
-import { requestUserListDate } from "network/humanageRequest";
+import { requestUserListDate, searchAppointStaff } from "network/humanageRequest";
 import { getInterviewInfo, getOneCustomerInfo } from "network/orderRequest";
 export default {
   name: "StaffQuery",
   data() {
     return {
+      searchForm: {},
       // 用户列表数据
       userList: [],
       // 当前页数
@@ -474,37 +475,38 @@ export default {
   },
   watch: {},
   methods: {
+    // 定义搜索数据函数
+    searchAppointData(options) {
+      searchAppointStaff(options).then((res) => {
+        let { code, data, msg } = res;
+        if (res.code === 200) {
+          this.userList = data.data;
+          this.currentPage = data.current_page;
+          this.total = data.total;
+          this.per_page = data.per_page;
+
+          // 关闭等待
+          this.loading = false;
+        } else {
+          this.$message.error(res.msg);
+        }
+      });
+    },
     // 搜索按钮
-    searchBtn(searchForm) {
-      console.log(searchForm);
+    searchBtn(val) {
+      this.searchForm = val;
+      this.searchAppointData(this.searchForm);
     },
     // 定义请求用户列表数据
     getUserData() {
       this.loading = true;
-      requestUserListDate()
-        .then((res) => {
-          if (res.code === 200) {
-            console.log(res.data);
-            this.userList = res.data.data;
-            // console.log(res.data)
-            this.currentPage = res.data.current_page;
-            this.total = parseInt(res.data.total);
-            this.per_page = res.data.per_page;
-
-            // 关闭等待
-            this.loading = false;
-          } else {
-            this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          return;
-        });
+      this.searchAppointData(this.searchForm);
     },
 
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      // console.log(currentpage);
+      this.searchForm.page = currentpage;
+      this.searchAppointData(this.searchForm);
     },
 
     // 定义获取该员工所有的面试记录

@@ -8,7 +8,7 @@
         <!-- 表单 -->
         <el-card class="table-content" :style="{height: screenHeight}">
           <el-table
-            :data="staffList"
+            :data="userList"
             v-loading="loading"
             border
             style="width: 100%"
@@ -92,7 +92,12 @@
           <template slot-scope="scope">
             <div v-if="scope.row.is_by == 0">未审核</div>
             <div v-else-if="scope.row.is_by == 1">
-              <el-tooltip class="item" effect="dark" :content="scope.row.assess_content" placement="top">
+              <el-tooltip
+                class="item"
+                effect="dark"
+                :content="scope.row.assess_content"
+                placement="top"
+              >
                 <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
               </el-tooltip>
             </div>
@@ -170,9 +175,10 @@ export default {
   name: "Assessment",
   data() {
     return {
+      searchForm: { person_state: 1 },
       // 加载中
       loading: true,
-      staffList: [],
+      userList: [],
       // 当前页数
       currentPage: 1,
       // 总数据条数
@@ -226,34 +232,40 @@ export default {
   },
   watch: {},
   methods: {
-    // 搜索按钮
-    searchBtn() {
-      console.log("考核评价");
+    // 定义搜索数据函数
+    searchAppointData(options) {
+      searchAppointStaff(options).then((res) => {
+        let { code, data, msg } = res;
+        if (res.code === 200) {
+          console.log(res.data);
+          this.userList = data.data;
+          this.currentPage = data.current_page;
+          this.total = data.total;
+          this.per_page = data.per_page;
+
+          // 关闭等待
+          this.loading = false;
+        } else {
+          this.$message.error(res.msg);
+        }
+      });
+    },
+
+    searchBtn(val) {
+      console.log(val);
+      this.searchForm = val;
+      this.searchAppointData(this.searchForm);
     },
     // 定义请求用户列表数据
     getStaffData() {
       this.loading = true;
-      searchAppointStaff("1")
-        .then((res) => {
-          if (res.code === 200) {
-            this.staffList = res.data.data;
-            this.currentPage = res.data.current_page;
-            this.total = parseInt(res.data.total);
-            this.per_page = res.data.per_page;
-            // 关闭等待
-            this.loading = false;
-          } else {
-            this.$message.error(res.msg);
-          }
-        })
-        .catch((err) => {
-          return;
-        });
+      this.searchAppointData(this.searchForm)
     },
 
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      console.log(currentpage);
+      this.searchForm.page = currentpage;
+      this.searchAppointData(this.searchForm);
     },
 
     // 定义一个获取当前用户所有的培训记录

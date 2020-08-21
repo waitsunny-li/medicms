@@ -10,7 +10,7 @@
           <!-- 表单内容 -->
           <!-- 表单 -->
           <el-table
-            :data="orderList"
+            :data="customers"
             class="user-table-wrap"
             style="width: 100%"
             :height="scrollHeight"
@@ -198,16 +198,11 @@
           <el-table-column prop="staff_id" align="center" label="面试人员编号" width="120"></el-table-column>
           <el-table-column align="center" label="姓名" width="100">
             <template slot-scope="scope">
-              <el-button
-                @click="staffInfoBtn(scope.row.staff)"
-                type="text"
-              >{{scope.row.staff.name}}</el-button>
+              <el-button @click="staffInfoBtn(scope.row.staff)" type="text">{{scope.row.staff.name}}</el-button>
             </template>
           </el-table-column>
           <el-table-column align="center" label="手机号" prop="tel">
-            <template slot-scope="scope">
-              {{scope.row.staff.mobile}}
-            </template>
+            <template slot-scope="scope">{{scope.row.staff.mobile}}</template>
           </el-table-column>
           <el-table-column align="center" label="面试内容" prop="content"></el-table-column>
           <el-table-column align="center" label="是否面试完成" prop="status">
@@ -232,21 +227,29 @@
     </el-dialog>
 
     <!-- 查看跟进记录 -->
-    <el-dialog :title="followUpTitle" :visible.sync="followUpDialogVisible" width="800px" center v-loading="followupLoading">
+    <el-dialog
+      :title="followUpTitle"
+      :visible.sync="followUpDialogVisible"
+      width="800px"
+      center
+      v-loading="followupLoading"
+    >
       <div class="followup-content">
         <el-table :data="followUpFormData" stripe style="width: 100%" height="400px">
           <el-table-column prop="start_time" align="center" label="日期" width="150"></el-table-column>
           <el-table-column prop="total_time" align="center" label="时长" width="180"></el-table-column>
-          
+
           <el-table-column prop="recommend" align="center" label="当前服务人员" width="110">
             <template slot-scope="scope">
-              <el-button
-                @click="staffInfoBtn(scope.row.staff)"
-                type="text"
-              >{{scope.row.staff.name}}</el-button>
+              <el-button @click="staffInfoBtn(scope.row.staff)" type="text">{{scope.row.staff.name}}</el-button>
             </template>
           </el-table-column>
-          <el-table-column prop="content" align="center" :show-overflow-tooltip="true" label="跟单记录情况" ></el-table-column>
+          <el-table-column
+            prop="content"
+            align="center"
+            :show-overflow-tooltip="true"
+            label="跟单记录情况"
+          ></el-table-column>
         </el-table>
       </div>
     </el-dialog>
@@ -283,15 +286,16 @@ import OrderInfo from "components/common/table/OrderInfo";
 import {
   getInterviewInfo,
   getOneCustomerInfo,
-  getCustomerInfo,
-  getFollowUpInfo
+  searchCustomerInfo,
+  getFollowUpInfo,
 } from "network/orderRequest";
 import { getAllSource } from "network/select";
 export default {
   name: "OrderQuery",
   data() {
     return {
-      orderList: [],
+      searchForm: {},
+      customers: [],
       // 当前页数
       currentPage: 1,
       // 总数据条数
@@ -324,8 +328,7 @@ export default {
       followUpDialogVisible: false,
       followupLoading: false,
       followUpTitle: "",
-      followUpFormData: [
-      ],
+      followUpFormData: [],
     };
   },
   computed: {
@@ -351,13 +354,13 @@ export default {
     });
   },
   methods: {
-    // 定义获取客户需求信息
-    getAllCustomerInfo() {
-      this.loading = true;
-      getCustomerInfo().then((res) => {
+    // 定义搜索获取信息
+    getSearchInfoData(options) {
+      searchCustomerInfo(options).then((res) => {
         if (res.code === 200) {
           // 获取客户数据
-          this.orderList = res.data.data;
+          this.customers = res.data.data;
+          console.log(res.data.data);
           // 页数赋值
           this.currentPage = res.data.current_page;
           // 总数据条数
@@ -370,6 +373,11 @@ export default {
           this.loading = false;
         }
       });
+    },
+    // 定义获取客户需求信息
+    getAllCustomerInfo() {
+      this.loading = true;
+      this.getSearchInfoData(this.searchForm);
     },
 
     // 定义获取该订单所有的面试记录
@@ -404,13 +412,15 @@ export default {
       });
     },
 
-    // 搜索按钮
-    searchBtn(searchForm) {
-      console.log(searchForm);
+    // 搜索按钮点击
+    searchBtn(val) {
+      this.searchForm = val;
+      this.getSearchInfoData(this.searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      // console.log(currentpage);
+      this.searchForm.page = currentpage;
+      this.getSearchInfoData(this.searchForm);
     },
 
     // 面试记录按钮事件
@@ -422,7 +432,7 @@ export default {
 
     // 查看单人的信息
     staffInfoBtn(staffInfo) {
-      this.staffInfo = staffInfo
+      this.staffInfo = staffInfo;
       this.staffInfoTitle = `家政员（${staffInfo.name}）的基本信息`;
       this.staffInfoDialogVisible = true;
     },
@@ -449,7 +459,7 @@ export default {
 
     // 查看跟进
     lookFollowUp(id) {
-      this.getAllFollowUpInfo(id)
+      this.getAllFollowUpInfo(id);
       this.followUpTitle = `订单号（${id}）的跟进情况`;
       this.followUpDialogVisible = true;
     },

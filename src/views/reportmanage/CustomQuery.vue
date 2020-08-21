@@ -155,12 +155,13 @@
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
-import { getCustomerInfo } from "network/orderRequest";
+import { searchCustomerInfo } from "network/orderRequest";
 import { getAllSource } from "network/select";
 export default {
   name: "CustomQuery",
   data() {
     return {
+      searchForm: {},
       customers: [],
       // 当前页数
       currentPage: 1,
@@ -197,10 +198,9 @@ export default {
     });
   },
   methods: {
-    // 定义获取客户需求信息
-    getAllCustomerInfo() {
-      this.loading = true;
-      getCustomerInfo().then((res) => {
+    // 定义搜索获取信息
+    getSearchInfoData(options) {
+      searchCustomerInfo(options).then((res) => {
         if (res.code === 200) {
           // 获取客户数据
           this.customers = res.data.data;
@@ -218,13 +218,19 @@ export default {
         }
       });
     },
-    // 搜索按钮
-    searchBtn(searchForm) {
-      console.log(searchForm);
+    // 定义获取客户需求信息
+    getAllCustomerInfo() {
+      this.loading = true;
+      this.getSearchInfoData(this.searchForm)
+    },
+    searchBtn(val) {
+      this.searchForm = val
+      this.getSearchInfoData(this.searchForm)
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      console.log(currentpage);
+      this.searchForm.page = currentpage
+      this.getSearchInfoData(this.searchForm)
     },
   },
   components: {

@@ -7,13 +7,19 @@ import Qs from 'qs'
  * 搜索
  */
 // 人员状态搜索
-export function searchAppointStaff(state) {
+export function searchAppointStaff(searchobj) {
   return request({
     url: "/staff/index",
     method: "get",
-    params: {
-      person_state: state
-    }
+    params: searchobj
+  })
+}
+
+// 获取生日提醒
+export function getStaffBirthday() {
+  return request({
+    url: "/staff/birthday",
+    method: "get",
   })
 }
 

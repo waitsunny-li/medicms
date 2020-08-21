@@ -14,20 +14,20 @@
             </el-form-item>
           </el-col>
           <el-col :span="3">
-            <el-form-item prop="telphone">
-              <el-input size="mini" v-model="searchForm.telphone" placeholder="手机号" clearable></el-input>
+            <el-form-item prop="mobile">
+              <el-input size="mini" v-model="searchForm.mobile" placeholder="手机号" clearable></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="4">
-            <el-form-item prop="idcard">
-              <el-input size="mini" v-model="searchForm.idcard" placeholder="身份证号" clearable></el-input>
+          <el-col :span="3">
+            <el-form-item prop="identity">
+              <el-input size="mini" v-model="searchForm.identity" placeholder="身份证号" clearable></el-input>
             </el-form-item>
           </el-col>
 
           <!-- 员工状态 -->
           <el-col :span="3">
-            <el-form-item prop="state">
-              <el-select size="mini" v-model="searchForm.state" placeholder="员工状态" >
+            <el-form-item prop="person_state">
+              <el-select size="mini" v-model="searchForm.person_state" placeholder="员工状态" >
                 <el-option label="培训" value="1"></el-option>
                 <el-option label="待岗" value="3"></el-option>
                 <el-option label="离职" value="4"></el-option>
@@ -38,11 +38,11 @@
             </el-form-item>
           </el-col>
           <!-- 录入时间 -->
-          <el-col :span="6">
-            <el-form-item prop="join_date">
+          <el-col :span="5">
+            <el-form-item prop="create_time">
               <el-date-picker
                 class="select-date"
-                v-model="searchForm.join_date"
+                v-model="searchForm.in_time"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -53,15 +53,15 @@
             </el-form-item>
           </el-col>
           <!-- 操作 -->
-          <el-col :span="4">
+          <el-col :span="3">
             <el-col :span="12">
               <el-form-item class="handle">
                 <el-button type="primary" icon="el-icon-search" @click="searchBtn">搜索</el-button>
               </el-form-item>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="10">
               <el-form-item>
-                <el-button icon="el-icon-delete" @click="clearBtn">清除查询</el-button>
+                <el-button icon="el-icon-delete" @click="clearBtn">清除</el-button>
               </el-form-item>
             </el-col>
           </el-col>
@@ -80,10 +80,10 @@ export default {
     return {
       searchForm: {
         name: "",
-        telphone: "",
-        idcard: "",
-        state: "",
-        join_date: "",
+        mobile: "",
+        identity: "",
+        person_state: "",
+        create_time: "",
       },
     };
   },
@@ -95,7 +95,7 @@ export default {
 
     // 搜索操作
     searchBtn() {
-      eventVue.$emit("searchstaff", this.searchForm);
+      // eventVue.$emit("searchstaff", this.searchForm);
       this.$emit("searchbtn", this.searchForm);
     },
   },

@@ -115,10 +115,12 @@
             </el-table-column>
             <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                <p v-if="scope.row.state == 0">面试中</p>
-                <p v-if="scope.row.state == 1">进行中</p>
-                <p v-if="scope.row.state == 3">结束</p>
-                <p v-if="scope.row.state == 4">取消</p>
+                <p v-if="scope.row.state == 0">审核中</p>
+                <p v-if="scope.row.state == 1">待进行</p>
+                <p v-if="scope.row.state == 2">订单进行中</p>
+                <p v-if="scope.row.state == 3">已完成</p>
+                <p v-if="scope.row.state == 4">已取消</p>
+                <p v-if="scope.row.state == 5">暂停中</p>
               </template>
             </el-table-column>
             <!-- 操作 -->
@@ -185,7 +187,7 @@
           <el-table-column align="center" prop="id" label="编号" width="90"></el-table-column>
           <el-table-column align="center" prop="create_time" label="录入时间"></el-table-column>
           <el-table-column align="center" prop="username" label="姓名" width="90"></el-table-column>
-          
+
           <el-table-column label="操作" align="center" width="100px">
             <template slot-scope="scope">
               <el-button @click="distributeSheBtn(scope.row.username, scope.row.id)" size="mini">分配</el-button>
@@ -201,7 +203,7 @@
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
 import {
-  getCustomerInfo,
+  searchCustomerInfo,
   distributeTeacher,
   searchNameTeacher,
 } from "network/orderRequest";
@@ -210,6 +212,7 @@ export default {
   name: "Distribute",
   data() {
     return {
+      searchForm: {},
       customers: [],
       // 当前页数
       currentPage: 1,
@@ -260,13 +263,13 @@ export default {
     });
   },
   methods: {
-    // 定义获取客户需求信息
-    getAllCustomerInfo() {
-      this.loading = true;
-      getCustomerInfo().then((res) => {
+    // 定义搜索获取信息
+    getSearchInfoData(options) {
+      searchCustomerInfo(options).then((res) => {
         if (res.code === 200) {
           // 获取客户数据
           this.customers = res.data.data;
+          console.log(res.data.data);
           // 页数赋值
           this.currentPage = res.data.current_page;
           // 总数据条数
@@ -280,20 +283,28 @@ export default {
         }
       });
     },
+
+    // 定义获取客户需求信息
+    getAllCustomerInfo() {
+      this.loading = true;
+      this.getSearchInfoData(this.searchForm);
+    },
     // 搜索按钮点击
-    searchBtn(searchForm) {
-      console.log("手工分配", searchForm);
+    searchBtn(val) {
+      this.searchForm = val;
+      this.getSearchInfoData(this.searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      console.log(currentpage);
+      this.searchForm.page = currentpage
+      this.getSearchInfoData(this.searchForm)
     },
 
     // 表单中分配按钮
     distributeBtn(id) {
       this.currentCustomId = id;
       this.distributeDialogVisible = true;
-      this.searchTeacherInfo()
+      this.searchTeacherInfo();
     },
 
     // 自定义搜索匹配老师数据
@@ -301,7 +312,8 @@ export default {
       searchNameTeacher(this.queryStaffName).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          this.defalutTeacherData = data.slice(0,10);
+          console.log(res)
+          this.defalutTeacherData = data.slice(0, 10);
         } else {
           this.$message.error(msg);
         }
@@ -312,7 +324,7 @@ export default {
     queryStaffBtn() {
       console.log(this.queryStaffName);
       this.distributeDialogVisible = true;
-      this.searchTeacherInfo(this.queryStaffName)
+      this.searchTeacherInfo(this.queryStaffName);
     },
 
     // 分配给他

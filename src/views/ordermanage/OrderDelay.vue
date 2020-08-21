@@ -11,7 +11,7 @@
           <!-- 表单内容 -->
           <!-- 表单 -->
           <el-table
-            :data="orderList"
+            :data="customers"
             class="user-table-wrap"
             style="width: 100%"
             :height="scrollHeight"
@@ -124,23 +124,32 @@
                     effect="dark"
                     :content="scope.row.staff.mobile"
                     placement="top"
-                  ><p>{{scope.row.staff.name}}</p></el-tooltip>
+                  >
+                    <p>{{scope.row.staff.name}}</p>
+                  </el-tooltip>
                 </div>
                 <div v-else>暂无服务人员</div>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                <p v-if="scope.row.state == 0">面试中</p>
-                <p v-if="scope.row.state == 1">进行中</p>
-                <p v-if="scope.row.state == 3">结束</p>
-                <p v-if="scope.row.state == 4">取消</p>
+                <p v-if="scope.row.state == 0">审核中</p>
+                <p v-if="scope.row.state == 1">待进行</p>
+                <p v-if="scope.row.state == 2">订单进行中</p>
+                <p v-if="scope.row.state == 3">已完成</p>
+                <p v-if="scope.row.state == 4">已取消</p>
+                <p v-if="scope.row.state == 5">暂停中</p>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="is_success" label="是否完成">
               <template slot-scope="scope">
                 <div v-if="scope.row.staff_id != 0">
-                  <el-tooltip class="item" effect="dark" content="Top Center 提示文字" placement="top">
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    :content="scope.row.staff.name"
+                    placement="top"
+                  >
                     <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
                   </el-tooltip>
                 </div>
@@ -150,7 +159,7 @@
             <!-- 操作 -->
             <el-table-column label="操作" align="center" width="140px" fixed="right">
               <template slot-scope="scope">
-                <el-tooltip
+                <!-- <el-tooltip
                   class="item"
                   effect="dark"
                   :enterable="false"
@@ -158,7 +167,7 @@
                   placement="top"
                 >
                   <el-button size="mini" type="primary" icon="el-icon-finished" circle></el-button>
-                </el-tooltip>
+                </el-tooltip>-->
 
                 <el-tooltip
                   class="item"
@@ -167,7 +176,13 @@
                   content="恢复"
                   placement="top"
                 >
-                  <el-button type="success" icon="el-icon-refresh" size="mini" circle></el-button>
+                  <el-button
+                    @click="restoreOrder(scope.row.id)"
+                    type="success"
+                    icon="el-icon-refresh"
+                    size="mini"
+                    circle
+                  ></el-button>
                 </el-tooltip>
               </template>
             </el-table-column>
@@ -189,13 +204,16 @@
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
-import { getCustomerInfo } from "network/orderRequest";
+import { searchCustomerInfo, restoreOrder } from "network/orderRequest";
 export default {
   name: "OrderDelay",
   data() {
     return {
+      searchForm: {
+        state: 5
+      },
       // 订单列表
-      orderList: [],
+      customers: [],
       // 当前页数
       currentPage: 1,
       // 总数据条数
@@ -220,13 +238,12 @@ export default {
     this.getAllOrderInfo();
   },
   methods: {
-    // 定义获取客户需求信息
-    getAllOrderInfo() {
-      this.loading = true;
-      getCustomerInfo().then((res) => {
+    // 定义搜索获取信息
+    getSearchInfoData(options) {
+      searchCustomerInfo(options).then((res) => {
         if (res.code === 200) {
           // 获取客户数据
-          this.orderList = res.data.data;
+          this.customers = res.data.data;
           console.log(res.data.data);
           // 页数赋值
           this.currentPage = res.data.current_page;
@@ -241,13 +258,45 @@ export default {
         }
       });
     },
+    // 定义获取客户需求信息
+    getAllOrderInfo() {
+      this.loading = true;
+      this.getSearchInfoData(this.searchForm);
+    },
     // 搜索按钮点击
-    searchBtn(searchForm) {
-      console.log("订单延迟", searchForm);
+    searchBtn(val) {
+      this.searchForm = val;
+      this.getSearchInfoData(this.searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      // console.log(currentpage);
+      this.searchForm.page = currentpage;
+      this.getSearchInfoData(this.searchForm);
+    },
+
+    // 恢复订单
+    restoreOrder(id) {
+      this.$confirm("此操作将恢复该订单，是否确定?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          restoreOrder(id).then(res => {
+            let { code, msg} = res
+            if(code === 200) {
+              this.$message.success(msg)
+            }else {
+              this.$message.error(msg)
+            }
+          })
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消恢复",
+          });
+        });
     },
   },
   components: {

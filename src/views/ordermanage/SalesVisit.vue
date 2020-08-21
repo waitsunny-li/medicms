@@ -9,7 +9,7 @@
         <el-card class="table-content" :style="{height: screenHeight}">
           <!-- 表单 -->
           <el-table
-            :data="customerListData"
+            :data="customers"
             style="width: 100%"
             border
             class="user-table-wrap"
@@ -39,10 +39,12 @@
             </el-table-column>
             <el-table-column align="center" prop="state" label="状态">
               <template slot-scope="scope">
-                <p v-if="scope.row.state == 0">面试中</p>
-                <p v-if="scope.row.state == 1">进行中</p>
-                <p v-if="scope.row.state == 3">结束</p>
-                <p v-if="scope.row.state == 4">取消</p>
+                <p v-if="scope.row.state == 0">审核中</p>
+                <p v-if="scope.row.state == 1">待进行</p>
+                <p v-if="scope.row.state == 2">订单进行中</p>
+                <p v-if="scope.row.state == 3">已完成</p>
+                <p v-if="scope.row.state == 4">已取消</p>
+                <p v-if="scope.row.state == 5">暂停中</p>
               </template>
             </el-table-column>
             <el-table-column align="center" label="操作" width="180">
@@ -115,14 +117,15 @@
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
-import { getSalesVisitInfo, saveSalesVisitInfo } from "network/orderRequest";
+import { getSalesVisitInfo, searchCustomerInfo, saveSalesVisitInfo } from "network/orderRequest";
 
 export default {
   name: "SalesVisit",
   data() {
     return {
+      searchForm: {},
       // 客户订单
-      customerListData: [],
+      customers: [],
       // 回访记录
       customerVisitList: [],
       // 当前页数
@@ -168,34 +171,42 @@ export default {
     this.getAllSaleVisitInfo();
   },
   methods: {
-    // 获取全部回访记录
-    getAllSaleVisitInfo() {
-      getSalesVisitInfo().then((res) => {
-        let { code, data, msg } = res;
-        console.log(data);
-        if (code === 200) {
+    // 定义搜索获取信息
+    getSearchInfoData(options) {
+      searchCustomerInfo(options).then((res) => {
+        if (res.code === 200) {
           // 获取客户数据
-          this.customerListData = data.data;
+          this.customers = res.data.data;
+          console.log(res.data.data);
           // 页数赋值
-          this.currentPage = data.current_page;
+          this.currentPage = res.data.current_page;
           // 总数据条数
-          this.total = data.total;
+          this.total = res.data.total;
           // 每页的条
-          this.per_page = data.per_page;
+          this.per_page = res.data.per_page;
           this.loading = false;
         } else {
-          this.$message.error(msg);
-          this.loading = true;
+          this.$message.error(res.msg);
+          this.loading = false;
         }
+      }).catch(err => {
+        this.$message.error('服务器炸了！')
       });
     },
+    // 获取全部回访记录
+    getAllSaleVisitInfo() {
+      this.loading = true;
+      this.getSearchInfoData(this.searchForm)
+    },
     // 搜索按钮点击
-    searchBtn(searchForm) {
-      console.log("销售回访", searchForm);
+    searchBtn(val) {
+      this.searchForm = val
+      this.getSearchInfoData(this.searchForm)
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      // console.log(currentpage);
+      this.searchForm.page = currentpage
+      this.getSearchInfoData(this.searchForm)
     },
 
     // 查看回访记录按钮

@@ -3,6 +3,7 @@ import { getComplaint } from "network/feedbackRequest";
 let feedMixin = {
   data() {
     return {
+      searchForm: {},
       // 这里应该是未分配的投诉
       feedFormData: [],
 
@@ -17,13 +18,13 @@ let feedMixin = {
     }
   },
   created () {
-    this.getAllComplaints()
+    this.getAllComplaints(this.searchForm)
   },
   methods: {
     // 获取投诉列表
-    getAllComplaints() {
+    getAllComplaints(option) {
       this.loading = true;
-      getComplaint().then((res) => {
+      getComplaint(option).then((res) => {
         let { code, data, msg } = res;
         console.log(data);
         if (code === 200) {

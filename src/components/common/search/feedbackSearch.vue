@@ -2,48 +2,75 @@
   <div class="feedback-search">
     <el-card class="search-wrap">
       <el-form size="small" :inline="true" ref="searchForm" :model="feedbacksearchForm">
-        <el-form-item prop="name">
-          <el-input size="mini" v-model="feedbacksearchForm.name" placeholder="请输入投诉人姓名" clearable></el-input>
-        </el-form-item>
-        <el-form-item prop="telphone">
-          <el-input
-            size="mini"
-            v-model="feedbacksearchForm.telphone"
-            placeholder="请输入客户手机号"
-            clearable
-          ></el-input>
-        </el-form-item>
-        <!-- 分配状态 -->
-        <el-form-item prop="distribute_state">
-          <el-select v-model="feedbacksearchForm.distribute_state" placeholder="分配状态">
-            <el-option label="已分配" value="1"></el-option>
-            <el-option label="未分配" value="0"></el-option>
-          </el-select>
-        </el-form-item>
+        <el-row>
+          <el-col :span="3">
+            <el-form-item prop="name">
+              <el-input size="mini" v-model="feedbacksearchForm.name" placeholder="投诉人姓名" clearable></el-input>
+            </el-form-item>
+          </el-col>
 
-        <!-- 处理状态 -->
-        <el-form-item prop="solved_state">
-          <el-select v-model="feedbacksearchForm.solved_state" placeholder="处理状态">
-            <el-option label="已解决" value="1"></el-option>
-            <el-option label="未解决" value="0"></el-option>
-          </el-select>
-        </el-form-item>
-        <!-- 录入时间 -->
-        <el-form-item prop="join_date">
-          <el-date-picker
-            class="select-date"
-            v-model="feedbacksearchForm.join_date"
-            type="date"
-            placeholder="选择日期"
-          ></el-date-picker>
-        </el-form-item>
-        <!-- 操作 -->
-        <el-form-item class="handle">
-          <el-button type="primary" icon="el-icon-search" @click="searchBtn">搜索</el-button>
-        </el-form-item>
-        <el-form-item>
-          <el-button icon="el-icon-delete" @click="clearBtn">清除查询</el-button>
-        </el-form-item>
+          <el-col :span="3">
+            <el-form-item prop="mobile">
+              <el-input
+                size="mini"
+                v-model="feedbacksearchForm.mobile"
+                placeholder="请输入客户手机号"
+                clearable
+              ></el-input>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="3">
+            <!-- 分配状态 -->
+            <el-form-item>
+              <el-select v-model="is_assign" size="mini" placeholder="分配状态">
+                <el-option label="已分配" value="1"></el-option>
+                <el-option label="未分配" value="0"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="3">
+            <!-- 处理状态 -->
+            <el-form-item>
+              <el-select v-model="status" placeholder="处理状态" size="mini">
+                <el-option label="已解决" value="1"></el-option>
+                <el-option label="未解决" value="0"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="5">
+            <!-- 录入时间 -->
+            <el-form-item prop="create_time">
+              <el-date-picker
+                class="select-date"
+                v-model="feedbacksearchForm.create_time"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                style="width: 250px"
+                value-format="yyyy-MM-dd"
+                size="mini"
+              ></el-date-picker>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="3">
+            <!-- 操作 -->
+            <el-col :span="14">
+              <el-form-item class="handle">
+                <el-button type="primary" icon="el-icon-search" @click="searchBtn">搜索</el-button>
+              </el-form-item>
+            </el-col>
+            <el-col :span="10">
+              <el-form-item>
+                <el-button icon="el-icon-delete" @click="clearBtn">清除</el-button>
+              </el-form-item>
+            </el-col>
+          </el-col>
+        </el-row>
       </el-form>
     </el-card>
   </div>
@@ -57,11 +84,11 @@ export default {
     return {
       feedbacksearchForm: {
         name: "",
-        telphone: "",
-        distribute_state: "",
-        solved_state: "",
-        join_date: "",
+        mobile: "",
+        create_time: "",
       },
+      is_assign: "",
+      status: "",
     };
   },
   methods: {
@@ -72,6 +99,16 @@ export default {
 
     // 搜索操作
     searchBtn() {
+      if (this.is_assign !== "") {
+        this.feedbacksearchForm.is_assign = this.is_assign
+      }
+      if(this.status !== "") {
+        this.feedbacksearchForm.status = this.status
+      }
+      this.feedbacksearchForm.create_time = this.feedbacksearchForm.create_time
+        ? this.feedbacksearchForm.create_time.join(",")
+        : "";
+
       this.$emit("searchBtn", this.feedbacksearchForm);
     },
   },
@@ -91,11 +128,9 @@ export default {
   }
 
   .el-form-item {
-    width: 170px;
     margin: 0;
     margin-right: 10px;
     .select-date {
-      width: 170px;
     }
   }
   .handle {

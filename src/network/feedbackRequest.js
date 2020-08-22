@@ -3,10 +3,11 @@ import {
 } from './request'
 
 // 获取反馈
-export function getComplaint() {
+export function getComplaint(searchObj) {
   return request({
     url: "/complaint/index",
     method: "get",
+    params: searchObj
   })
 }
 
@@ -55,6 +56,15 @@ export function distributeSalesStaff(customer_id, user_id) {
 export function handleComplaint(data) {
   return request({
     url: "complaint/state",
+    method: "post",
+    data: data
+  })
+}
+
+// 处理结果内容
+export function handleResult(data) {
+  return request({
+    url: "/complaint/deal_with",
     method: "post",
     data: data
   })

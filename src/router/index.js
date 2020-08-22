@@ -262,10 +262,15 @@ const router = new VueRouter({
 
 // 导航守卫
 router.beforeEach((to, from, next) => {
+  console.log(to.path)
   if (to.path === '/login') {
     // 从from跳转到to
     document.title = to.meta.title
-    next()
+    if(getItem('userInfo')['userToken']) {
+      next(from.path)
+    }else {
+      next()
+    }
   } else {
     let userToken = getItem('userInfo')['userToken']
     if (userToken == null || userToken == '') {

@@ -120,7 +120,7 @@ export default {
 
     // 搜索操作
     searchBtn() {
-      this.CustomerSearchForm.create_time = this.CustomerSearchForm.create_time.join(',')
+      this.CustomerSearchForm.create_time = this.CustomerSearchForm.create_time ? this.CustomerSearchForm.create_time.join(',') : ""
       if(this.CustomerSearchForm.state) {
         this.$emit("searchBtn", this.CustomerSearchForm);
       }else {

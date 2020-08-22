@@ -36,9 +36,9 @@
               label="投诉事件"
               :show-overflow-tooltip="true"
             ></el-table-column>
-            <el-table-column align="center" prop="is_status" label="是否解决" width="180">
+            <el-table-column align="center" prop="status" label="是否解决" width="180">
               <template slot-scope="scope">
-                <div v-if="scope.row.is_status">
+                <div v-if="scope.row.status">
                   <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
                 </div>
                 <div v-else>
@@ -171,12 +171,15 @@ export default {
   methods: {
    
     // 搜索按钮
-    searchBtn(searchForm) {
-      console.log("客户反馈", searchForm);
+    searchBtn(val) {
+      this.searchForm = val
+      this.getAllComplaints(this.searchForm)
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
       // console.log(currentpage);
+      this.searchForm.page = currentpage
+      this.getAllComplaints(this.searchForm)
     },
 
     // 添加投诉
@@ -199,7 +202,7 @@ export default {
             if (code === 200) {
               this.$message.success(msg);
               this.addFeedDialogVisible = false
-              this.getAllComplaints()
+              this.getAllComplaints(this.searchForm)
             } else {
               this.$message.error(msg);
             }
@@ -222,7 +225,7 @@ export default {
         let { code, msg } = res;
         if (code === 200) {
           this.$message.success(msg);
-          this.getAllComplaints();
+          this.getAllComplaints(this.searchForm);
         } else {
           this.$message.error(msg);
         }

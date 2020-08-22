@@ -31,7 +31,12 @@
             <el-table-column align="center" prop="status" label="是否解决" width="100">
               <template slot-scope="scope">
                 <div v-if="scope.row.status">
-                  <el-tooltip class="item" effect="dark" :content="scope.row.evaluation" placement="top">
+                  <el-tooltip
+                    class="item"
+                    effect="dark"
+                    :content="scope.row.evaluation"
+                    placement="top"
+                  >
                     <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
                   </el-tooltip>
                 </div>
@@ -46,6 +51,7 @@
                 <div v-else>未分配</div>
               </template>
             </el-table-column>
+            <el-table-column align="center" prop="result" label="处理结果"></el-table-column>
             <el-table-column align="center" prop="rate" width label="客户满意度">
               <template slot-scope="scope">
                 <p v-if="scope.row.status">
@@ -57,9 +63,13 @@
                     show-text
                   ></el-rate>
                 </p>
-                <p v-else>
-                  <el-button @click="rateBtn(scope.row.id)" type="text">评价</el-button>
-                </p>
+                <p v-else>暂无评价</p>
+              </template>
+            </el-table-column>
+            <el-table-column label="操作" align="center" min-width="150px">
+              <template slot-scope="scope">
+                <el-button @click="rateBtn(scope.row.id)" type="success" size="mini">评价</el-button>
+                <el-button @click="handleRsultBtn(scope.row.id)" type="primary" size="mini">处理</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -87,13 +97,37 @@
             style="margin-top: 10px"
           ></el-rate>
         </el-form-item>
-        <el-form-item label="评分" prop="evaluation">
+        <el-form-item label="评价内容" prop="evaluation">
           <el-input v-model="rateForm.evaluation" type="textarea"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="rateDialogVisible = false">取 消</el-button>
         <el-button size="mini" type="primary" @click="saveRateBtn">保 存</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 显示处理框 -->
+    <el-dialog
+      title="处理结果上报"
+      :visible.sync="resultDialogVisible"
+      width="450px"
+      center
+      @close="resultClose"
+    >
+      <el-form
+        ref="handleResultForm"
+        :rules="handleResultFormRules"
+        :model="handleResultForm"
+        label-width="80px"
+      >
+        <el-form-item label="处理结果" prop="result">
+          <el-input v-model="handleResultForm.result" type="textarea"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="resultDialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="saveHandleResultBtn">保 存</el-button>
       </span>
     </el-dialog>
   </div>
@@ -103,7 +137,7 @@
 import feedbackSearch from "components/common/search/feedbackSearch";
 import Pagination from "components/common/pagination/Pagination";
 import { feedMixin } from "common/promixin";
-import { handleComplaint } from "network/feedbackRequest";
+import { handleComplaint, handleResult } from "network/feedbackRequest";
 export default {
   name: "Handle",
   mixins: [feedMixin],
@@ -127,6 +161,16 @@ export default {
         ],
         start: [{ required: true, message: "请输入满意度", trigger: "blur" }],
       },
+
+      handleResultFormRules: {
+        rsult: [{ required: true, message: "请输入处理结果", trigger: "blur" }],
+      },
+
+      handleResultForm: {
+        complaint_id: "",
+        result: "",
+      },
+      resultDialogVisible: false,
     };
   },
   computed: {
@@ -151,6 +195,35 @@ export default {
     rateBtn(id) {
       this.rateDialogVisible = true;
       this.rateForm.complaint_id = id;
+    },
+    // 保存处理结果
+    saveHandleResultBtn() {
+      this.$refs.handleResultForm.validate((valid) => {
+        if (valid) {
+          console.log(this.handleResultForm)
+          handleResult(this.handleResultForm).then((res) => {
+            let { code, msg } = res;
+            console.log(res)
+            if (code === 200) {
+              this.$message.success(msg);
+              this.resultDialogVisible = false;
+              this.getAllComplaints();
+            } else {
+              this.$message.error(msg);
+            }
+          });
+        } else {
+          return false;
+        }
+      });
+    },
+    resultClose() {
+      this.$refs.handleResultForm.resetFields();
+    },
+    // 处理
+    handleRsultBtn(id) {
+      this.resultDialogVisible = true;
+      this.handleResultForm.complaint_id = id;
     },
     // 评价框关闭事件
     rateClose() {

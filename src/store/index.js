@@ -22,7 +22,6 @@ const state = {
     last_login_time: getItem('userInfo')['last_login_time'] ? getItem('userInfo')['last_login_time'] : '',
     ip: getItem('userInfo')['ip'] ? getItem('userInfo')['ip'] : '',
     role_id: getItem('userInfo')['role_id'] ? getItem('userInfo')['role_id'] : '',
-
   }
 }
 

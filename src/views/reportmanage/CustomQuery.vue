@@ -123,10 +123,12 @@
             </el-table-column>
             <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                <p v-if="scope.row.state == 0">面试中</p>
-                <p v-if="scope.row.state == 1">进行中</p>
-                <p v-if="scope.row.state == 3">结束</p>
-                <p v-if="scope.row.state == 4">取消</p>
+                <p v-if="scope.row.state == 0">审核中</p>
+                <p v-if="scope.row.state == 1">待进行</p>
+                <p v-if="scope.row.state == 2">订单进行中</p>
+                <p v-if="scope.row.state == 3">已完成</p>
+                <p v-if="scope.row.state == 4">已取消</p>
+                <p v-if="scope.row.state == 5">暂停中</p>
               </template>
             </el-table-column>
             <el-table-column
@@ -172,7 +174,7 @@ export default {
       // 等待加载
       loading: false,
       // 来源
-      source: []
+      source: [],
     };
   },
   computed: {
@@ -221,16 +223,16 @@ export default {
     // 定义获取客户需求信息
     getAllCustomerInfo() {
       this.loading = true;
-      this.getSearchInfoData(this.searchForm)
+      this.getSearchInfoData(this.searchForm);
     },
     searchBtn(val) {
-      this.searchForm = val
-      this.getSearchInfoData(this.searchForm)
+      this.searchForm = val;
+      this.getSearchInfoData(this.searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      this.searchForm.page = currentpage
-      this.getSearchInfoData(this.searchForm)
+      this.searchForm.page = currentpage;
+      this.getSearchInfoData(this.searchForm);
     },
   },
   components: {

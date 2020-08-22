@@ -28,9 +28,9 @@
               :show-overflow-tooltip="true"
               label="投诉事件"
             ></el-table-column>
-            <el-table-column align="center" prop="is_status" label="是否解决" width="180">
+            <el-table-column align="center" prop="status" label="是否解决" width="180">
               <template slot-scope="scope">
-                <div v-if="scope.row.is_status">
+                <div v-if="scope.row.status">
                   <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
                 </div>
                 <div v-else>
@@ -71,13 +71,14 @@
     />
 
     <!-- 显示分配给公司员工列表 -->
-    <el-dialog title="分配" :visible.sync="distributeDialogVisible" width="450px" center>
+    <el-dialog title="分配" :visible.sync="distributeDialogVisible" width="550px" center>
       <div class="content">
         <el-input
           size="mini"
-          placeholder="请输入要分配的员工姓名"
+          placeholder="请输入要分配的售后人员姓名"
           v-model="queryStaffName"
           class="input-with-select"
+          @keyup.native.enter="queryStaffBtn"
         >
           <el-button slot="append" icon="el-icon-search" @click="queryStaffBtn"></el-button>
         </el-input>
@@ -87,13 +88,17 @@
           :data="defalutStaffData"
           style="width: 100%"
           :highlight-current-row="true"
+          height="260"
         >
-          <el-table-column align="center" prop="number" label="编号" width="90"></el-table-column>
-          <el-table-column align="center" prop="name" label="姓名" width="90"></el-table-column>
-          <el-table-column align="center" prop="mobile" label="手机号"></el-table-column>
+          <el-table-column align="center" prop="id" label="编号" width="90"></el-table-column>
+          <el-table-column align="center" prop="create_time" label="录入时间"></el-table-column>
+          <el-table-column align="center" prop="username" label="姓名" width="90"></el-table-column>
           <el-table-column label="操作" align="center" width="100px">
             <template slot-scope="scope">
-              <el-button @click="distributeSheBtn(scope.row.name)" size="mini">分配给他</el-button>
+              <el-button
+                @click="distributeSheBtn(scope.row.username, scope.row.id)"
+                size="mini"
+              >分配给他</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -106,6 +111,7 @@
 import feedbackSearch from "components/common/search/feedbackSearch";
 import Pagination from "components/common/pagination/Pagination";
 import { feedMixin } from "common/promixin";
+import { searchNameSaleStaff, distributeSalesStaff } from "network/feedbackRequest";
 export default {
   name: "SaleDistribute",
   mixins: [feedMixin],
@@ -120,18 +126,13 @@ export default {
         time: "",
         content: "",
       },
+      currentCustomId: "",
 
       // 要查询的员工姓名
       queryStaffName: "",
       distributeDialogVisible: false,
       // 默认数据
-      defalutStaffData: [
-        {
-          number: "2332",
-          name: "天猫精灵",
-          mobile: "13955877889",
-        },
-      ],
+      defalutStaffData: [],
     };
   },
   computed: {
@@ -153,19 +154,57 @@ export default {
       // console.log(currentpage);
     },
 
+    // 自定义搜索匹配老师数据
+    searchSaleStaffInfo(name) {
+      searchNameSaleStaff(this.queryStaffName).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          console.log(res);
+          this.defalutStaffData = data.slice(0, 10);
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+
     // 分配
     distributeSuccess(id) {
-      console.log(id);
+      this.currentCustomId = id;
+      this.searchSaleStaffInfo();
       this.distributeDialogVisible = true;
     },
 
     // 点击搜索按钮事件
     queryStaffBtn() {
       console.log(this.queryStaffName);
+      this.searchSaleStaffInfo(this.queryStaffName);
     },
 
     // 分配给他
-    distributeSheBtn() {},
+    distributeSheBtn(name, user_id) {
+      this.$confirm("是否要将此客户分配给售后服务人员" + name, '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+           distributeSalesStaff(this.currentCustomId, user_id).then((res) => {
+            let { code, msg } = res;
+            if (code === 200) {
+              this.$message.success(msg);
+              // 关闭分配弹框
+              this.distributeDialogVisible = false;
+              this.getAllComplaints();
+            } else {
+              this.$message.error(msg);
+            }
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+    },
   },
   components: {
     feedbackSearch,

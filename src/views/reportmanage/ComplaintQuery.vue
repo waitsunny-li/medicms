@@ -28,10 +28,12 @@
               label="投诉事件"
               :show-overflow-tooltip="true"
             ></el-table-column>
-            <el-table-column align="center" prop="is_status" label="是否解决" width="100">
+            <el-table-column align="center" prop="status" label="是否解决" width="100">
               <template slot-scope="scope">
-                <div v-if="scope.row.is_status">
-                  <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
+                <div v-if="scope.row.status">
+                  <el-tooltip class="item" effect="dark" :content="scope.row.evaluation" placement="top">
+                    <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
+                  </el-tooltip>
                 </div>
                 <div v-else>
                   <i style="color:#F56C6C; font-size: 28px" class="el-icon-circle-close"></i>
@@ -44,18 +46,18 @@
                 <div v-else>未分配</div>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="rate" width label="客户满意度">
+            <el-table-column align="center" prop="star" width label="客户满意度">
               <template slot-scope="scope">
-                <p v-if="scope.row.is_solved">
+                <p v-if="scope.row.status">
                   <el-rate
                     :disabled="true"
-                    :value="scope.row.rate"
+                    :value="scope.row.star"
                     :texts="texts"
                     :colors="colors"
                     show-text
                   ></el-rate>
                 </p>
-                <p v-else>无</p>
+                <p v-else>处理中</p>
               </template>
             </el-table-column>
           </el-table>

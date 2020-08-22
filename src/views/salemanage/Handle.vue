@@ -28,10 +28,12 @@
               label="投诉事件"
               :show-overflow-tooltip="true"
             ></el-table-column>
-            <el-table-column align="center" prop="is_status" label="是否解决" width="100">
+            <el-table-column align="center" prop="status" label="是否解决" width="100">
               <template slot-scope="scope">
-                <div v-if="scope.row.is_status">
-                  <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
+                <div v-if="scope.row.status">
+                  <el-tooltip class="item" effect="dark" :content="scope.row.evaluation" placement="top">
+                    <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
+                  </el-tooltip>
                 </div>
                 <div v-else>
                   <i style="color:#F56C6C; font-size: 28px" class="el-icon-circle-close"></i>
@@ -46,10 +48,10 @@
             </el-table-column>
             <el-table-column align="center" prop="rate" width label="客户满意度">
               <template slot-scope="scope">
-                <p v-if="scope.row.is_solved">
+                <p v-if="scope.row.status">
                   <el-rate
                     :disabled="true"
-                    :value="scope.row.rate"
+                    :value="scope.row.star"
                     :texts="texts"
                     :colors="colors"
                     show-text
@@ -74,25 +76,20 @@
     />
 
     <!-- 显示评价框 -->
-    <el-dialog title="评价" :visible.sync="rateDialogVisible" width="400px" center @close="rateClose">
-      <el-form ref="rateForm" :model="rateForm" label-width="80px">
-        <el-form-item label="是否完成" prop="is_solved">
-          <el-switch v-model="rateForm.is_solved" active-color="#13ce66"></el-switch>
+    <el-dialog title="评价" :visible.sync="rateDialogVisible" width="450px" center @close="rateClose">
+      <el-form ref="rateForm" :rules="rateFormRules" :model="rateForm" label-width="80px">
+        <el-form-item label="评分" prop="star">
+          <el-rate
+            v-model="rateForm.star"
+            :colors="colors"
+            :texts="texts"
+            show-text
+            style="margin-top: 10px"
+          ></el-rate>
         </el-form-item>
-
-        <transition name="el-zoom-in-center">
-          <div v-show="rateForm.is_solved" class="transition-box">
-            <el-form-item label="评分" prop="rate">
-              <el-rate
-                v-model="rateForm.rate"
-                :colors="colors"
-                :texts="texts"
-                show-text
-                style="margin-top: 10px"
-              ></el-rate>
-            </el-form-item>
-          </div>
-        </transition>
+        <el-form-item label="评分" prop="evaluation">
+          <el-input v-model="rateForm.evaluation" type="textarea"></el-input>
+        </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="rateDialogVisible = false">取 消</el-button>
@@ -105,24 +102,13 @@
 <script>
 import feedbackSearch from "components/common/search/feedbackSearch";
 import Pagination from "components/common/pagination/Pagination";
-import {feedMixin} from "common/promixin"
+import { feedMixin } from "common/promixin";
+import { handleComplaint } from "network/feedbackRequest";
 export default {
   name: "Handle",
   mixins: [feedMixin],
   data() {
     return {
-      // 这里应该是未分配的投诉
-      // feedFormData: [
-      // ],
-
-      // // 当前页数
-      // currentPage: 1,
-      // // 总数据条数
-      // total: null,
-      // // 每页的条数
-      // per_page: null,
-      // // 是否加载
-      // loading: false,
       // 评分颜色和辅助文字
       texts: ["极差", "失望", "一般", "满意", "非常满意"],
       colors: ["#99A9BF", "#F7BA2A", "#FF9900"],
@@ -130,9 +116,16 @@ export default {
       // 显示评价框内容
       rateDialogVisible: false,
       rateForm: {
-        id: "",
-        is_solved: false,
-        rate: null,
+        complaint_id: "",
+        evaluation: "",
+        star: null,
+      },
+      // 规则
+      rateFormRules: {
+        evaluation: [
+          { required: true, message: "请输入评价内容", trigger: "blur" },
+        ],
+        start: [{ required: true, message: "请输入满意度", trigger: "blur" }],
       },
     };
   },
@@ -157,6 +150,7 @@ export default {
     // 评价按钮
     rateBtn(id) {
       this.rateDialogVisible = true;
+      this.rateForm.complaint_id = id;
     },
     // 评价框关闭事件
     rateClose() {
@@ -165,6 +159,22 @@ export default {
     // 保存按钮
     saveRateBtn() {
       console.log(this.rateForm);
+      this.$refs.rateForm.validate((valid) => {
+        if (valid) {
+          handleComplaint(this.rateForm).then((res) => {
+            let { code, msg } = res;
+            if (code === 200) {
+              this.$message.success(msg);
+              this.rateDialogVisible = false;
+              this.getAllComplaints();
+            } else {
+              this.$message.error(msg);
+            }
+          });
+        } else {
+          return false;
+        }
+      });
     },
   },
   mounted() {},

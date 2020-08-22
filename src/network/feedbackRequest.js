@@ -29,3 +29,33 @@ export function deleteComplaint(id) {
     }
   })
 }
+
+// 手工搜素售后服务人员
+export function searchNameSaleStaff(name) {
+  return request({
+    url: "user/sale",
+    method: "get",
+    params: {
+      keyword: name
+    }
+  })
+}
+// 分派给售后服务人员
+export function distributeSalesStaff(customer_id, user_id) {
+  return request({
+    url: "complaint/match",
+    method: "post",
+    data: {
+      complaint_id: customer_id,
+      assign_user_id: user_id
+    }
+  })
+}
+// 评价内容
+export function handleComplaint(data) {
+  return request({
+    url: "complaint/state",
+    method: "post",
+    data: data
+  })
+}

@@ -29,6 +29,7 @@ let feedMixin = {
         if (code === 200) {
           // 获取客户数据
           this.feedFormData = data.data;
+          console.log(this.feedFormData)
           // 页数赋值
           this.currentPage = data.current_page;
           // 总数据条数

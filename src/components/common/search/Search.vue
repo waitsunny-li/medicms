@@ -42,12 +42,13 @@
             <el-form-item prop="create_time">
               <el-date-picker
                 class="select-date"
-                v-model="searchForm.in_time"
+                v-model="searchForm.create_time"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 style="width: 250px"
+                value-format="yyyy-MM-dd"
                 size="mini"
               ></el-date-picker>
             </el-form-item>
@@ -96,6 +97,8 @@ export default {
     // 搜索操作
     searchBtn() {
       // eventVue.$emit("searchstaff", this.searchForm);
+      this.searchForm.create_time = this.searchForm.create_time.join(',')
+      // console.log(this.searchForm)
       this.$emit("searchbtn", this.searchForm);
     },
   },

@@ -132,15 +132,15 @@ const routes = [{
           title: "人员派出"
         }
       },
-      {
-        path: 'salesvisit',
-        components: {
-          content: SalesVisit
-        },
-        meta: {
-          title: "销售回访"
-        }
-      },
+      // {
+      //   path: 'salesvisit',
+      //   components: {
+      //     content: SalesVisit
+      //   },
+      //   meta: {
+      //     title: "销售回访"
+      //   }
+      // },
       {
         path: 'orderdelay',
         components: {
@@ -150,15 +150,15 @@ const routes = [{
           title: "订单延期"
         }
       },
-      {
-        path: 'orderrenewal',
-        components: {
-          content: OrderRenewal
-        },
-        meta: {
-          title: "订单续签"
-        }
-      },
+      // {
+      //   path: 'orderrenewal',
+      //   components: {
+      //     content: OrderRenewal
+      //   },
+      //   meta: {
+      //     title: "订单续签"
+      //   }
+      // },
 
       // 售后管理
       {

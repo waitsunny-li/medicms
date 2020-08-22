@@ -50,14 +50,15 @@
 
           <el-col :span="5">
             <!-- 录入时间 -->
-            <el-form-item prop="creat_time">
+            <el-form-item prop="create_time">
               <el-date-picker
                 class="select-date"
-                v-model="CustomerSearchForm.creat_time"
+                v-model="CustomerSearchForm.create_time"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                value-format="yyyy-MM-dd"
                 style="width: 250px"
               ></el-date-picker>
             </el-form-item>
@@ -93,7 +94,7 @@ export default {
         name: "",
         mobile: "",
         source_id: "",
-        creat_time: [],
+        create_time: [],
         state: "",
       },
       source: [],
@@ -119,7 +120,17 @@ export default {
 
     // 搜索操作
     searchBtn() {
-      this.$emit("searchBtn", this.CustomerSearchForm);
+      this.CustomerSearchForm.create_time = this.CustomerSearchForm.create_time.join(',')
+      if(this.CustomerSearchForm.state) {
+        this.$emit("searchBtn", this.CustomerSearchForm);
+      }else {
+        this.$emit("searchBtn", {
+        name: "",
+        mobile: "",
+        source_id: "",
+        creat_time: [],
+      });
+      }
     },
   },
   created() {},

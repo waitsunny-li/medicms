@@ -26,7 +26,7 @@
           <!-- 右侧 -->
           <div class="right-wrap">
             <div class="login-time">
-              <span>您上次的登录时间：{{$store.state.userInfo.last_login_time}}</span>
+              <span>登录时间：{{$store.state.userInfo.last_login_time}}</span> 
             </div>
 
             <div class="home-wrap">
@@ -70,7 +70,7 @@ export default {
       ],
       asideNavList: [
         [
-          {
+          { 
             navname: "资料录入",
             path: "/home/datainput",
             icon: "icon el-icon-edit-outline",
@@ -112,11 +112,11 @@ export default {
             path: "/home/persondispatch",
             icon: "icon el-icon-place",
           },
-          {
-            navname: "销售回访",
-            path: "/home/salesvisit",
-            icon: "icon el-icon-refresh",
-          },
+          // {
+          //   navname: "销售回访",
+          //   path: "/home/salesvisit",
+          //   icon: "icon el-icon-refresh",
+          // },
           {
             navname: "订单延期",
             path: "/home/orderdelay",

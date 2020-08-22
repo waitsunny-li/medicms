@@ -99,7 +99,8 @@ export default {
                 "userToken": res.data.Authorization,
                 "username": res.data.username,
                 "last_login_time": res.data.last_login_time,
-                "ip": res.data.ip
+                "ip": res.data.ip,
+                "role_id": res.data.role_id,
               })
               this.$message.success(res.msg)
               this.$router.replace('/welcome')

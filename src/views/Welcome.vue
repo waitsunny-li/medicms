@@ -26,7 +26,7 @@
           <el-col :span="18">
             <!-- 时间-ip -->
             <div class="time-ip-wrap">
-              <div class="time">您上次登录时间：{{$store.state.userInfo.last_login_time}}</div>
+              <div class="time">登录时间：{{$store.state.userInfo.last_login_time}}</div>
               <div class="ip">IP：{{$store.state.userInfo.ip}}</div>
             </div>
           </el-col>

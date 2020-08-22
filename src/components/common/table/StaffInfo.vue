@@ -26,12 +26,12 @@
 
       <el-row class="expand-row">
         <el-col :span="4">
-          <span class="label-text">工资待遇</span>
-          <span class="content-text">12000 / 26天</span>
+          <span class="label-text">生肖</span>
+          <span class="content-text">{{staffInfo.zodiac}}</span>
         </el-col>
         <el-col :span="5">
           <span class="label-text">休假要求</span>
-          <span class="content-text">{{staffInfo.salary}}</span>
+          <span class="content-text">{{staffInfo.spare_time}}</span>
         </el-col>
         <el-col :span="5">
           <span class="label-text">户口地址</span>
@@ -62,11 +62,12 @@
         </el-col>
         <el-col :span="5">
           <span class="label-text">服务技能</span>
-          <span
+          <!-- <span
             class="content-text"
             v-for="(item, index) in staffInfo.service_skills"
             :key="index"
-          >{{item}}</span>
+          >{{item}}</span> -->
+          <span class="content-text">{{staffInfo.service_skills}}</span>
         </el-col>
         <el-col :span="5">
           <span class="label-text">家用电器</span>
@@ -93,7 +94,14 @@
         </el-col>
         <el-col :span="5">
           <span class="label-text">员工状态</span>
-          <span class="content-text">{{staffInfo.person_state}}</span>
+          <span class="content-text" v-if="staffInfo.person_state == 1">培训</span>
+          <span class="content-text" v-else-if="staffInfo.person_state == 2">考核</span>
+          <span class="content-text" v-else-if="staffInfo.person_state == 3">待岗</span>
+          <span class="content-text" v-else-if="staffInfo.person_state == 4">离职</span>
+          <span class="content-text" v-else-if="staffInfo.person_state == 5">黑名单</span>
+          <span class="content-text" v-else-if="staffInfo.person_state == 6">在岗</span>
+          <span class="content-text" v-else-if="staffInfo.person_state == 7">离职(下单)</span>
+          <span class="content-text" v-else>错误</span>
         </el-col>
         <el-col :span="5">
           <span class="label-text">保险</span>
@@ -131,7 +139,7 @@
       <el-row class="expand-row">
         <el-col :span="4">
           <span class="label-text">录入人</span>
-          <span class="content-text">{{staffInfo.salary}}</span>
+          <span class="content-text">{{staffInfo.user_id}}</span>
         </el-col>
         <el-col :span="8">
           <span class="label-text">家庭紧急联系</span>

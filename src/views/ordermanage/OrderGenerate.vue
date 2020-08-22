@@ -81,12 +81,11 @@
                       <el-table-column align="center" label="电话" prop="staff.mobile"></el-table-column>
                       <el-table-column align="center" label="状态">
                         <template slot-scope="scope">
-                          <p v-if="scope.row.state == 0">审核中</p>
-                          <p v-if="scope.row.state == 1">待进行</p>
-                          <p v-if="scope.row.state == 2">订单进行中</p>
-                          <p v-if="scope.row.state == 3">已完成</p>
-                          <p v-if="scope.row.state == 4">已取消</p>
-                          <p v-if="scope.row.state == 5">暂停中</p>
+                          <p v-if="scope.row.status == 0">面试中</p>
+                          <p v-if="scope.row.status == 1">进行中</p>
+                       
+                          <p v-if="scope.row.status == 3">结束</p>
+                          <p v-if="scope.row.status == 4">取消</p>
                         </template>
                       </el-table-column>
                       <el-table-column align="center" label="面试内容" prop="content"></el-table-column>
@@ -210,7 +209,7 @@
                       style="margin-top: 10px"
                     >
                       <el-row>
-                        <el-col :span="6">
+                        <el-col :span="8">
                           <el-form-item label="开始时间" prop="time" label-width="100px">
                             <el-date-picker
                               v-model="addFollowUpForm.start_time"
@@ -269,7 +268,6 @@
                       </el-col>
                     </el-row>
                   </el-tab-pane>
-                  <el-tab-pane label="合同" name="fourth">合同</el-tab-pane>
                 </el-tabs>
               </template>
             </el-table-column>
@@ -501,6 +499,23 @@
                         size="mini"
                         type="success"
                         class="el-icon-finished"
+                        circle
+                        style="margin-left: 5px"
+                      ></el-button>
+                    </el-tooltip>
+
+                    <el-tooltip
+                      class="item"
+                      effect="dark"
+                      :enterable="false"
+                      content="完成"
+                      placement="top"
+                    >
+                      <el-button
+                        @click="completeBtn(scope.row.id)"
+                        size="mini"
+                        type="success"
+                        class="el-icon-s-claim"
                         circle
                         style="margin-left: 5px"
                       ></el-button>
@@ -819,6 +834,7 @@ import {
   saveEditContract,
   spassOrder,
   pauseOrder,
+  completeOrder
 } from "network/orderRequest";
 import { getAllSource } from "network/select";
 export default {
@@ -1049,6 +1065,20 @@ export default {
       .replace(/\//g, "-");
     },
 
+    // 完成订单
+    completeBtn(order_id) {
+      completeOrder(order_id).then(res => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg);
+          // 重新获取所有订单
+          this.getAllOrderInfo();
+        } else {
+          this.$message.error(msg);
+        }
+      })
+    },
+
     // 保存暂停时间
     savePauseOrderInfo() {
       pauseOrder(this.pauseOrderForm).then(res => {
@@ -1183,6 +1213,7 @@ export default {
     staffInfoBtn(staff) {
       this.staffInfoTitle = `家政员（${staff.name}）的基本信息`;
       this.staffInfoDialogVisible = true;
+      this.staffInfo = staff
     },
 
     // 添加完成订单

@@ -43,6 +43,15 @@ export function saveStaffInfo(data) {
   })
 }
 
+// 添加经理评价内容
+export function saveHandlEva(data) {
+  return request({
+    url: "/staff/evaluation",
+    method: "post",
+    data: data
+  })
+}
+
 // 删除单个员工按钮
 export function deleteStaff(ids) {
   return request({

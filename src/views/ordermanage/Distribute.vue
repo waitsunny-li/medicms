@@ -168,7 +168,7 @@
       <div class="dis-content">
         <el-input
           size="mini"
-          placeholder="请输入要分配的员工姓名"
+          placeholder="请输入要分配的跟单老师姓名"
           v-model="queryStaffName"
           class="input-with-select"
           @keyup.native.enter="queryStaffBtn"

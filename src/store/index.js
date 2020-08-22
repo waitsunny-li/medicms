@@ -1,23 +1,28 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {setItem, getItem} from '../common/utils'
+import {
+  setItem,
+  getItem
+} from '../common/utils'
 
 Vue.use(Vuex)
 
 // 状态
 const state = {
-  navindex: sessionStorage.getItem('navindex')? sessionStorage.getItem('navindex') : 0,
+  navindex: sessionStorage.getItem('navindex') ? sessionStorage.getItem('navindex') : 0,
 
   // 窗口的宽和高
   screenWidth: "",
   screenHeight: "",
-  
+
   // 用户信息
   userInfo: {
     userToken: getItem('userInfo')['userToken'] ? getItem('userInfo')['userToken'] : '',
     username: getItem('userInfo')['username'] ? getItem('userInfo')['username'] : '',
     last_login_time: getItem('userInfo')['last_login_time'] ? getItem('userInfo')['last_login_time'] : '',
     ip: getItem('userInfo')['ip'] ? getItem('userInfo')['ip'] : '',
+    role_id: getItem('userInfo')['role_id'] ? getItem('userInfo')['role_id'] : '',
+
   }
 }
 
@@ -28,7 +33,7 @@ const mutations = {
     state.navindex = index
     sessionStorage.setItem('navindex', index)
   },
- 
+
   // 存储用户的基本信息
   saveUserInfo(state, payload) {
     state.userInfo.userToken = payload.userToken
@@ -46,7 +51,7 @@ const mutations = {
   }
 }
 
-const store =  new Vuex.Store({
+const store = new Vuex.Store({
   state,
   mutations
 })

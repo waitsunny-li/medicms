@@ -22,12 +22,14 @@
                 <el-button type="success" icon="el-icon-share" size="mini">分享</el-button>
               </el-col>
               <el-col :span="2">
-                <el-button
-                  type="success"
-                  icon="el-icon-goblet-square-full"
-                  @click="birthdayBtn"
-                  size="mini"
-                >生日提醒</el-button>
+                <el-badge :value="birthdayNumber" class="item">
+                  <el-button
+                    type="success"
+                    icon="el-icon-goblet-square-full"
+                    @click="birthdayBtn"
+                    size="mini"
+                  >生日提醒</el-button>
+                </el-badge>
               </el-col>
             </el-row>
 
@@ -79,7 +81,7 @@
                         </el-col>
                         <el-col :span="5">
                           <span class="label-text">休假要求</span>
-                          <span class="content-text">{{scope.row.salary}}</span>
+                          <span class="content-text">{{scope.row.spare_time}}</span>
                         </el-col>
                         <el-col :span="5">
                           <span class="label-text">户口地址</span>
@@ -139,7 +141,14 @@
                         </el-col>
                         <el-col :span="5">
                           <span class="label-text">员工状态</span>
-                          <span class="content-text">{{scope.row.person_state}}</span>
+                          <span class="content-text" v-if="scope.row.person_state == 1">培训</span>
+                          <span class="content-text" v-else-if="scope.row.person_state == 2">考核</span>
+                          <span class="content-text" v-else-if="scope.row.person_state == 3">待岗</span>
+                          <span class="content-text" v-else-if="scope.row.person_state == 4">离职</span>
+                          <span class="content-text" v-else-if="scope.row.person_state == 5">黑名单</span>
+                          <span class="content-text" v-else-if="scope.row.person_state == 6">在岗</span>
+                          <span class="content-text" v-else-if="scope.row.person_state == 7">离职(下单)</span>
+                          <span class="content-text" v-else>错误</span>
                         </el-col>
                         <el-col :span="5">
                           <span class="label-text">保险</span>
@@ -173,7 +182,7 @@
                       <el-row class="expand-row">
                         <el-col :span="4">
                           <span class="label-text">录入人</span>
-                          <span class="content-text">{{scope.row.salary}}</span>
+                          <span class="content-text">{{scope.row.user.username}}</span>
                         </el-col>
                         <el-col :span="5">
                           <span class="label-text">家庭紧急联系</span>
@@ -310,17 +319,21 @@
                     <el-tab-pane label="经理评价" name="three">
                       <el-row>
                         <el-col :span="4">经理评价内容：</el-col>
-                        <el-col :span="20">该员工符合标准，给予通过</el-col>
+                        <el-col :span="20">{{scope.row.evaluation}}</el-col>
                       </el-row>
-                      <el-row style="margin-top: 30px">
+                      <el-row  style="margin-top: 30px">
                         <el-col :span="3">评价：</el-col>
                         <el-col :span="10">
-                          <el-input type="textarea"></el-input>
+                          <el-input type="textarea" v-model="handleEvaluation"></el-input>
                         </el-col>
                       </el-row>
                       <el-row style="margin-top: 30px">
                         <el-col :span="5" :offset="12">
-                          <el-button type="primary" size="mini">保 存</el-button>
+                          <el-button
+                            @click="saveHandleEva(scope.row.id)"
+                            type="primary"
+                            size="mini"
+                          >保 存</el-button>
                         </el-col>
                       </el-row>
                     </el-tab-pane>
@@ -376,7 +389,9 @@
                   <p v-else>错误</p>
                 </template>
               </el-table-column>
-              <el-table-column width="180" align="center" prop="in_time" label="入职时间"></el-table-column>
+              <el-table-column width="180" align="center" prop="in_time" label="入职时间">
+                <template slot-scope="scope">{{scope.row.in_time.split(' ')[0]}}</template>
+              </el-table-column>
               <!-- 操作 -->
               <el-table-column label="操作" align="center" width="140px">
                 <template slot-scope="scope">
@@ -1162,6 +1177,30 @@
     </el-dialog>
 
     <!-- 生日提醒 -->
+    <el-dialog title="今日生日榜" :visible.sync="birthdayDialogVisible" width="600px" center>
+      <el-table :data="birthdayListData" height="500">
+        <el-table-column prop="date" label="生日日期" align="center"></el-table-column>
+        <el-table-column align="center" prop="staff.name" label="姓名">
+          <template slot-scope="scope">
+            <el-tag type="success" effect="dark">{{scope.row.staff.name}}</el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" prop="staff.mobile" label="手机号"></el-table-column>
+        <el-table-column align="center" prop="staff.job" label="岗位"></el-table-column>
+        <el-table-column align="center" label="人员状态">
+          <template slot-scope="scope">
+            <p v-if="scope.row.staff.person_state== 1">培训</p>
+            <p v-else-if="scope.row.staff.person_state == 2">考核</p>
+            <p v-else-if="scope.row.staff.person_state == 3">待岗</p>
+            <p v-else-if="scope.row.staff.person_state == 4">离职</p>
+            <p v-else-if="scope.row.staff.person_state == 5">黑名单</p>
+            <p v-else-if="scope.row.staff.person_state == 6">在岗</p>
+            <p v-else-if="scope.row.staff.person_state == 7">离职(下单)</p>
+            <p v-else>错误</p>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -1181,6 +1220,7 @@ import {
   updateStraffInfo,
   searchAppointStaff,
   getStaffBirthday,
+  saveHandlEva,
 } from "network/humanageRequest";
 
 import {
@@ -1200,6 +1240,9 @@ export default {
   name: "DataInput",
   data() {
     return {
+      birthdayDialogVisible: false,
+      birthdayListData: [],
+      birthdayNumber: "",
       // 搜索字段
       searchForm: {},
 
@@ -1232,6 +1275,8 @@ export default {
         take_body: [],
         other: [],
       },
+      // 经历评价内容
+      handleEvaluation: "",
       // 默认显示客户详情
       activeName: "first",
       // 域名
@@ -1474,20 +1519,44 @@ export default {
   methods: {
     // 生日提醒
     birthdayBtn() {
+      this.birthdayDialogVisible = true;
+      this.getBirthdayData();
+    },
+
+    // 定义生日获取函数
+    getBirthdayData() {
       getStaffBirthday().then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(res);
+          this.birthdayListData = data.data;
+
+          console.log(data.data);
         } else {
-          return false;
+          this.$message.error(msg);
         }
       });
-      this.$notify({
-        duration: 0,
-        title: "HTML 片段",
-        dangerouslyUseHTMLString: true,
-        message: "<strong>这是 <i>HTML</i> 片段</strong>",
-      });
+    },
+
+    // 经历评价内容保存
+    saveHandleEva(staff_id) {
+      if (this.handleEvaluation.trim() == "") {
+        this.$message.error("请输入评价内容！");
+      } else {
+        let handleForm = {
+          staff_id: staff_id,
+          evaluation: this.handleEvaluation,
+        };
+        saveHandlEva(handleForm).then((res) => {
+          let { code, msg } = res;
+          if (code === 200) {
+            this.$message.success(msg);
+            this.getUserData()
+            this.this.handleEvaluation = ""
+          } else {
+            this.$message.error(msg);
+          }
+        });
+      }
     },
 
     // 定义搜索数据函数
@@ -1925,10 +1994,10 @@ export default {
     // 编辑保存
     editSaveStaffBtn() {
       // 修复bug
-      if (!this.staffForm.now_id) {
+      if (this.staffForm.now_id.length == 0) {
         this.staffForm.now_id = this.editnow_id;
       }
-      if (!this.staffForm.census_id) {
+      if (this.staffForm.census_id == 0) {
         this.staffForm.census_id = this.editcensus_id;
       }
 
@@ -1947,6 +2016,14 @@ export default {
     },
   },
   created() {
+    getStaffBirthday().then((res) => {
+      let { code, data, msg } = res;
+      if (code === 200) {
+        this.birthdayNumber = data.data ? data.data.length : 0;
+      } else {
+        this.$message.error(msg);
+      }
+    });
     // 获取用户数据
     this.getUserData();
 

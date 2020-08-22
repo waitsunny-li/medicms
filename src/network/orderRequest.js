@@ -43,6 +43,7 @@ export function getOneCustomerInfo(id) {
     }
   })
 }
+
 // 删除客户信息
 export function deleteCustomer(id) {
   return request({
@@ -233,16 +234,27 @@ export function restoreOrder(customer_id) {
     }
   })
 }
+// 完成订单
+export function completeOrder(customer_id) {
+  return request({
+    url: "/customer/complete",
+    method: "post",
+    data: {
+      customer_id: customer_id
+    }
+  })
+}
 
 
 /**
  * 销售回访
  */
 // 获取回访记录
-export function getSalesVisitInfo() {
+export function getSalesVisitInfo(objsearch) {
   return request({
     url: "/visit/index",
     method: "get",
+    params: objsearch
   })
 }
 

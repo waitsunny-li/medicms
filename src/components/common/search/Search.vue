@@ -10,24 +10,25 @@
                 v-model="searchForm.name"
                 placeholder="姓名"
                 clearable
+                @keyup.native.enter="searchBtn"
               ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="3">
             <el-form-item prop="mobile">
-              <el-input size="mini" v-model="searchForm.mobile" placeholder="手机号" clearable></el-input>
+              <el-input size="mini" v-model="searchForm.mobile" placeholder="手机号" clearable @keyup.native.enter="searchBtn"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="3">
             <el-form-item prop="identity">
-              <el-input size="mini" v-model="searchForm.identity" placeholder="身份证号" clearable></el-input>
+              <el-input size="mini" v-model="searchForm.identity" placeholder="身份证号" clearable @keyup.native.enter="searchBtn"></el-input>
             </el-form-item>
           </el-col>
 
           <!-- 员工状态 -->
           <el-col :span="3">
             <el-form-item prop="person_state">
-              <el-select size="mini" v-model="searchForm.person_state" placeholder="员工状态" >
+              <el-select size="mini" v-model="searchForm.person_state" placeholder="员工状态" @change="searchBtn">
                 <el-option label="培训" value="1"></el-option>
                 <el-option label="待岗" value="3"></el-option>
                 <el-option label="离职" value="4"></el-option>
@@ -39,10 +40,11 @@
           </el-col>
           <!-- 录入时间 -->
           <el-col :span="5">
-            <el-form-item prop="create_time">
+            <el-form-item>
               <el-date-picker
                 class="select-date"
-                v-model="searchForm.create_time"
+                @change="searchBtn"
+                v-model="time"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -86,19 +88,22 @@ export default {
         person_state: "",
         create_time: "",
       },
+      time: [],
     };
   },
   methods: {
     // 清除操作
     clearBtn() {
       this.$refs.searchForm.resetFields();
+      this.time = []
+      // 清除再搜索
+      this.searchBtn()
     },
 
     // 搜索操作
     searchBtn() {
-      // eventVue.$emit("searchstaff", this.searchForm);
-      this.searchForm.create_time = this.searchForm.create_time.join(',')
-      // console.log(this.searchForm)
+      this.searchForm.create_time = this.time.join(',')
+      console.log(this.searchForm)
       this.$emit("searchbtn", this.searchForm);
     },
   },

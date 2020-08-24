@@ -83,7 +83,7 @@
                         <template slot-scope="scope">
                           <p v-if="scope.row.status == 0">面试中</p>
                           <p v-if="scope.row.status == 1">进行中</p>
-                       
+
                           <p v-if="scope.row.status == 3">结束</p>
                           <p v-if="scope.row.status == 4">取消</p>
                         </template>
@@ -422,104 +422,125 @@
                       ></el-button>
                     </el-tooltip>
 
-                    <el-tooltip
-                      class="item"
-                      effect="dark"
-                      :enterable="false"
-                      content="取消订单"
-                      placement="top"
-                    >
-                      <el-popconfirm
-                        confirmButtonText="好的"
-                        cancelButtonText="不用了"
-                        icon="el-icon-info"
-                        iconColor="red"
-                        title="您确定要取消该订单吗？"
-                        @onConfirm="formDeleteBtn(scope.row.id)"
-                      >
-                        <el-button
-                          type="danger"
-                          icon="el-icon-delete"
-                          size="mini"
-                          circle
-                          slot="reference"
-                        ></el-button>
-                      </el-popconfirm>
-                    </el-tooltip>
-
-                    <el-popover placement="bottom" trigger="click">
-                      <el-form ref="pauseOrderForm" :model="pauseOrderForm" label-width="80px">
-                        <el-row>
-                          <el-col :span="18">
-                            <el-form-item label="暂停日期">
-                              <el-date-picker
-                                v-model="pauseOrderForm.pause_time"
-                                type="date"
-                                placeholder="选择日期"
-                                format="yyyy-MM-dd"
-                                value-format="yyyy-MM-dd"
-                                size="mini"
-                                style="width: 130px"
-                              ></el-date-picker>
-                            </el-form-item>
-                          </el-col>
-                          <el-col :span="5" :offset="1" style=" margin-top: 8px;">
-                            <el-button @click="savePauseOrderInfo" type="primary" size="mini">保 存</el-button>
-                          </el-col>
-                        </el-row>
-                      </el-form>
+                    <span v-if="$store.state.userInfo.role_id == 1 || 4">
                       <el-tooltip
                         class="item"
                         effect="dark"
                         :enterable="false"
-                        content="暂停"
+                        content="取消订单"
                         placement="top"
-                        slot="reference"
+                      >
+                        <el-popconfirm
+                          confirmButtonText="好的"
+                          cancelButtonText="不用了"
+                          icon="el-icon-info"
+                          iconColor="red"
+                          title="您确定要取消该订单吗？"
+                          @onConfirm="formDeleteBtn(scope.row.id)"
+                        >
+                          <el-button
+                            type="danger"
+                            icon="el-icon-delete"
+                            size="mini"
+                            circle
+                            slot="reference"
+                          ></el-button>
+                        </el-popconfirm>
+                      </el-tooltip>
+
+                      <el-popover placement="bottom" trigger="click">
+                        <el-form ref="pauseOrderForm" :model="pauseOrderForm" label-width="80px">
+                          <el-row>
+                            <el-col :span="18">
+                              <el-form-item label="暂停日期">
+                                <el-date-picker
+                                  v-model="pauseOrderForm.pause_time"
+                                  type="date"
+                                  placeholder="选择日期"
+                                  format="yyyy-MM-dd"
+                                  value-format="yyyy-MM-dd"
+                                  size="mini"
+                                  style="width: 130px"
+                                ></el-date-picker>
+                              </el-form-item>
+                            </el-col>
+                            <el-col :span="5" :offset="1" style=" margin-top: 8px;">
+                              <el-button @click="savePauseOrderInfo" type="primary" size="mini">保 存</el-button>
+                            </el-col>
+                          </el-row>
+                        </el-form>
+                        <el-tooltip
+                          class="item"
+                          effect="dark"
+                          :enterable="false"
+                          content="暂停"
+                          placement="top"
+                          slot="reference"
+                        >
+                          <el-button
+                            @click="stopBtn(scope.row.id)"
+                            size="mini"
+                            type="warning"
+                            class="el-icon-video-pause"
+                            circle
+                            style="margin-left: 5px"
+                          ></el-button>
+                        </el-tooltip>
+                      </el-popover>
+
+                      <el-tooltip
+                        class="item"
+                        effect="dark"
+                        :enterable="false"
+                        content="审核"
+                        placement="top"
                       >
                         <el-button
-                          @click="stopBtn(scope.row.id)"
+                          @click="examineBtn(scope.row.id)"
                           size="mini"
-                          type="warning"
-                          class="el-icon-video-pause"
+                          type="success"
+                          class="el-icon-finished"
                           circle
                           style="margin-left: 5px"
                         ></el-button>
                       </el-tooltip>
-                    </el-popover>
 
-                    <el-tooltip
-                      class="item"
-                      effect="dark"
-                      :enterable="false"
-                      content="审核"
-                      placement="top"
-                    >
-                      <el-button
-                        @click="examineBtn(scope.row.id)"
-                        size="mini"
-                        type="success"
-                        class="el-icon-finished"
-                        circle
-                        style="margin-left: 5px"
-                      ></el-button>
-                    </el-tooltip>
+                      <el-tooltip
+                        class="item"
+                        effect="dark"
+                        :enterable="false"
+                        content="完成"
+                        placement="top"
+                      >
+                        <el-button
+                          @click="completeBtn(scope.row.id)"
+                          size="mini"
+                          type="primary"
+                          class="el-icon-s-claim"
+                          circle
+                          style="margin-left: 5px"
+                        ></el-button>
+                      </el-tooltip>
 
-                    <el-tooltip
-                      class="item"
-                      effect="dark"
-                      :enterable="false"
-                      content="完成"
-                      placement="top"
-                    >
-                      <el-button
-                        @click="completeBtn(scope.row.id)"
-                        size="mini"
-                        type="success"
-                        class="el-icon-s-claim"
-                        circle
-                        style="margin-left: 5px"
-                      ></el-button>
-                    </el-tooltip>
+                      <el-tooltip
+                        class="item"
+                        effect="dark"
+                        :enterable="false"
+                        content="续签"
+                        placement="top"
+                        v-if="scope.row.state == 3"
+                      >
+                        <el-button
+                          @click="copyBtn(scope.row.id)"
+                          size="mini"
+                          type="success"
+                          class="el-icon-copy-document"
+                          circle
+                          style="margin-left: 5px"
+                        ></el-button>
+                      </el-tooltip>
+                    </span>
+                    <span v-else></span>
                   </div>
                   <el-button
                     slot="reference"
@@ -834,7 +855,8 @@ import {
   saveEditContract,
   spassOrder,
   pauseOrder,
-  completeOrder
+  completeOrder,
+  copyOrder,
 } from "network/orderRequest";
 import { getAllSource } from "network/select";
 export default {
@@ -1059,15 +1081,29 @@ export default {
 
     // 暂停
     stopBtn(order_id) {
-      this.pauseOrderForm.customer_id = order_id
+      this.pauseOrderForm.customer_id = order_id;
       this.pauseOrderForm.pause_time = new Date()
-      .toLocaleDateString()
-      .replace(/\//g, "-");
+        .toLocaleDateString()
+        .replace(/\//g, "-");
+    },
+
+    // 续签订单
+    copyBtn(order_id) {
+      copyOrder(order_id).then((res) => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg);
+          // 重新获取所有订单
+          this.getAllOrderInfo();
+        } else {
+          this.$message.error(msg);
+        }
+      });
     },
 
     // 完成订单
     completeBtn(order_id) {
-      completeOrder(order_id).then(res => {
+      completeOrder(order_id).then((res) => {
         let { code, msg } = res;
         if (code === 200) {
           this.$message.success(msg);
@@ -1076,12 +1112,12 @@ export default {
         } else {
           this.$message.error(msg);
         }
-      })
+      });
     },
 
     // 保存暂停时间
     savePauseOrderInfo() {
-      pauseOrder(this.pauseOrderForm).then(res => {
+      pauseOrder(this.pauseOrderForm).then((res) => {
         let { code, msg } = res;
         if (code === 200) {
           this.$message.success(msg);
@@ -1090,7 +1126,7 @@ export default {
         } else {
           this.$message.error(msg);
         }
-      })
+      });
     },
 
     // 审核是否完成
@@ -1127,21 +1163,21 @@ export default {
 
     // 编辑显示
     editBtn(name, id, contract) {
-      if(contract) {
-        this.editForm.customer_id = contract.customer_id
-        this.editForm.identity = contract.identity
-        this.editForm.start_time = contract.start_time
-        this.editForm.work_time = contract.work_time
-        this.editForm.work_address = contract.work_address
-        this.editForm.spend = contract.spend
-        this.editForm.num = contract.num
-        this.editForm.is_insurance = contract.is_insurance
-        this.editForm.now_salary = contract.now_salary
-        this.editForm.commission = contract.commission
-        this.editForm.sign_salary = contract.sign_salary
-        this.editForm.remark = contract.remark
-        this.editForm.name = contract.name
-        this.editForm.phone = contract.phone
+      if (contract) {
+        this.editForm.customer_id = contract.customer_id;
+        this.editForm.identity = contract.identity;
+        this.editForm.start_time = contract.start_time;
+        this.editForm.work_time = contract.work_time;
+        this.editForm.work_address = contract.work_address;
+        this.editForm.spend = contract.spend;
+        this.editForm.num = contract.num;
+        this.editForm.is_insurance = contract.is_insurance;
+        this.editForm.now_salary = contract.now_salary;
+        this.editForm.commission = contract.commission;
+        this.editForm.sign_salary = contract.sign_salary;
+        this.editForm.remark = contract.remark;
+        this.editForm.name = contract.name;
+        this.editForm.phone = contract.phone;
       }
       this.editCustomerTitle = `编辑客户（${name}）的合同`;
       this.editDialogVisible = true;
@@ -1213,7 +1249,7 @@ export default {
     staffInfoBtn(staff) {
       this.staffInfoTitle = `家政员（${staff.name}）的基本信息`;
       this.staffInfoDialogVisible = true;
-      this.staffInfo = staff
+      this.staffInfo = staff;
     },
 
     // 添加完成订单

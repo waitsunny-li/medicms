@@ -47,7 +47,7 @@ export function getOneCustomerInfo(id) {
 // 删除客户信息
 export function deleteCustomer(id) {
   return request({
-    url: "/customer/delete",
+    url: "/customer/cancel",
     method: "get",
     params: {
       id: id
@@ -244,7 +244,16 @@ export function completeOrder(customer_id) {
     }
   })
 }
-
+// 复制订单
+export function copyOrder(customer_id) {
+  return request({
+    url: "/customer/copy",
+    method: "get",
+    params: {
+      customer_id: customer_id
+    }
+  })
+}
 
 /**
  * 销售回访

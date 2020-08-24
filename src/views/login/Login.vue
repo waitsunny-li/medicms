@@ -36,8 +36,8 @@
           </div>
           <div class="remember-wrap">
             <div class="remember">
-              <el-checkbox v-model="loginForm.remember" class="remember-text">记住密码</el-checkbox>
-              <div class="forget">忘记密码?</div>
+              <!-- <el-checkbox v-model="loginForm.remember" class="remember-text">记住密码</el-checkbox>
+              <div class="forget">忘记密码?</div> -->
             </div>
           </div>
 
@@ -63,25 +63,25 @@ export default {
     return {
       loginForm: {
         username: "",
-        password: ""
+        password: "",
         // remember: false
       },
       // 密码验证
       loginRules: {
         username: [
           { required: true, message: "请输入您的用户名", trigger: "blur" },
-          { min: 5, max: 20, message: "用户名长度5~12字符", trigger: "blur" }
+          { min: 5, max: 20, message: "用户名长度5~12字符", trigger: "blur" },
         ],
         password: [
           { required: true, message: "请输入您的密码", trigger: "blur" },
-          { min: 6, max: 12, message: "密码长度3~12字符", trigger: "change" }
-        ]
-      }
+          { min: 6, max: 12, message: "密码长度3~12字符", trigger: "change" },
+        ],
+      },
     };
   },
   methods: {
     loginBtn() {
-      this.$refs.loginForm.validate(valid => {
+      this.$refs.loginForm.validate((valid) => {
         if (!valid) {
           this.$message.error("出现错误了");
         }
@@ -89,35 +89,364 @@ export default {
         this.$request({
           url: "/login",
           method: "post",
-          data: this.loginForm
+          data: this.loginForm,
         })
-          .then(res => {
+          .then((res) => {
             if (res.code === 200) {
-              console.log(res)
+              console.log(res);
               // 本地存储用户的基本信息
-              this.$store.commit('saveUserInfo', {
-                "userToken": res.data.Authorization,
-                "username": res.data.username,
-                "last_login_time": res.data.last_login_time,
-                "ip": res.data.ip,
-                "role_id": res.data.role_id,
-              })
-              this.$message.success(res.msg)
-              this.$router.replace('/welcome')
-            }else {
-              this.$message.error(res.msg)
+              this.$store.commit("saveUserInfo", {
+                userToken: res.data.Authorization,
+                username: res.data.username,
+                last_login_time: res.data.last_login_time,
+                ip: res.data.ip,
+                role_id: res.data.role_id,
+              });
+              // 存储菜单
+              let navlist = this.navListData(res.data.role_id)
+              let asidelist = this.asideNavListData(res.data.role_id)
+              this.$store.commit("changeNavList", navlist)
+              this.$store.commit("changeAsideNavList", asidelist)
+              this.$message.success(res.msg);
+              this.$router.replace("/welcome");
+            } else {
+              this.$message.error(res.msg);
             }
           })
-          .catch(err => {
+          .catch((err) => {
             this.$message.error(err);
           });
       });
     },
 
+    navListData(role_id) {
+      if (role_id == 2) {
+        return [
+          { navname: "订单管理", path: "/home/demand" },
+          { navname: "报表管理", path: "/home/customquery" },
+        ];
+      }
+      if (role_id == 5) {
+        return [
+          { navname: "人力管理", path: "/home/datainput" },
+          { navname: "订单管理", path: "/home/demand" },
+          { navname: "报表管理", path: "/home/customquery" },
+        ];
+      }
+      if (role_id == 6) {
+        return [
+          { navname: "人力管理", path: "/home/datainput" },
+          { navname: "报表管理", path: "/home/customquery" },
+        ];
+      }
+      if (role_id == 8) {
+        return [
+          { navname: "人力管理", path: "/home/datainput" },
+          { navname: "报表管理", path: "/home/customquery" },
+        ];
+      }
+      if (role_id == 1 || role_id == 4) {
+        return [
+          { navname: "人力管理", path: "/home/datainput" },
+          { navname: "订单管理", path: "/home/demand" },
+          { navname: "售后管理", path: "/home/feedback" },
+          { navname: "报表管理", path: "/home/customquery" },
+          { navname: "系统管理", path: "/home/sysmanage" },
+        ];
+      }
+      // return [
+      //   { navname: "人力管理", path: "/home/datainput" },
+      //   { navname: "订单管理", path: "/home/demand" },
+      //   { navname: "售后管理", path: "/home/feedback" },
+      //   { navname: "报表管理", path: "/home/customquery" },
+      //   { navname: "系统管理", path: "/home/sysmanage" },
+      // ];
+    },
+    asideNavListData(role_id) {
+      if (role_id == 2) {
+        return [
+          [
+            {
+              navname: "客户需求",
+              path: "/home/demand",
+              icon: "icon el-icon-document",
+            },
+          ],
+          [
+            {
+              navname: "客户查询",
+              path: "/home/customquery",
+              icon: "icon el-icon-s-custom",
+            },
+            {
+              navname: "员工查询",
+              path: "/home/staffquery",
+              icon: "icon el-icon-s-check",
+            },
+            {
+              navname: "订单查询",
+              path: "/home/orderquery",
+              icon: "icon el-icon-tickets",
+            },
+            {
+              navname: "投诉查询",
+              path: "/home/complaintquery",
+              icon: "icon el-icon-notebook-2",
+            },
+          ],
+        ];
+      }
+      if (role_id == 5) {
+        return [
+          [
+            {
+              navname: "资料录入",
+              path: "/home/datainput",
+              icon: "icon el-icon-edit-outline",
+            },
+          ],
+          [
+            {
+              navname: "客户需求",
+              path: "/home/demand",
+              icon: "icon el-icon-document",
+            },
+            {
+              navname: "订单列表",
+              path: "/home/ordergenerate",
+              icon: "icon el-icon-s-order",
+            },
+            {
+              navname: "订单延期",
+              path: "/home/orderdelay",
+              icon: "icon el-icon-date",
+            },
+          ],
+          [
+            {
+              navname: "客户查询",
+              path: "/home/customquery",
+              icon: "icon el-icon-s-custom",
+            },
+            {
+              navname: "员工查询",
+              path: "/home/staffquery",
+              icon: "icon el-icon-s-check",
+            },
+            {
+              navname: "订单查询",
+              path: "/home/orderquery",
+              icon: "icon el-icon-tickets",
+            },
+            {
+              navname: "投诉查询",
+              path: "/home/complaintquery",
+              icon: "icon el-icon-notebook-2",
+            },
+          ],
+        ];
+      }
+      if (role_id == 6) {
+        return [
+          [
+            {
+              navname: "培训记录",
+              path: "/home/training",
+              icon: "icon el-icon-timer",
+            },
+            {
+              navname: "考核评价",
+              path: "/home/assessment",
+              icon: "icon el-icon-notebook-2",
+            },
+          ],
+          [
+            {
+              navname: "客户查询",
+              path: "/home/customquery",
+              icon: "icon el-icon-s-custom",
+            },
+            {
+              navname: "员工查询",
+              path: "/home/staffquery",
+              icon: "icon el-icon-s-check",
+            },
+            {
+              navname: "订单查询",
+              path: "/home/orderquery",
+              icon: "icon el-icon-tickets",
+            },
+            {
+              navname: "投诉查询",
+              path: "/home/complaintquery",
+              icon: "icon el-icon-notebook-2",
+            },
+          ],
+        ];
+      }
+      if (role_id == 8) {
+        return [
+          [
+            {
+              navname: "客户反馈",
+              path: "/home/feedback",
+              icon: "icon el-icon-phone-outline",
+            },
+            {
+              navname: "处理结果",
+              path: "/home/handle",
+              icon: "icon el-icon-finished",
+            },
+            {
+              navname: "客户回访",
+              path: "/home/review",
+              icon: "icon el-icon-sort",
+            },
+          ],
+          [
+            {
+              navname: "客户查询",
+              path: "/home/customquery",
+              icon: "icon el-icon-s-custom",
+            },
+            {
+              navname: "员工查询",
+              path: "/home/staffquery",
+              icon: "icon el-icon-s-check",
+            },
+            {
+              navname: "订单查询",
+              path: "/home/orderquery",
+              icon: "icon el-icon-tickets",
+            },
+            {
+              navname: "投诉查询",
+              path: "/home/complaintquery",
+              icon: "icon el-icon-notebook-2",
+            },
+          ],
+        ];
+      }
+      if (role_id == 1 || role_id == 4) {
+        return [
+          [
+            {
+              navname: "资料录入",
+              path: "/home/datainput",
+              icon: "icon el-icon-edit-outline",
+            },
+            {
+              navname: "培训记录",
+              path: "/home/training",
+              icon: "icon el-icon-timer",
+            },
+            {
+              navname: "考核评价",
+              path: "/home/assessment",
+              icon: "icon el-icon-notebook-2",
+            },
+            {
+              navname: "员工申诉",
+              path: "/home/staffappeal",
+              icon: "icon el-icon-notebook-2",
+            },
+          ],
+          [
+            {
+              navname: "客户需求",
+              path: "/home/demand",
+              icon: "icon el-icon-document",
+            },
+            {
+              navname: "手工分配",
+              path: "/home/distribute",
+              icon: "icon el-icon-coin",
+            },
+            {
+              navname: "订单列表",
+              path: "/home/ordergenerate",
+              icon: "icon el-icon-s-order",
+            },
+            {
+              navname: "人员派出",
+              path: "/home/persondispatch",
+              icon: "icon el-icon-place",
+            },
+            // {
+            //   navname: "销售回访",
+            //   path: "/home/salesvisit",
+            //   icon: "icon el-icon-refresh",
+            // },
+            {
+              navname: "订单延期",
+              path: "/home/orderdelay",
+              icon: "icon el-icon-date",
+            },
+            // {
+            //   navname: "订单续签",
+            //   path: "/home/orderrenewal",
+            //   icon: "icon el-icon-finished",
+            // },
+          ],
+          [
+            {
+              navname: "客户反馈",
+              path: "/home/feedback",
+              icon: "icon el-icon-phone-outline",
+            },
+            {
+              navname: "手工分配",
+              path: "/home/saledistribute",
+              icon: "icon el-icon-coin",
+            },
+            {
+              navname: "处理结果",
+              path: "/home/handle",
+              icon: "icon el-icon-finished",
+            },
+            {
+              navname: "客户回访",
+              path: "/home/review",
+              icon: "icon el-icon-sort",
+            },
+          ],
+          [
+            {
+              navname: "客户查询",
+              path: "/home/customquery",
+              icon: "icon el-icon-s-custom",
+            },
+            {
+              navname: "员工查询",
+              path: "/home/staffquery",
+              icon: "icon el-icon-s-check",
+            },
+            {
+              navname: "订单查询",
+              path: "/home/orderquery",
+              icon: "icon el-icon-tickets",
+            },
+            {
+              navname: "投诉查询",
+              path: "/home/complaintquery",
+              icon: "icon el-icon-notebook-2",
+            },
+          ],
+          [
+            {
+              navname: "系统设置",
+              path: "/home/sysmanage",
+              icon: "icon el-icon-setting",
+            },
+          ],
+        ];
+      }
+    },
+
     enterClick() {
-      this.loginBtn()
-    }
-  }
+      this.loginBtn();
+    },
+  },
 };
 </script>
 

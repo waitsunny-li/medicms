@@ -5,7 +5,13 @@
         <el-row>
           <el-col :span="3">
             <el-form-item prop="name">
-              <el-input size="mini" v-model="feedbacksearchForm.name" placeholder="投诉人姓名" clearable></el-input>
+              <el-input
+                size="mini"
+                v-model="feedbacksearchForm.name"
+                placeholder="投诉人姓名"
+                clearable
+                @keyup.native.enter="searchBtn"
+              ></el-input>
             </el-form-item>
           </el-col>
 
@@ -16,6 +22,7 @@
                 v-model="feedbacksearchForm.mobile"
                 placeholder="请输入客户手机号"
                 clearable
+                @keyup.native.enter="searchBtn"
               ></el-input>
             </el-form-item>
           </el-col>
@@ -23,7 +30,7 @@
           <el-col :span="3">
             <!-- 分配状态 -->
             <el-form-item>
-              <el-select v-model="is_assign" size="mini" placeholder="分配状态">
+              <el-select v-model="is_assign" size="mini" placeholder="分配状态" @change="searchBtn">
                 <el-option label="已分配" value="1"></el-option>
                 <el-option label="未分配" value="0"></el-option>
               </el-select>
@@ -33,7 +40,7 @@
           <el-col :span="3">
             <!-- 处理状态 -->
             <el-form-item>
-              <el-select v-model="status" placeholder="处理状态" size="mini">
+              <el-select v-model="status" placeholder="处理状态" size="mini" @change="searchBtn">
                 <el-option label="已解决" value="1"></el-option>
                 <el-option label="未解决" value="0"></el-option>
               </el-select>
@@ -42,10 +49,11 @@
 
           <el-col :span="5">
             <!-- 录入时间 -->
-            <el-form-item prop="create_time">
+            <el-form-item>
               <el-date-picker
                 class="select-date"
-                v-model="feedbacksearchForm.create_time"
+                @change="searchBtn"
+                v-model="time"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -57,9 +65,9 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="3">
+          <el-col :span="4">
             <!-- 操作 -->
-            <el-col :span="14">
+            <el-col :span="11" :offset="2">
               <el-form-item class="handle">
                 <el-button type="primary" icon="el-icon-search" @click="searchBtn">搜索</el-button>
               </el-form-item>
@@ -89,24 +97,35 @@ export default {
       },
       is_assign: "",
       status: "",
+      time: [],
     };
   },
   methods: {
     // 清除操作
     clearBtn() {
-      this.$refs.searchForm.resetFields();
+      this.feedbacksearchForm = {
+        name: "",
+        mobile: "",
+        create_time: "",
+      };
+      this.is_assign = "";
+      this.status = "";
+      this.time = []
+      this.searchBtn();
     },
 
     // 搜索操作
     searchBtn() {
+      // 每次点击都清除
+
       if (this.is_assign !== "") {
-        this.feedbacksearchForm.is_assign = this.is_assign
+        this.feedbacksearchForm.is_assign = this.is_assign;
       }
-      if(this.status !== "") {
-        this.feedbacksearchForm.status = this.status
+      if (this.status !== "") {
+        this.feedbacksearchForm.status = this.status;
       }
-      this.feedbacksearchForm.create_time = this.feedbacksearchForm.create_time
-        ? this.feedbacksearchForm.create_time.join(",")
+      this.feedbacksearchForm.create_time = this.time
+        ? this.time.join(",")
         : "";
 
       this.$emit("searchBtn", this.feedbacksearchForm);

@@ -62,16 +62,11 @@
         </el-col>
         <el-col :span="5">
           <span class="label-text">服务技能</span>
-          <!-- <span
-            class="content-text"
-            v-for="(item, index) in staffInfo.service_skills"
-            :key="index"
-          >{{item}}</span> -->
-          <span class="content-text">{{staffInfo.service_skills}}</span>
+          <span class="content-text">{{staffInfo.service_skills.join('，')}}</span>
         </el-col>
         <el-col :span="5">
           <span class="label-text">家用电器</span>
-          <span class="content-text" v-for="(item, index) in staffInfo.device" :key="index">{{item}}</span>
+          <span class="content-text">{{staffInfo.device.join('，')}}</span>
         </el-col>
         <el-col :span="5">
           <span class="label-text">入职来源</span>
@@ -128,11 +123,7 @@
         </el-col>
         <el-col :span="5">
           <span class="label-text">语言能力</span>
-          <span
-            class="content-text"
-            v-for="(item, index) in staffInfo.language"
-            :key="index"
-          >{{item}}</span>
+          <span class="content-text">{{staffInfo.language.join('，')}}</span>
         </el-col>
       </el-row>
 

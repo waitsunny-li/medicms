@@ -10,20 +10,30 @@
                 placeholder="请输入客户姓名"
                 clearable
                 style="width: 140px"
+                @keyup.native.enter="searchBtn"
               ></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="4">
-            <el-form-item prop="telphone">
-              <el-input v-model="CustomerSearchForm.telphone" placeholder="请输入客户手机号" clearable></el-input>
+            <el-form-item prop="mobile">
+              <el-input
+                v-model="CustomerSearchForm.mobile"
+                placeholder="请输入客户手机号"
+                clearable
+                @keyup.native.enter="searchBtn"
+              ></el-input>
             </el-form-item>
           </el-col>
 
           <el-col :span="4">
             <!-- 需求来源 -->
             <el-form-item prop="source_id">
-              <el-select v-model="CustomerSearchForm.source_id" placeholder="需求来源">
+              <el-select
+                v-model="CustomerSearchForm.source_id"
+                placeholder="需求来源"
+                @change="searchBtn"
+              >
                 <el-option
                   v-for="item in source"
                   :key="item.id"
@@ -37,7 +47,7 @@
           <el-col :span="4">
             <!-- 需求来源 -->
             <el-form-item prop="state">
-              <el-select v-model="CustomerSearchForm.state" placeholder="订单状态">
+              <el-select v-model="CustomerSearchForm.state" placeholder="订单状态" @change="searchBtn">
                 <el-option label="审核中" value="0"></el-option>
                 <el-option label="待进行" value="1"></el-option>
                 <el-option label="订单进行中" value="2"></el-option>
@@ -50,10 +60,11 @@
 
           <el-col :span="5">
             <!-- 录入时间 -->
-            <el-form-item prop="create_time">
+            <el-form-item>
               <el-date-picker
+                @change="searchBtn"
                 class="select-date"
-                v-model="CustomerSearchForm.create_time"
+                v-model="time"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -98,6 +109,7 @@ export default {
         state: "",
       },
       source: [],
+      time: [],
     };
   },
   mounted() {
@@ -106,7 +118,6 @@ export default {
       let { code, data, msg } = res;
       if (code === 200) {
         this.source = data;
-        console.log(data, "kkkk");
       } else {
         this.$message.error(msg);
       }
@@ -116,20 +127,25 @@ export default {
     // 清除操作
     clearBtn() {
       this.$refs.searchForm.resetFields();
+      this.time = []
+      this.searchBtn()
     },
 
     // 搜索操作
     searchBtn() {
-      this.CustomerSearchForm.create_time = this.CustomerSearchForm.create_time ? this.CustomerSearchForm.create_time.join(',') : ""
-      if(this.CustomerSearchForm.state) {
+      this.CustomerSearchForm.create_time = this.time
+        ? this.time.join(",")
+        : "";
+      if (this.CustomerSearchForm.state) {
         this.$emit("searchBtn", this.CustomerSearchForm);
-      }else {
-        this.$emit("searchBtn", {
-        name: "",
-        mobile: "",
-        source_id: "",
-        creat_time: [],
-      });
+      } else {
+        let res = {};
+        res.name = this.CustomerSearchForm.name;
+        res.mobile = this.CustomerSearchForm.mobile;
+        res.source_id = this.CustomerSearchForm.source_id;
+        res.create_time = this.CustomerSearchForm.create_time;
+        console.log('else: ', res)
+        this.$emit("searchBtn", res);
       }
     },
   },

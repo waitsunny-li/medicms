@@ -2,7 +2,7 @@
   <div class="welcome">
     <div class="header">
       <el-row>
-        <el-col :span="5">
+        <el-col :span="4">
           <div class="logo-wrap">
             <div class="headlogo">
               <img src="~assets/img/logohead.png" alt />
@@ -22,15 +22,15 @@
             >{{item.navname}}</span>
           </div>
         </el-col>
-        <el-col :span="9" :offset="2">
-          <el-col :span="18">
+        <el-col :span="6" :offset="5">
+          <el-col :span="20">
             <!-- 时间-ip -->
             <div class="time-ip-wrap">
               <div class="time">登录时间：{{$store.state.userInfo.last_login_time}}</div>
               <div class="ip">IP：{{$store.state.userInfo.ip}}</div>
             </div>
           </el-col>
-          <el-col :span="6" >
+          <el-col :span="4">
             <!-- 主页退出 -->
             <div class="home-logout">
               <el-button type="text" icon="el-icon-monitor" class="home">主页</el-button>
@@ -46,22 +46,76 @@
         </el-col>
       </el-row>
     </div>
+
+    <div class="welcome-body">
+      <div class="content-wrap">
+        <!-- 欢迎来到家政管理系统 -->
+        <div class="circle-wrpa" style="background-color: #67c23a;">
+          <i class="el-icon-s-custom" style="font-size: 45px"></i>
+          <div class="right-wrap">
+            <p class="title">家政员</p>
+            <p class="number">{{companyData.staff}}</p>
+          </div>
+        </div>
+        <div class="circle-wrpa" style="background-color: #E6A23C;">
+          <i class="el-icon-s-order" style="font-size: 45px"></i>
+          <div class="right-wrap">
+            <p class="title">订单数</p>
+            <p class="number">{{companyData.customer}}</p>
+          </div>
+        </div>
+        <div class="circle-wrpa" style="background-color: #F56C6C;">
+          <i class="el-icon-s-comment" style="font-size: 45px"></i>
+          <div class="right-wrap">
+            <p class="title">投诉数</p>
+            <p class="number">{{companyData.complaint}}</p>
+          </div>
+        </div>
+        <div class="circle-wrpa" style="background-color: #909399;">
+          <i class="el-icon-user-solid" style="font-size: 45px"></i>
+          <div class="right-wrap">
+            <p class="title">员工数</p>
+            <p class="number">{{companyData.user}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import { setItem } from "../common/utils";
+import { request } from "../network/request";
 export default {
   name: "Welcome",
   data() {
     return {
-      navList: [
-        { navname: "人力管理", path: "/home/datainput" },
-        { navname: "订单管理", path: "/home/demand" },
-        { navname: "售后管理", path: "/home/feedback" },
-        { navname: "报表管理", path: "/home/customquery" },
-      ],
+      companyData: {
+        customer: "",
+        staff: "",
+        complaint: "",
+        user: "",
+      }
     };
+  },
+  computed: {
+    navList() {
+      return this.$store.state.navList;
+    },
+  },
+  created() {
+    request({
+      url: "/index",
+      method: "get",
+    }).then(res => {
+      let {code, data, msg} = res
+      if(code === 200) {
+        this.companyData = data
+        this.$message.success(msg)
+      }else {
+        this.$message.error(msg)
+      }
+    })
   },
   methods: {
     // 退出登录
@@ -129,12 +183,13 @@ export default {
       width: 480px;
       height: 100%;
       display: flex;
-      justify-content: space-around;
+      // justify-content: space-around;
       line-height: 60px;
 
       span {
         cursor: pointer;
         color: #fff;
+        padding: 5px 20px;
         font-size: 14px;
         font-family: "微软雅黑";
       }
@@ -185,6 +240,45 @@ export default {
 
       .logout-btn {
         color: red;
+      }
+    }
+  }
+
+  .welcome-body {
+    width: 100%;
+    height: calc(100vh - 60px);
+    display: flex;
+    justify-content: center;
+
+    .content-wrap {
+      width: 1200px;
+      height: calc(100vh - 160px);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      color: #fff;
+      letter-spacing: 10px;
+
+      .circle-wrpa {
+        width: 250px;
+        height: 120px;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+
+        .right-wrap {
+          .title {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+          }
+          .number {
+            text-align: center;
+            font-size: 40px;
+            margin-top: 10px;
+          }
+        }
       }
     }
   }

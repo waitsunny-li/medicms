@@ -18,8 +18,12 @@
                   @click="selectDeleteBtn"
                   size="mini"
                 >删除</el-button>
-                <el-button type="warning" icon="el-icon-printer" size="mini">打印</el-button>
-                <el-button type="success" icon="el-icon-share" size="mini">分享</el-button>
+                <el-button
+                  type="warning"
+                  icon="el-icon-printer"
+                  @click="createResume"
+                  size="mini"
+                >生成简历</el-button>
               </el-col>
               <el-col :span="2">
                 <el-badge :value="birthdayNumber" class="item">
@@ -35,6 +39,7 @@
 
             <!-- 表格 -->
             <el-table
+              ref="userList"
               :data="userList"
               class="user-table-wrap"
               style="width: 100%"
@@ -321,7 +326,7 @@
                         <el-col :span="4">经理评价内容：</el-col>
                         <el-col :span="20">{{scope.row.evaluation}}</el-col>
                       </el-row>
-                      <el-row  style="margin-top: 30px">
+                      <el-row style="margin-top: 30px">
                         <el-col :span="3">评价：</el-col>
                         <el-col :span="10">
                           <el-input type="textarea" v-model="handleEvaluation"></el-input>
@@ -389,11 +394,16 @@
                   <p v-else>错误</p>
                 </template>
               </el-table-column>
-              <el-table-column width="180" align="center" prop="in_time" label="入职时间">
+              <el-table-column
+                :show-overflow-tooltip="true"
+                align="center"
+                prop="in_time"
+                label="入职时间"
+              >
                 <template slot-scope="scope">{{scope.row.in_time.split(' ')[0]}}</template>
               </el-table-column>
               <!-- 操作 -->
-              <el-table-column label="操作" align="center" width="140px">
+              <el-table-column label="操作" align="center" width="170px">
                 <template slot-scope="scope">
                   <el-button
                     size="mini"
@@ -436,6 +446,37 @@
                       circle
                     ></el-button>
                   </el-tooltip>
+                  <el-popover
+                    style="margin-left: 10px"
+                    placement="bottom"
+                    @show="shareShow(scope.row.id)"
+                    width="360"
+                    trigger="hover"
+                  >
+                    <el-row>
+                      <el-col :span="16">
+                        <el-input class="shareInput" size="mini" disabled v-model="shareLink"></el-input>
+                      </el-col>
+                      <el-col :span="8">
+                        <div style="text-align: right; margin: 0">
+                          <button
+                            class="copy"
+                            @mouseenter.once="copyBtn($event, scope.$index)"
+                            @click="copyBtn($event, scope.$index)"
+                            :data-clipboard-text="shareLink"
+                          >复制</button>
+                          <el-button @click="openShareLink" type="primary" size="mini">跳转</el-button>
+                        </div>
+                      </el-col>
+                    </el-row>
+                    <el-button
+                      type="success"
+                      icon="el-icon-share"
+                      slot="reference"
+                      size="mini"
+                      circle
+                    ></el-button>
+                  </el-popover>
                 </template>
               </el-table-column>
             </el-table>
@@ -1201,10 +1242,13 @@
         </el-table-column>
       </el-table>
     </el-dialog>
+
+    <div id="pdfDom" ref="report"></div>
   </div>
 </template>
 
 <script>
+import Clipboard from "clipboard";
 import Search from "components/common/search/Search";
 import eventVue from "common/eventVue";
 import Pagination from "components/common/pagination/Pagination";
@@ -1240,6 +1284,7 @@ export default {
   name: "DataInput",
   data() {
     return {
+      shareLink: "",
       birthdayDialogVisible: false,
       birthdayListData: [],
       birthdayNumber: "",
@@ -1517,6 +1562,31 @@ export default {
     Pagination,
   },
   methods: {
+    // 生成分享链接
+    shareShow(staff_id) {
+      this.shareLink = `http://qqq.shihanphp.cn/get_pdf?id=${staff_id}`;
+    },
+    // 复制分享链接回调
+    copyBtn(e, index) {
+      let clipboard = new Clipboard(e.target);
+      clipboard.on("success", (e) => {
+        this.$message.success("复制成功");
+        // 释放内存
+        clipboard.destroy();
+      });
+      clipboard.on("error", (e) => {
+        // 不支持复制
+        this.$message.error("该浏览器不支持自动复制");
+        // 释放内存
+        clipboard.destroy();
+      });
+    },
+    // 跳转链接
+    openShareLink() {
+      window.open(this.shareLink)
+    },
+    // 生成简历
+    createResume() {},
     // 生日提醒
     birthdayBtn() {
       this.birthdayDialogVisible = true;
@@ -1550,8 +1620,8 @@ export default {
           let { code, msg } = res;
           if (code === 200) {
             this.$message.success(msg);
-            this.getUserData()
-            this.this.handleEvaluation = ""
+            this.getUserData();
+            this.this.handleEvaluation = "";
           } else {
             this.$message.error(msg);
           }
@@ -1579,7 +1649,6 @@ export default {
     },
 
     searchBtn(val) {
-      console.log(val);
       this.searchForm = val;
       this.searchAppointData(this.searchForm);
     },
@@ -1591,7 +1660,6 @@ export default {
     },
     //
     popoverHiden() {
-      console.log("我隐藏了");
     },
 
     // 清除原有图片操作
@@ -1614,6 +1682,7 @@ export default {
       getOneStaffImage(id).then((res) => {
         if (res.code === 200) {
           let data = res.data;
+          console.log(res.data)
           // pictureData赋值（防止保存图片错误，使数据丢失）
           this.pictureData.staff_id = data.staff_id;
           this.pictureData.identity = data.identity;
@@ -2119,6 +2188,11 @@ export default {
 </script>
 
 <style lang='less' scoped>
+.copy {
+  color: #409EFF;
+  margin-right: 10px;
+  cursor: pointer;
+}
 .user-table {
   margin-top: 10px;
 

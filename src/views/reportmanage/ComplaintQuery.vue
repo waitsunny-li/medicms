@@ -103,12 +103,15 @@ export default {
   },
   methods: {
     // 搜索按钮
-    searchBtn(searchForm) {
-      console.log("投诉查询", searchForm);
+    searchBtn(val) {
+      this.searchForm = val
+      this.getAllComplaints(this.searchForm)
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
       // console.log(currentpage);
+      this.searchForm.page = currentpage
+      this.getAllComplaints(this.searchForm)
     },
   },
   components: {

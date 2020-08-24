@@ -2,7 +2,11 @@
   <div class="home">
     <el-container :style="{height: screenHeight + 'px'}">
       <!-- 侧边栏 -->
-      <el-aside width="200px" class="aside-wrap"  :style="{height: screenHeight + 'px', overflow: 'hidden'}">
+      <el-aside
+        width="200px"
+        class="aside-wrap"
+        :style="{height: screenHeight + 'px', overflow: 'hidden'}"
+      >
         <!-- icon -->
         <div class="icon-wrap">
           <div class="img-wrap">
@@ -26,11 +30,20 @@
           <!-- 右侧 -->
           <div class="right-wrap">
             <div class="login-time">
-              <span>登录时间：{{$store.state.userInfo.last_login_time}}</span> 
+              <span>登录时间：{{$store.state.userInfo.last_login_time}}</span>
             </div>
 
             <div class="home-wrap">
-              <el-button type="text" icon="el-icon-monitor" class="home" @click="homeBtn">主页</el-button>
+              <el-button
+                type="text"
+                icon="el-icon-monitor"
+                class="home"
+                @click="homeBtn"
+                v-has-permission="{powers:{
+                '/class/add': true,
+                '/class/edit': false
+                }, curpower: '/class/add'}"
+              >主页</el-button>
 
               <el-button
                 type="text"
@@ -61,158 +74,167 @@ export default {
   name: "Home",
   data() {
     return {
-      navList: [
-        { navname: "人力管理", path: "/home/datainput" },
-        { navname: "订单管理", path: "/home/demand" },
-        { navname: "售后管理", path: "/home/feedback" },
-        { navname: "报表管理", path: "/home/customquery" },
-        { navname: "系统管理", path: "/home/sysmanage" },
-      ],
-      asideNavList: [
-        [
-          { 
-            navname: "资料录入",
-            path: "/home/datainput",
-            icon: "icon el-icon-edit-outline",
-          },
-          {
-            navname: "培训记录",
-            path: "/home/training",
-            icon: "icon el-icon-timer",
-          },
-          {
-            navname: "考核评价",
-            path: "/home/assessment",
-            icon: "icon el-icon-notebook-2",
-          },
-          {
-            navname: "员工申诉",
-            path: "/home/staffappeal",
-            icon: "icon el-icon-notebook-2",
-          },
-        ],
-        [
-          {
-            navname: "客户需求",
-            path: "/home/demand",
-            icon: "icon el-icon-document",
-          },
-          {
-            navname: "手工分配",
-            path: "/home/distribute",
-            icon: "icon el-icon-coin",
-          },
-          {
-            navname: "订单列表",
-            path: "/home/ordergenerate",
-            icon: "icon el-icon-s-order",
-          },
-          {
-            navname: "人员派出",
-            path: "/home/persondispatch",
-            icon: "icon el-icon-place",
-          },
-          // {
-          //   navname: "销售回访",
-          //   path: "/home/salesvisit",
-          //   icon: "icon el-icon-refresh",
-          // },
-          {
-            navname: "订单延期",
-            path: "/home/orderdelay",
-            icon: "icon el-icon-date",
-          },
-          // {
-          //   navname: "订单续签",
-          //   path: "/home/orderrenewal",
-          //   icon: "icon el-icon-finished",
-          // },
-        ],
-        [
-          {
-            navname: "客户反馈",
-            path: "/home/feedback",
-            icon: "icon el-icon-phone-outline",
-          },
-          {
-            navname: "手工分配",
-            path: "/home/saledistribute",
-            icon: "icon el-icon-coin",
-          },
-          {
-            navname: "处理结果",
-            path: "/home/handle",
-            icon: "icon el-icon-finished",
-          },
-          {
-            navname: "客户回访",
-            path: "/home/review",
-            icon: "icon el-icon-sort",
-          },
-        ],
-        [
-          {
-            navname: "客户查询",
-            path: "/home/customquery",
-            icon: "icon el-icon-s-custom",
-          },
-          {
-            navname: "员工查询",
-            path: "/home/staffquery",
-            icon: "icon el-icon-s-check",
-          },
-          {
-            navname: "订单查询",
-            path: "/home/orderquery",
-            icon: "icon el-icon-tickets",
-          },
-          {
-            navname: "投诉查询",
-            path: "/home/complaintquery",
-            icon: "icon el-icon-notebook-2",
-          },
-        ],
-        [
-          {
-            navname: "系统设置",
-            path: "/home/sysmanage",
-            icon: "icon el-icon-setting",
-          },
-        ]
-      ],
-      selectAsides: null,
+      // navList: [
+      //   { navname: "人力管理", path: "/home/datainput" },
+      //   { navname: "订单管理", path: "/home/demand" },
+      //   { navname: "售后管理", path: "/home/feedback" },
+      //   { navname: "报表管理", path: "/home/customquery" },
+      //   { navname: "系统管理", path: "/home/sysmanage" },
+      // ],
+      // asideNavList: [
+      //   [
+      //     {
+      //       navname: "资料录入",
+      //       path: "/home/datainput",
+      //       icon: "icon el-icon-edit-outline",
+      //     },
+      //     {
+      //       navname: "培训记录",
+      //       path: "/home/training",
+      //       icon: "icon el-icon-timer",
+      //     },
+      //     {
+      //       navname: "考核评价",
+      //       path: "/home/assessment",
+      //       icon: "icon el-icon-notebook-2",
+      //     },
+      //     {
+      //       navname: "员工申诉",
+      //       path: "/home/staffappeal",
+      //       icon: "icon el-icon-notebook-2",
+      //     },
+      //   ],
+      //   [
+      //     {
+      //       navname: "客户需求",
+      //       path: "/home/demand",
+      //       icon: "icon el-icon-document",
+      //     },
+      //     {
+      //       navname: "手工分配",
+      //       path: "/home/distribute",
+      //       icon: "icon el-icon-coin",
+      //     },
+      //     {
+      //       navname: "订单列表",
+      //       path: "/home/ordergenerate",
+      //       icon: "icon el-icon-s-order",
+      //     },
+      //     {
+      //       navname: "人员派出",
+      //       path: "/home/persondispatch",
+      //       icon: "icon el-icon-place",
+      //     },
+      //     // {
+      //     //   navname: "销售回访",
+      //     //   path: "/home/salesvisit",
+      //     //   icon: "icon el-icon-refresh",
+      //     // },
+      //     {
+      //       navname: "订单延期",
+      //       path: "/home/orderdelay",
+      //       icon: "icon el-icon-date",
+      //     },
+      //     // {
+      //     //   navname: "订单续签",
+      //     //   path: "/home/orderrenewal",
+      //     //   icon: "icon el-icon-finished",
+      //     // },
+      //   ],
+      //   [
+      //     {
+      //       navname: "客户反馈",
+      //       path: "/home/feedback",
+      //       icon: "icon el-icon-phone-outline",
+      //     },
+      //     {
+      //       navname: "手工分配",
+      //       path: "/home/saledistribute",
+      //       icon: "icon el-icon-coin",
+      //     },
+      //     {
+      //       navname: "处理结果",
+      //       path: "/home/handle",
+      //       icon: "icon el-icon-finished",
+      //     },
+      //     {
+      //       navname: "客户回访",
+      //       path: "/home/review",
+      //       icon: "icon el-icon-sort",
+      //     },
+      //   ],
+      //   [
+      //     {
+      //       navname: "客户查询",
+      //       path: "/home/customquery",
+      //       icon: "icon el-icon-s-custom",
+      //     },
+      //     {
+      //       navname: "员工查询",
+      //       path: "/home/staffquery",
+      //       icon: "icon el-icon-s-check",
+      //     },
+      //     {
+      //       navname: "订单查询",
+      //       path: "/home/orderquery",
+      //       icon: "icon el-icon-tickets",
+      //     },
+      //     {
+      //       navname: "投诉查询",
+      //       path: "/home/complaintquery",
+      //       icon: "icon el-icon-notebook-2",
+      //     },
+      //   ],
+      //   [
+      //     {
+      //       navname: "系统设置",
+      //       path: "/home/sysmanage",
+      //       icon: "icon el-icon-setting",
+      //     },
+      //   ],
+      // ],
+      // selectAsides: null,
     };
   },
   components: {
     MainNav,
     AsideMainNav,
-    Pagination
+    Pagination,
   },
   computed: {
     screenHeight() {
-      return this.$store.state.screenHeight
+      return this.$store.state.screenHeight;
+    },
+    navList() {
+      return this.$store.state.navList
+    },
+    asideNavList() {
+      return this.$store.state.asideNavList
     }
   },
   mounted() {
+
     // 初始化操作
     this.$store.commit("changeWidthHeight", {
-        width: window.innerWidth,
-        height: window.innerHeight
-      })
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
     // 窗口改变时获取窗口的高度
     window.onresize = () => {
-      console.log(window.innerHeight - 40)
+      console.log(window.innerHeight - 40);
       this.$store.commit("changeWidthHeight", {
         width: window.innerWidth,
-        height: window.innerHeight
-      })
-    }
+        height: window.innerHeight,
+      });
+    };
+
+ 
   },
   methods: {
-    currentSelect(index) {
-      let currentIndex = parseInt(index);
-      this.selectAsides = this.asideNavList[currentIndex];
-    },
+    // currentSelect(index) {
+    //   let currentIndex = parseInt(index);
+    //   this.selectAsides = this.asideNavList[currentIndex];
+    // },
     // 退出登录
     logoutBtn() {
       // token为空

@@ -15,6 +15,21 @@ const state = {
   screenWidth: "",
   screenHeight: "",
 
+  // 菜单
+  navList: getItem('navList') ? getItem('navList') : [],
+  asideNavList: getItem('asideNavList') ? getItem('asideNavList') : [],
+
+  // 权限链接
+  permissionLink: {
+    '/page1': true,
+    '/page1/page1_child1': true
+  },
+  // 权限列表
+  powersList: {
+    '/ordergenerate/add': true,
+    '/ordergenerate/edit': false
+  },
+
   // 用户信息
   userInfo: {
     userToken: getItem('userInfo')['userToken'] ? getItem('userInfo')['userToken'] : '',
@@ -47,6 +62,20 @@ const mutations = {
   changeWidthHeight(state, payload) {
     state.screenWidth = payload.width
     state.screenHeight = payload.height
+  },
+
+  // 修改菜单
+  changeNavList(state, navListData) {
+    state.navList = navListData
+    // sessionStorage.setItem('navList', navListData)
+    setItem('navList', navListData)
+  },
+  changeAsideNavList(state, asidenavListData) {
+    state.asideNavList = asidenavListData
+    // sessionStorage.setItem('asideNavList', asidenavListData)
+    setItem('asideNavList', asidenavListData)
+
+
   }
 }
 

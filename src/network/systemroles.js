@@ -4,10 +4,11 @@ import {
 
 
 // 获取用户列表
-export function getUserList() {
+export function getUserList(searchform) {
   return request({
     url: "/user/index",
     method: "get",
+    params: searchform
   }) 
 }
 

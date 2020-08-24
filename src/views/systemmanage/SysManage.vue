@@ -4,27 +4,20 @@
     <div class="search">
       <el-card class="search-wrap">
         <el-form size="small" :inline="true" ref="searchForm" :model="searchForm">
-          <el-form-item prop="name">
-            <el-input size="mini" v-model="searchForm.name" placeholder="姓名" clearable></el-input>
+          <el-form-item prop="username">
+            <el-input size="mini" v-model="searchForm.username" placeholder="姓名" clearable @keyup.native.enter="searchBtn"></el-input>
           </el-form-item>
 
-          <!-- 员工状态 -->
+          <!-- 角色 -->
           <el-form-item prop="role_id">
-            <el-select v-model="searchForm.role_id" placeholder="职位">
-              <el-option label="跟单老师" value="1"></el-option>
-              <el-option label="实操老师" value="3"></el-option>
-              <el-option label="炒鸡管理员" value="4"></el-option>
-              <el-option label="普通管理员" value="5"></el-option>
+            <el-select v-model="searchForm.role_id" placeholder="职位" @change="searchBtn">
+              <el-option
+                v-for="item in roleIdList"
+                :key="item.value"
+                :label="item.name"
+                :value="item.id"
+              ></el-option>
             </el-select>
-          </el-form-item>
-          <!-- 录入时间 -->
-          <el-form-item prop="join_date">
-            <el-date-picker
-              class="select-date"
-              v-model="searchForm.join_date"
-              type="date"
-              placeholder="选择日期"
-            ></el-date-picker>
           </el-form-item>
           <!-- 操作 -->
           <el-form-item class="handle">
@@ -304,9 +297,8 @@ export default {
   data() {
     return {
       searchForm: {
-        name: "",
-        state: "",
-        join_date: "",
+        username: "",
+        role_id: "",
       },
       form: {},
       roleForm: {},
@@ -390,7 +382,7 @@ export default {
     };
   },
   created() {
-    this.getAllUserListData();
+    this.getAllUserListData(this.searchForm);
     this.getAllRoleListData();
 
     // 角色id列表
@@ -414,12 +406,13 @@ export default {
     });
   },
   methods: {
-    getAllUserListData() {
+    getAllUserListData(opation) {
       this.loading = true;
-      getUserList().then((res) => {
+      getUserList(opation).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
           this.userList = data.data;
+          console.log(data.data);
           // 页数赋值
           this.currentPage = data.current_page;
           // 总数据条数
@@ -477,8 +470,8 @@ export default {
       updateRolePower(this.updatePowerForm).then((res) => {
         let { code, msg } = res;
         if (code === 200) {
-          this.$message.success(msg)
-          this.powerDialogVisible = false
+          this.$message.success(msg);
+          this.powerDialogVisible = false;
         } else {
           this.$message.error(msg);
         }
@@ -498,15 +491,20 @@ export default {
     // 清除操作
     clearBtn() {
       this.$refs.searchForm.resetFields();
+      this.getAllUserListData(this.searchForm);
     },
 
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
       console.log(currentpage);
+      this.searchForm.page = currentpage;
+      this.getAllUserListData(this.searchForm);
     },
 
     // 搜索操作
-    searchBtn() {},
+    searchBtn() {
+      this.getAllUserListData(this.searchForm);
+    },
 
     // 添加用户按钮
     addBtn() {

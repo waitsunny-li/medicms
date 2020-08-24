@@ -11,7 +11,7 @@
           <el-row>
             <el-col :span="24">
               <el-button type="primary" icon="el-icon-plus" size="mini" @click="addCustomerBtn">新增需求</el-button>
-              <el-button type="danger" icon="el-icon-delete" @click="selectDeleteBtn" size="mini">删除</el-button>
+              <el-button type="danger" icon="el-icon-delete" @click="selectDeleteBtn" size="mini">取消</el-button>
             </el-col>
           </el-row>
 
@@ -163,7 +163,7 @@
                   cancelButtonText="不用了"
                   icon="el-icon-info"
                   iconColor="red"
-                  title="您确定要永久删除该客户吗？"
+                  title="您确定要取消该客户订单吗？"
                   @onConfirm="DeleteFormBtn(scope.row.id)"
                 >
                   <el-button
@@ -872,14 +872,14 @@ export default {
 
     // 选择删除
     selectDeleteBtn() {
-      this.$confirm("此操作将永久删除客户, 是否继续?", "提示", {
+      this.$confirm("此操作将取消客户订单, 是否继续?", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
           if (this.selected.length == 0) {
-            this.$message.error("请选择要删除的客户");
+            this.$message.error("请选择要取消的客户订单");
           } else {
             deleteCustomer(this.selected).then((res) => {
               let { code, msg } = res;

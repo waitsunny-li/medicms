@@ -30,7 +30,7 @@ export default {
 }
 .head-nav-wrap .head-nav {
   display: flex;
-  justify-content: space-around;
+  /* justify-content: space-around; */
 }
 
 </style>

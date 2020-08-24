@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import {getItem} from '../common/utils'
+import store from '../store'
+
 Vue.use(VueRouter)
 
 // 登录界面
@@ -260,9 +262,10 @@ const router = new VueRouter({
   // mode: 'history'
 })
 
+
 // 导航守卫
 router.beforeEach((to, from, next) => {
-  console.log(to.path)
+  // console.log(store.state.permissionLink)
   if (to.path === '/login') {
     // 从from跳转到to
     document.title = to.meta.title

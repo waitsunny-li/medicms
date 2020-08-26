@@ -121,6 +121,8 @@
                 <p v-if="scope.row.state == 3">已完成</p>
                 <p v-if="scope.row.state == 4">已取消</p>
                 <p v-if="scope.row.state == 5">暂停中</p>
+                <p v-if="scope.row.state == 6">重新恢复</p>
+
               </template>
             </el-table-column>
             <!-- 操作 -->

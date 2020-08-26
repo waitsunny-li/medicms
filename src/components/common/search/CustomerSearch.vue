@@ -54,6 +54,8 @@
                 <el-option label="已完成" value="3"></el-option>
                 <el-option label="已取消" value="4"></el-option>
                 <el-option label="暂停中" value="5"></el-option>
+                <el-option label="重新恢复" value="6"></el-option>
+
               </el-select>
             </el-form-item>
           </el-col>

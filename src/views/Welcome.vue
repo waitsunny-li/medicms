@@ -26,7 +26,7 @@
           <el-col :span="20">
             <!-- 时间-ip -->
             <div class="time-ip-wrap">
-              <div class="time">登录时间：{{$store.state.userInfo.last_login_time}}</div>
+              <div class="time">当前时间：{{currentDate}}</div>
               <div class="ip">IP：{{$store.state.userInfo.ip}}</div>
             </div>
           </el-col>
@@ -95,7 +95,8 @@ export default {
         staff: "",
         complaint: "",
         user: "",
-      }
+      },
+      currentDate:"",
     };
   },
   computed: {
@@ -116,6 +117,17 @@ export default {
         this.$message.error(msg)
       }
     })
+  },
+  mounted() {
+    let _this = this; 
+    this.timer = setInterval(() => {
+      _this.currentDate = new Date().toLocaleString(); // 修改数据date
+    }, 1000)
+  },
+  beforeDestroy() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    }
   },
   methods: {
     // 退出登录

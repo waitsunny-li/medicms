@@ -275,3 +275,14 @@ export function saveSalesVisitInfo(data) {
     data: data
   })
 }
+
+// 派出单
+export function dispatchOrder(customer_id) {
+  return request({
+    url: "/dispatch_order/send",
+    method: "get",
+    params: {
+      customer_id: customer_id
+    }
+  })
+}

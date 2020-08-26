@@ -10,7 +10,7 @@
           <el-card class="user-table-card" :style="{height: screenHeight}">
             <!-- 公共操作 -->
             <el-row>
-              <el-col :span="22">
+              <el-col :span="20">
                 <el-button type="primary" icon="el-icon-plus" size="mini" @click="addStaffBtn">新增</el-button>
                 <el-button
                   type="danger"
@@ -25,6 +25,18 @@
                   size="mini"
                 >生成简历</el-button>
               </el-col>
+
+              <el-col :span="2">
+                <el-tooltip class="item" effect="dark" content="增删改查" placement="top">
+                  <el-button
+                    icon="el-icon-takeaway-box"
+                    size="mini"
+                    @click="sourceListBtn"
+                    type="primary"
+                  >来源</el-button>
+                </el-tooltip>
+              </el-col>
+
               <el-col :span="2">
                 <el-badge :value="birthdayNumber" class="item">
                   <el-button
@@ -55,7 +67,7 @@
               <el-table-column type="expand">
                 <template slot-scope="scope">
                   <el-tabs v-model="activeName" class="staffInfo-wrap">
-                    <el-tab-pane label="客户详情" name="first">
+                    <el-tab-pane label="员工详情" name="first">
                       <el-row class="expand-row">
                         <el-col :span="4">
                           <span class="label-text">手机号</span>
@@ -1243,7 +1255,45 @@
       </el-table>
     </el-dialog>
 
-    <div id="pdfDom" ref="report"></div>
+    <el-dialog title="来源列表" :visible.sync="sourceDialogVisible" width="600px" center>
+      <el-table class="sourceList" :data="sourceListData" style="width: 100%" height="400">
+        <el-table-column align="center" prop="id" label="编号" width="180"></el-table-column>
+        <el-table-column align="center" prop="name" label="名称" width="180"></el-table-column>
+        <el-table-column align="center" label="操作">
+          <template slot-scope="scope">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-edit"
+              @click="editSource(scope.row.id, scope.row.name)"
+              circle
+              style="margin-right: 5px"
+            ></el-button>
+
+            <el-popconfirm
+              confirmButtonText="好的"
+              cancelButtonText="不用了"
+              icon="el-icon-info"
+              iconColor="red"
+              title="你确定要删除吗？"
+              @onConfirm="deleteSource(scope.row.id)"
+            >
+              <el-button
+                type="danger"
+                size="mini"
+                icon="el-icon-delete"
+                circle
+                slot="reference"
+              ></el-button>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="sourceDialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="addSource">新 增</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -1265,6 +1315,9 @@ import {
   searchAppointStaff,
   getStaffBirthday,
   saveHandlEva,
+  addSourceData,
+  editSourceData,
+  deleteSourceData,
 } from "network/humanageRequest";
 
 import {
@@ -1278,6 +1331,7 @@ import {
   getWiring,
   getJob,
   getKills,
+  getAllSource,
 } from "network/select";
 
 export default {
@@ -1290,6 +1344,10 @@ export default {
       birthdayNumber: "",
       // 搜索字段
       searchForm: {},
+
+      // 来源增删改查
+      sourceDialogVisible: false,
+      sourceListData: [],
 
       // 用户列表数据
       userList: [],
@@ -1562,6 +1620,88 @@ export default {
     Pagination,
   },
   methods: {
+    // 定义来源列表
+    getAllSourceList() {
+      getAllSource().then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          this.sourceListData = data;
+          console.log(res);
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+    // 来源按钮
+    sourceListBtn() {
+      this.getAllSourceList();
+      this.sourceDialogVisible = true;
+    },
+
+    // 新增来源
+    addSource() {
+      this.$prompt("请输入要增加的来源名", "新增", {
+        confirmButtonText: "保存",
+        cancelButtonText: "取消",
+      })
+        .then(({ value }) => {
+          addSourceData(value).then((res) => {
+            let { code, msg } = res;
+            if (code === 200) {
+              this.$message.success(msg);
+              this.getAllSourceList();
+            } else {
+              this.$message.error(msg);
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "取消输入",
+          });
+        });
+    },
+
+    // 编辑来源
+    editSource(source_id, name) {
+      this.$prompt("请输入更改后的来源名", "编辑", {
+        confirmButtonText: "保存",
+        cancelButtonText: "取消",
+        inputValue: name,
+      })
+        .then(({ value }) => {
+          editSourceData(source_id, value).then((res) => {
+            let { code, msg } = res;
+            if (code === 200) {
+              this.$message.success(msg);
+              this.getAllSourceList();
+            } else {
+              this.$message.error(msg);
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "取消输入",
+          });
+        });
+    },
+
+    // 删除来源
+    deleteSource(source_id) {
+      deleteSourceData(source_id).then((res) => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg);
+          this.getAllSourceList();
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+
     // 生成分享链接
     shareShow(staff_id) {
       this.shareLink = `http://qqq.shihanphp.cn/get_pdf?id=${staff_id}`;
@@ -1583,7 +1723,7 @@ export default {
     },
     // 跳转链接
     openShareLink() {
-      window.open(this.shareLink)
+      window.open(this.shareLink);
     },
     // 生成简历
     createResume() {},
@@ -1599,8 +1739,6 @@ export default {
         let { code, data, msg } = res;
         if (code === 200) {
           this.birthdayListData = data.data;
-
-          console.log(data.data);
         } else {
           this.$message.error(msg);
         }
@@ -1659,8 +1797,7 @@ export default {
       this.searchAppointData(this.searchForm);
     },
     //
-    popoverHiden() {
-    },
+    popoverHiden() {},
 
     // 清除原有图片操作
     clearImg() {
@@ -1682,7 +1819,7 @@ export default {
       getOneStaffImage(id).then((res) => {
         if (res.code === 200) {
           let data = res.data;
-          console.log(res.data)
+          console.log(res.data);
           // pictureData赋值（防止保存图片错误，使数据丢失）
           this.pictureData.staff_id = data.staff_id;
           this.pictureData.identity = data.identity;
@@ -2189,7 +2326,7 @@ export default {
 
 <style lang='less' scoped>
 .copy {
-  color: #409EFF;
+  color: #409eff;
   margin-right: 10px;
   cursor: pointer;
 }
@@ -2506,6 +2643,18 @@ export default {
         width: 200px;
       }
     }
+  }
+}
+
+.sourceList {
+  /deep/.el-table__body-wrapper::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+  }
+
+  /deep/.el-table__body-wrapper::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
   }
 }
 </style>

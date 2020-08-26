@@ -24,6 +24,40 @@ export function getStaffBirthday() {
   })
 }
 
+// 添加来源
+export function addSourceData(name) {
+  return request({
+    url: "/source/save",
+    method: "post",
+    data: {
+      name: name
+    }
+  })
+}
+
+// 编辑来源
+export function editSourceData(id, name) {
+  return request({
+    url: "/source/update",
+    method: "post",
+    data: {
+      id: id,
+      name: name
+    }
+  })
+}
+
+// 删除来源
+export function deleteSourceData(id) {
+  return request({
+    url: "/source/delete",
+    method: "get",
+    params: {
+      id: id
+    }
+  })
+}
+
 /**
  * 资料录入
  */
@@ -222,4 +256,3 @@ export function changeAppeal(data) {
     data: data
   })
 }
-

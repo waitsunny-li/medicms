@@ -25,6 +25,18 @@ Vue.directive('hasPermission', {
   }
 })
 
+// 全局绑定订单的状态来显示对应的操作(v-order-state="{limitList: [], state: "1"}")
+Vue.directive('orderState', {
+  inserted: function(el, binding, vnode) {
+    // console.log(el.parentNode, binding.value.limitList, binding.value.state)
+    let state = parseInt(binding.value.state)
+    if(binding.value.limitList.includes(state)) {
+      el.style.display = 'none'
+      // el.parentNode.removeChild(el)
+    }
+  }
+})
+
 new Vue({
   router,
   store,

@@ -30,7 +30,7 @@
           <!-- 右侧 -->
           <div class="right-wrap">
             <div class="login-time">
-              <span>登录时间：{{$store.state.userInfo.last_login_time}}</span>
+              <span>当前时间：{{currentDate}}</span>
             </div>
 
             <div class="home-wrap">
@@ -74,6 +74,7 @@ export default {
   name: "Home",
   data() {
     return {
+      currentDate: ""
       // navList: [
       //   { navname: "人力管理", path: "/home/datainput" },
       //   { navname: "订单管理", path: "/home/demand" },
@@ -227,6 +228,11 @@ export default {
         height: window.innerHeight,
       });
     };
+
+    let _this = this; 
+    this.timer = setInterval(() => {
+      _this.currentDate = new Date().toLocaleString(); // 修改数据date
+    }, 1000)
 
  
   },

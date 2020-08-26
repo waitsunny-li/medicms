@@ -45,11 +45,12 @@
                 <p v-if="scope.row.state == 3">已完成</p>
                 <p v-if="scope.row.state == 4">已取消</p>
                 <p v-if="scope.row.state == 5">暂停中</p>
+                <p v-if="scope.row.state == 6">重新恢复</p>
               </template>
             </el-table-column>
             <el-table-column align="center" label="操作">
               <template slot-scope="scope">
-                <el-button type="primary" size="mini" @click="printDispatchBtn">查看派出单</el-button>
+                <el-button type="primary" size="mini" @click="printDispatchBtn(scope.row.id)">查看派出单</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -70,7 +71,7 @@
 <script>
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
-import { searchCustomerInfo } from "network/orderRequest";
+import { searchCustomerInfo, dispatchOrder } from "network/orderRequest";
 export default {
   name: "PersonDispatch",
   data() {
@@ -102,25 +103,27 @@ export default {
   methods: {
     // 定义搜索获取信息
     getSearchInfoData(options) {
-      searchCustomerInfo(options).then((res) => {
-        if (res.code === 200) {
-          // 获取客户数据
-          this.customers = res.data.data;
-          console.log(res.data.data);
-          // 页数赋值
-          this.currentPage = res.data.current_page;
-          // 总数据条数
-          this.total = res.data.total;
-          // 每页的条
-          this.per_page = res.data.per_page;
-          this.loading = false;
-        } else {
-          this.$message.error(res.msg);
-          this.loading = false;
-        }
-      }).catch(err => {
-        this.$message.error('服务器炸了！')
-      });
+      searchCustomerInfo(options)
+        .then((res) => {
+          if (res.code === 200) {
+            // 获取客户数据
+            this.customers = res.data.data;
+            console.log(res.data.data);
+            // 页数赋值
+            this.currentPage = res.data.current_page;
+            // 总数据条数
+            this.total = res.data.total;
+            // 每页的条
+            this.per_page = res.data.per_page;
+            this.loading = false;
+          } else {
+            this.$message.error(res.msg);
+            this.loading = false;
+          }
+        })
+        .catch((err) => {
+          this.$message.error("服务器炸了！");
+        });
     },
     // 定义获取客户需求信息
     getAllOrderInfo() {
@@ -129,23 +132,41 @@ export default {
     },
     // 搜索按钮点击
     searchBtn(val) {
-      this.searchForm = val
-      this.getSearchInfoData(this.searchForm)
+      this.searchForm = val;
+      this.getSearchInfoData(this.searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      this.searchForm.page = currentpage
-      this.getSearchInfoData(this.searchForm)
+      this.searchForm.page = currentpage;
+      this.getSearchInfoData(this.searchForm);
     },
 
     // 打印派出单
-    printDispatchBtn() {
+    printDispatchBtn(oarder_id) {
       this.$confirm("是否打印派出单", "提示", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning",
       })
         .then(() => {
+          dispatchOrder(oarder_id).then((res) => {
+            let { code, data, msg } = res;
+            if (code === 200) {
+              // console.log(data.url);
+              var a = document.createElement("a");
+              a.setAttribute("href", data.url);
+              a.setAttribute("target", "_blank");
+              a.setAttribute("id", "js_a");
+              //防止反复添加
+              if (document.getElementById("js_a")) {
+                document.body.removeChild(document.getElementById("js_a"));
+              }
+              document.body.appendChild(a);
+              a.click();
+            } else {
+              this.$message.error(msg);
+            }
+          });
           this.$message({
             type: "success",
             message: "打印成功!",

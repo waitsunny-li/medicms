@@ -27,51 +27,13 @@
             :default-sort="{prop: 'create_time', order: 'descending'}"
           >
             <!-- 选择 -->
-            <el-table-column type="selection" width="55"></el-table-column>
-            <!-- 展示 -->
-            <el-table-column type="expand">
-              <template slot-scope="scope">
-                <p class="title-need">
-                  <el-button type="text">
-                    对家政员的需求
-                    <i class="el-icon-bottom"></i>
-                  </el-button>
-                </p>
-                <el-form label-position="center" inline class="demo-table-expand">
-                  <el-form-item label="年龄">
-                    <span>{{ scope.row.demand_age }}岁以下</span>
-                  </el-form-item>
-                  <el-form-item label="籍贯">
-                    <span>{{ scope.row.demand_census }}</span>
-                  </el-form-item>
+            <el-table-column
+              class="select"
+              type="selection"
+              :show-overflow-tooltip="false"
+              width="35"
+            ></el-table-column>
 
-                  <el-form-item label="性别">
-                    <span v-if="scope.row.demand_sex == 0">不限</span>
-                    <span v-if="scope.row.demand_sex == 1">女</span>
-                    <span v-if="scope.row.demand_sex == 2">男</span>
-                  </el-form-item>
-                  <el-form-item label="岗位要求">
-                    <span>{{ scope.row.demand_job.join('，') }}</span>
-                  </el-form-item>
-
-                  <el-form-item label="学历">
-                    <span>{{ scope.row.demand_education }}</span>
-                  </el-form-item>
-                  <el-form-item label="服务技能">
-                    <span>{{ scope.row.demand_service_skill.join('，') }}</span>
-                  </el-form-item>
-                  <el-form-item label="工资">
-                    <span>{{scope.row.demand_salary}} / 月</span>
-                  </el-form-item>
-                  <el-form-item label="家政从业经验">
-                    <span>{{ scope.row.demand_experience }}</span>
-                  </el-form-item>
-                  <el-form-item label="厨艺">
-                    <span>{{ scope.row.demand_cooking.join('，') }}</span>
-                  </el-form-item>
-                </el-form>
-              </template>
-            </el-table-column>
             <el-table-column align="center" prop="name" label="姓名" width="100"></el-table-column>
             <el-table-column align="center" prop="family_hometown" label="家庭成员籍贯" min-width="110"></el-table-column>
             <el-table-column
@@ -138,6 +100,7 @@
                 <p v-if="scope.row.state == 3">已完成</p>
                 <p v-if="scope.row.state == 4">已取消</p>
                 <p v-if="scope.row.state == 5">暂停中</p>
+                <p v-if="scope.row.state == 6">重新恢复</p>
               </template>
             </el-table-column>
             <el-table-column
@@ -148,6 +111,50 @@
               prop="create_time"
               label="录入时间"
             ></el-table-column>
+            <!-- 展示 -->
+            <el-table-column type="expand">
+              <template slot-scope="scope">
+                <p class="title-need">
+                  <el-button type="text">
+                    对家政员的需求
+                    <i class="el-icon-bottom"></i>
+                  </el-button>
+                </p>
+                <el-form label-position="center" inline class="demo-table-expand">
+                  <el-form-item label="年龄">
+                    <span>{{ scope.row.demand_age }}岁以下</span>
+                  </el-form-item>
+                  <el-form-item label="籍贯">
+                    <span>{{ scope.row.demand_census }}</span>
+                  </el-form-item>
+
+                  <el-form-item label="性别">
+                    <span v-if="scope.row.demand_sex == 0">不限</span>
+                    <span v-if="scope.row.demand_sex == 1">女</span>
+                    <span v-if="scope.row.demand_sex == 2">男</span>
+                  </el-form-item>
+                  <el-form-item label="岗位要求">
+                    <span>{{ scope.row.demand_job.join('，') }}</span>
+                  </el-form-item>
+
+                  <el-form-item label="学历">
+                    <span>{{ scope.row.demand_education }}</span>
+                  </el-form-item>
+                  <el-form-item label="服务技能">
+                    <span>{{ scope.row.demand_service_skill.join('，') }}</span>
+                  </el-form-item>
+                  <el-form-item label="工资">
+                    <span>{{scope.row.demand_salary}} / 月</span>
+                  </el-form-item>
+                  <el-form-item label="家政从业经验">
+                    <span>{{ scope.row.demand_experience }}</span>
+                  </el-form-item>
+                  <el-form-item label="厨艺">
+                    <span>{{ scope.row.demand_cooking.join('，') }}</span>
+                  </el-form-item>
+                </el-form>
+              </template>
+            </el-table-column>
             <!-- 操作 -->
             <el-table-column label="操作" align="center" width="140px">
               <template slot-scope="scope">
@@ -768,18 +775,18 @@ export default {
     // 定义获取客户需求信息
     getAllCustomerInfo() {
       this.loading = true;
-      this.getSearchInfoData(this.searchForm)
+      this.getSearchInfoData(this.searchForm);
     },
 
     // 搜索按钮点击
     searchBtn(val) {
-      this.searchForm = val
-      this.getSearchInfoData(this.searchForm)
+      this.searchForm = val;
+      this.getSearchInfoData(this.searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      this.searchForm.page = currentpage
-      this.getSearchInfoData(this.searchForm)
+      this.searchForm.page = currentpage;
+      this.getSearchInfoData(this.searchForm);
     },
 
     // 添加客户需求
@@ -1078,6 +1085,14 @@ export default {
   /deep/.el-dialog__body::-webkit-scrollbar-thumb {
     background-color: #ccc;
     border-radius: 20px;
+  }
+}
+
+/deep/.el-table-column--selection {
+  padding-right: 0;
+
+  /deep/.cell {
+    padding-right: 0;
   }
 }
 </style>

@@ -279,7 +279,7 @@
                 >{{scope.row.id}}</el-button>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="name" label="名字">
+            <el-table-column align="center" label="名字">
               <template slot-scope="scope">
                 <div class="name-wrap">
                   <span style="margin-left: 10px">{{scope.row.name}}</span>
@@ -355,10 +355,11 @@
               <template slot-scope="scope">
                 <p v-if="scope.row.state == 0">审核中</p>
                 <p v-if="scope.row.state == 1">待进行</p>
-                <p v-if="scope.row.state == 2">订单进行中</p>
+                <p v-if="scope.row.state == 2">跟进中</p>
                 <p v-if="scope.row.state == 3">已完成</p>
                 <p v-if="scope.row.state == 4">已取消</p>
                 <p v-if="scope.row.state == 5">暂停中</p>
+                <p v-if="scope.row.state == 6">重新恢复</p>
               </template>
             </el-table-column>
             <el-table-column
@@ -373,7 +374,7 @@
                   <el-tooltip
                     class="item"
                     effect="dark"
-                    :content="scope.row.staff.name"
+                    :content="scope.row.staff ? scope.row.staff.name : seatData"
                     placement="top"
                   >
                     <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
@@ -487,6 +488,24 @@
                           ></el-button>
                         </el-tooltip>
                       </el-popover>
+
+                      <el-tooltip
+                        class="item"
+                        effect="dark"
+                        :enterable="false"
+                        content="恢复"
+                        placement="top"
+                        v-order-state="{limitList: [0,1,2,3,4,6], state: scope.row.state}"
+                      >
+                        <el-button
+                          @click="restoreBtn(scope.row.id)"
+                          size="mini"
+                          type="success"
+                          class="el-icon-refresh"
+                          circle
+                          style="margin-left: 5px"
+                        ></el-button>
+                      </el-tooltip>
 
                       <el-tooltip
                         class="item"
@@ -857,12 +876,14 @@ import {
   pauseOrder,
   completeOrder,
   copyOrder,
+  restoreOrder,
 } from "network/orderRequest";
 import { getAllSource } from "network/select";
 export default {
   name: "OrderGenerate",
   data() {
     return {
+      seatData: "无",
       searchForm: {},
       // 订单列表
       customers: [],
@@ -1085,6 +1106,20 @@ export default {
       this.pauseOrderForm.pause_time = new Date()
         .toLocaleDateString()
         .replace(/\//g, "-");
+    },
+
+    // 恢复订单
+    restoreBtn(order_id) {
+      restoreOrder(order_id).then((res) => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg);
+          // 重新获取所有订单
+          this.getAllOrderInfo();
+        } else {
+          this.$message.error(msg);
+        }
+      });
     },
 
     // 续签订单

@@ -2,22 +2,26 @@
   <div class="home">
     <el-container :style="{height: screenHeight + 'px'}">
       <!-- 侧边栏 -->
-      <el-aside
-        width="200px"
-        class="aside-wrap"
-        :style="{height: screenHeight + 'px', overflow: 'hidden'}"
-      >
-        <!-- icon -->
-        <div class="icon-wrap">
-          <div class="img-wrap">
-            <img src="~assets/img/logo.png" alt />
+      <el-menu default-active="1-4-1" class="el-menu-vertical-demo" :collapse="isCollapse">
+        <el-aside
+          width="200px"
+          class="aside-wrap"
+          :style="{height: screenHeight + 'px', overflow: 'hidden'}"
+        >
+          <!-- icon -->
+          <div class="icon-wrap">
+            <div class="img-wrap">
+              <img src="~assets/img/logo.png" alt />
+            </div>
           </div>
-        </div>
-        <!-- 功能栏 -->
-        <div class="aside" :style="{height: screenHeight + 'px'}">
-          <aside-main-nav :asideNavList="asideNavList" />
-        </div>
-      </el-aside>
+
+          <!-- 功能栏 -->
+          <div class="aside" :style="{height: screenHeight + 'px'}">
+            <aside-main-nav :asideNavList="asideNavList" />
+            
+          </div>
+        </el-aside>
+      </el-menu>
       <!-- 内容 -->
       <el-container>
         <!-- 头部 -->
@@ -74,7 +78,8 @@ export default {
   name: "Home",
   data() {
     return {
-      currentDate: ""
+      currentDate: "",
+      isCollapse: false,
       // navList: [
       //   { navname: "人力管理", path: "/home/datainput" },
       //   { navname: "订单管理", path: "/home/demand" },
@@ -207,14 +212,13 @@ export default {
       return this.$store.state.screenHeight;
     },
     navList() {
-      return this.$store.state.navList
+      return this.$store.state.navList;
     },
     asideNavList() {
-      return this.$store.state.asideNavList
-    }
+      return this.$store.state.asideNavList;
+    },
   },
   mounted() {
-
     // 初始化操作
     this.$store.commit("changeWidthHeight", {
       width: window.innerWidth,
@@ -229,12 +233,10 @@ export default {
       });
     };
 
-    let _this = this; 
+    let _this = this;
     this.timer = setInterval(() => {
       _this.currentDate = new Date().toLocaleString(); // 修改数据date
-    }, 1000)
-
- 
+    }, 1000);
   },
   methods: {
     // currentSelect(index) {

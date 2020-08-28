@@ -4,7 +4,6 @@
       <el-col :span="24">
         <!-- 搜索框 -->
         <customer-search @searchBtn="searchBtn"></customer-search>
-
         <!-- 表单 -->
         <el-card class="table-content" :style="{height: screenHeight}">
           <!-- 表单 -->
@@ -26,10 +25,9 @@
             <el-table-column align="center" prop="family_address" label="地址" width="180"></el-table-column>
             <el-table-column align="center" prop="service_type" label="服务类型" width="150">
               <template slot-scope="scope">
-                <p v-if="scope.row.service_type == 0">{{scope.row.service_other}}</p>
-                <p v-if="scope.row.service_type == 1">全日住家型</p>
-                <p v-if="scope.row.service_type == 2">日间照料型</p>
-                <p v-if="scope.row.service_type == 3">计时收费型</p>
+                <div v-for="item in service_types" :key="item.id">
+                  <p v-if="scope.row.service_type == item.id">{{item.name}}</p>
+                </div>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="family_people" label="家庭成员">
@@ -72,6 +70,8 @@
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
 import { searchCustomerInfo, dispatchOrder } from "network/orderRequest";
+import { getJob } from "network/select";
+import download from "downloadjs";
 export default {
   name: "PersonDispatch",
   data() {
@@ -86,6 +86,9 @@ export default {
       // 每页的条数
       per_page: null,
       loading: false,
+
+      // 服务类型
+      service_types: [],
     };
   },
   computed: {
@@ -99,6 +102,15 @@ export default {
   watch: {},
   created() {
     this.getAllOrderInfo();
+
+    // 服务类型
+    getJob().then((res) => {
+      if (res.code === 200) {
+        this.service_types = res.data;
+      } else {
+        this.$message.waraing("获取岗位失败！");
+      }
+    });
   },
   methods: {
     // 定义搜索获取信息
@@ -153,15 +165,17 @@ export default {
             let { code, data, msg } = res;
             if (code === 200) {
               // console.log(data.url);
-              var a = document.createElement("a");
-              a.setAttribute("href", data.url);
-              a.setAttribute("target", "_blank");
-              a.setAttribute("id", "js_a");
-              //防止反复添加
-              if (document.getElementById("js_a")) {
-                document.body.removeChild(document.getElementById("js_a"));
-              }
-              document.body.appendChild(a);
+              // var a = document.createElement("a");
+              // a.setAttribute("href", data.url);
+              // a.setAttribute("target", "_blank");
+              // a.setAttribute("download", "");
+              // a.setAttribute("id", "js_a");
+              // //防止反复添加
+              // if (document.getElementById("js_a")) {
+              //   document.body.removeChild(document.getElementById("js_a"));
+              // }
+              // document.body.appendChild(a);
+              download(data.url)
               a.click();
             } else {
               this.$message.error(msg);

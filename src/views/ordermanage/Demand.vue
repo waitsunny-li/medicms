@@ -9,9 +9,19 @@
         <el-card class="table-content" :style="{height: screenHeight}">
           <!-- 公共操作 -->
           <el-row>
-            <el-col :span="24">
+            <el-col :span="22">
               <el-button type="primary" icon="el-icon-plus" size="mini" @click="addCustomerBtn">新增需求</el-button>
               <el-button type="danger" icon="el-icon-delete" @click="selectDeleteBtn" size="mini">取消</el-button>
+            </el-col>
+            <el-col :span="2">
+              <el-tooltip class="item" effect="dark" content="增删改查" placement="top">
+                <el-button
+                  icon="el-icon-takeaway-box"
+                  size="mini"
+                  @click="sourceListBtn"
+                  type="primary"
+                >来源</el-button>
+              </el-tooltip>
             </el-col>
           </el-row>
 
@@ -45,10 +55,9 @@
               width="100"
             >
               <template slot-scope="scope">
-                <p v-if="scope.row.service_type == 0">{{scope.row.service_other}}</p>
-                <p v-if="scope.row.service_type == 1">全日住家型</p>
-                <p v-if="scope.row.service_type == 2">日间照料型</p>
-                <p v-if="scope.row.service_type == 3">计时收费型</p>
+                <div v-for="item in service_types" :key="item.id">
+                  <p v-if="scope.row.service_type == item.id">{{item.name}}</p>
+                </div>
               </template>
             </el-table-column>
             <el-table-column
@@ -240,10 +249,12 @@
           <el-col :span="6">
             <el-form-item label="服务类型" prop="service_type">
               <el-select size="mini" v-model="form.service_type" placeholder="请选择">
-                <el-option label="无" :value="0"></el-option>
-                <el-option label="全日住家型" :value="1"></el-option>
-                <el-option label="日间照料型" :value="2"></el-option>
-                <el-option label="计时收费型" :value="3"></el-option>
+                <el-option
+                  v-for="item in service_types"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                ></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -505,6 +516,40 @@
         <el-button size="mini" v-else type="primary" @click="saveEditCustomerInfo">编 辑</el-button>
       </span>
     </el-dialog>
+
+    <el-dialog title="来源列表" :visible.sync="sourceDialogVisible" width="600px" center>
+      <el-table class="sourceList" :data="sourceListData" style="width: 100%" height="400">
+        <el-table-column align="center" prop="id" label="编号" width="180"></el-table-column>
+        <el-table-column align="center" prop="name" label="名称" width="180"></el-table-column>
+        <el-table-column align="center" label="操作">
+          <template slot-scope="scope">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-edit"
+              @click="editSource(scope.row.id, scope.row.name)"
+              circle
+              style="margin-right: 5px"
+            ></el-button>
+
+            <el-popconfirm
+              confirmButtonText="好的"
+              cancelButtonText="不用了"
+              icon="el-icon-info"
+              iconColor="red"
+              title="你确定要删除吗？"
+              @onConfirm="deleteSource(scope.row.id)"
+            >
+              <el-button type="danger" size="mini" icon="el-icon-delete" circle slot="reference"></el-button>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+      </el-table>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="sourceDialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="addSource">新 增</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -512,7 +557,12 @@
 import eventVue from "common/eventVue";
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
-import { getAllSelects, getAllSource } from "network/select";
+import {
+  addSourceData,
+  editSourceData,
+  deleteSourceData,
+} from "network/humanageRequest";
+import { getAllSelects, getAllSource, getJob } from "network/select";
 import {
   searchCustomerInfo,
   saveCustomerInfo,
@@ -524,6 +574,10 @@ export default {
   name: "Demand",
   data() {
     return {
+       // 来源增删改查
+      sourceDialogVisible: false,
+      sourceListData: [],
+
       searchForm: {},
       customers: [],
       // 当前页数
@@ -586,6 +640,8 @@ export default {
       languages: null,
       zodiacs: null,
       source: null,
+      // 服务类型
+      service_types: [],
 
       // 多选框
       selectSericeList: [],
@@ -741,6 +797,15 @@ export default {
       }
     });
 
+    // 服务类型
+    getJob().then((res) => {
+      if (res.code === 200) {
+        this.service_types = res.data;
+      } else {
+        this.$message.waraing("获取岗位失败！");
+      }
+    });
+
     // 获取需求来源
     getAllSource().then((res) => {
       let { code, data, msg } = res;
@@ -752,6 +817,87 @@ export default {
     });
   },
   methods: {
+    // 定义来源列表
+    getAllSourceList() {
+      getAllSource().then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          this.sourceListData = data;
+          console.log(res);
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+    // 来源按钮
+    sourceListBtn() {
+      this.getAllSourceList();
+      this.sourceDialogVisible = true;
+    },
+
+    // 新增来源
+    addSource() {
+      this.$prompt("请输入要增加的来源名", "新增", {
+        confirmButtonText: "保存",
+        cancelButtonText: "取消",
+      })
+        .then(({ value }) => {
+          addSourceData(value).then((res) => {
+            let { code, msg } = res;
+            if (code === 200) {
+              this.$message.success(msg);
+              this.getAllSourceList();
+            } else {
+              this.$message.error(msg);
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "取消输入",
+          });
+        });
+    },
+    // 编辑来源
+    editSource(source_id, name) {
+      this.$prompt("请输入更改后的来源名", "编辑", {
+        confirmButtonText: "保存",
+        cancelButtonText: "取消",
+        inputValue: name,
+      })
+        .then(({ value }) => {
+          editSourceData(source_id, value).then((res) => {
+            let { code, msg } = res;
+            if (code === 200) {
+              this.$message.success(msg);
+              this.getAllSourceList();
+            } else {
+              this.$message.error(msg);
+            }
+          });
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "取消输入",
+          });
+        });
+    },
+
+    // 删除来源
+    deleteSource(source_id) {
+      deleteSourceData(source_id).then((res) => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg);
+          this.getAllSourceList();
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+
     // 定义搜索获取信息
     getSearchInfoData(options) {
       searchCustomerInfo(options).then((res) => {
@@ -1093,6 +1239,17 @@ export default {
 
   /deep/.cell {
     padding-right: 0;
+  }
+}
+.sourceList {
+  /deep/.el-table__body-wrapper::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+  }
+
+  /deep/.el-table__body-wrapper::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 20px;
   }
 }
 </style>

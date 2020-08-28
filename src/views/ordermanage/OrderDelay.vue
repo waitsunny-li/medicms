@@ -80,10 +80,9 @@
               width="100"
             >
               <template slot-scope="scope">
-                <p v-if="scope.row.service_type == 0">{{scope.row.service_other}}</p>
-                <p v-if="scope.row.service_type == 1">全日住家型</p>
-                <p v-if="scope.row.service_type == 2">日间照料型</p>
-                <p v-if="scope.row.service_type == 3">计时收费型</p>
+                <div v-for="item in service_types" :key="item.id">
+                  <p v-if="scope.row.service_type == item.id">{{item.name}}</p>
+                </div>
               </template>
             </el-table-column>
             <el-table-column
@@ -207,6 +206,7 @@
 import CustomerSearch from "components/common/search/CustomerSearch";
 import Pagination from "components/common/pagination/Pagination";
 import { searchCustomerInfo, restoreOrder } from "network/orderRequest";
+import { getJob } from "network/select";
 export default {
   name: "OrderDelay",
   data() {
@@ -238,6 +238,15 @@ export default {
   },
   created() {
     this.getAllOrderInfo();
+
+    // 服务类型
+    getJob().then((res) => {
+      if (res.code === 200) {
+        this.service_types = res.data;
+      } else {
+        this.$message.waraing("获取岗位失败！");
+      }
+    });
   },
   methods: {
     // 定义搜索获取信息

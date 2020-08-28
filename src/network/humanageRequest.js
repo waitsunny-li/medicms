@@ -69,6 +69,17 @@ export function requestUserListDate(tate) {
   })
 }
 
+// 简历
+export function createResume(id) {
+  return request({
+    url: "/share/send",
+    method: "get",
+    params: {
+      staff_id: id
+    }
+  })
+}
+
 // 保存员工信息
 export function saveStaffInfo(data) {
   return request({

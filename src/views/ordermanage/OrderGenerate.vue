@@ -268,13 +268,15 @@
                       </el-col>
                     </el-row>
                   </el-tab-pane>
+                  <el-tab-pane label="保险" name="four"></el-tab-pane>
                 </el-tabs>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="id" label="订单号" width="80">
+            <el-table-column align="center" prop="id" label="订单号">
               <template slot-scope="scope">
                 <el-button
                   type="text"
+                  size="mini"
                   @click="orderInfoBtn(scope.row.name, scope.row.id)"
                 >{{scope.row.id}}</el-button>
               </template>
@@ -310,10 +312,9 @@
               width="100"
             >
               <template slot-scope="scope">
-                <p v-if="scope.row.service_type == 0">{{scope.row.service_other}}</p>
-                <p v-if="scope.row.service_type == 1">全日住家型</p>
-                <p v-if="scope.row.service_type == 2">日间照料型</p>
-                <p v-if="scope.row.service_type == 3">计时收费型</p>
+                <div v-for="item in service_types" :key="item.id">
+                  <p v-if="scope.row.service_type == item.id">{{item.name}}</p>
+                </div>
               </template>
             </el-table-column>
             <el-table-column
@@ -382,6 +383,32 @@
                 </div>
                 <div v-else>未完成</div>
               </template>
+            </el-table-column>
+            <el-table-column align="center" label="保险购买" :show-overflow-tooltip="true">
+              <template slot-scope="scope">
+                <span v-if="scope.row.safety.length == 0">无</span>
+                <span v-else>
+                  <el-button
+                    @click="lookInsuranceBtn(scope.row.staff_id, scope.row.staff.name)"
+                    type="text"
+                    size="mini"
+                  >查看</el-button>
+                </span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="当前服务人员">
+              <template slot-scope="scope">
+                {{scope.row.staff ? scope.row.staff.name : seatData}}
+                <span
+                  v-if="scope.row.staff_id != 0"
+                >
+                  <el-button type="text" size="mini" @click="buyInsuranceBtn(scope.row.id)">购买保险</el-button>
+                </span>
+                <span v-else></span>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" label="跟单老师" :show-overflow-tooltip="true">
+              <template slot-scope="scope">{{scope.row.match ? scope.row.match.username : '无'}}</template>
             </el-table-column>
 
             <!-- 操作 -->
@@ -583,6 +610,88 @@
       :total="total"
       @handlecurrentchange="handleCurrentChange"
     />
+
+    <!-- 查看当前保险 -->
+    <el-dialog
+      :title="currenInsurTitle"
+      :visible.sync="lookInsuranceDialogVisible"
+      width="600px"
+      center
+    >
+      <el-table :data="insuracneFormData" height="350px" style="width: 100%">
+        <el-table-column align="center" prop="safety_no" label="保险单号"></el-table-column>
+        <el-table-column width="180" align="center" prop="time" label="起止时间">
+          <template slot-scope="scope">{{scope.row.time.join(' ~ ')}}</template>
+        </el-table-column>
+        <el-table-column align="center" prop="content" label="保险内容"></el-table-column>
+        <el-table-column align="center" label="操作">
+          <template slot-scope="scope">
+            <el-button
+              type="primary"
+              size="mini"
+              icon="el-icon-edit"
+              @click="editInsuranceBtn(scope.row.id)"
+              circle
+              style="margin-right: 10px"
+            ></el-button>
+            <el-popconfirm
+              confirmButtonText="好的"
+              cancelButtonText="不用了"
+              icon="el-icon-info"
+              iconColor="red"
+              title="您确定要删除该保险吗？"
+              @onConfirm="deleteInsuranceBtn(scope.row.id, scope.row.staff_id)"
+            >
+              <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete" circle></el-button>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
+
+    <!-- 添加保险 -->
+    <el-dialog
+      :title="addInsurTile"
+      :visible.sync="buyInsurDialogVisible"
+      width="500px"
+      center
+      @close="buyInsuranceClose"
+      append-to-body
+    >
+      <el-form
+        ref="insuracneForm"
+        :rules="insuracneFormRules"
+        :model="insuracneForm"
+        label-width="80px"
+      >
+        <el-row>
+          <el-col :span="14">
+            <el-form-item label="保险单号" prop="safety_no">
+              <el-input size="mini" v-model="insuracneForm.safety_no"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="起止时间" prop="time">
+          <el-date-picker
+            v-model="insuracneForm.time"
+            size="mini"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="合同内容" prop="content">
+          <el-input size="mini" type="textarea" v-model="insuracneForm.content"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="buyInsurDialogVisible = false">取 消</el-button>
+        <el-button v-if="isaddIns" size="mini" type="primary" @click="saveInsurance">保 存</el-button>
+        <el-button v-else size="mini" type="primary" @click="saveEditInsurance">编 辑</el-button>
+      </span>
+    </el-dialog>
 
     <!-- 调出家政员的基本信息 -->
     <el-dialog :title="staffInfoTitle" :visible.sync="staffInfoDialogVisible" width="870px" center>
@@ -877,12 +986,45 @@ import {
   completeOrder,
   copyOrder,
   restoreOrder,
+  saveInsuranceInfo,
+  lookStaffInsurance,
+  lookOneInsurance,
+  updateOneInsurance,
+  deleteInsurance,
 } from "network/orderRequest";
-import { getAllSource } from "network/select";
+import { getAllSource, getJob } from "network/select";
 export default {
   name: "OrderGenerate",
   data() {
     return {
+      // 保险
+      buyInsurDialogVisible: false,
+      insuracneForm: {
+        customer_id: "",
+        safety_no: "",
+        time: [],
+        content: "",
+      },
+      isaddIns: false,
+
+      // 保险验证
+      addInsurTile: "",
+      insuracneFormRules: {
+        safety_no: [
+          { required: true, message: "请输入保险单号", trigger: "blur" },
+        ],
+        time: [
+          { required: true, message: "请输入保险起止时间", trigger: "blur" },
+        ],
+        content: [
+          { required: true, message: "请输入保险内容", trigger: "blur" },
+        ],
+      },
+      // 查看当前保险
+      lookInsuranceDialogVisible: false,
+      currenInsurTitle: "",
+      insuracneFormData: [],
+
       seatData: "无",
       searchForm: {},
       // 订单列表
@@ -907,6 +1049,8 @@ export default {
       source: [],
       // 展开默认位置
       activeName: "first",
+
+      service_types: [],
 
       // 订单的基本详情
       orderInfoDialogVisible: false,
@@ -1049,6 +1193,109 @@ export default {
   },
   watch: {},
   methods: {
+    // 删除保险
+    deleteInsuranceBtn(insruance_id, staff_id) {
+      deleteInsurance(insruance_id).then((res) => {
+        let { code, msg } = res;
+        console.log(res);
+        if (code === 200) {
+          this.$message.success(msg);
+          this.getOneStaffInsuranceInfo(staff_id);
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+    // 保存编辑保险
+    saveEditInsurance() {
+      updateOneInsurance(this.insuracneForm).then((res) => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg);
+          this.getOneStaffInsuranceInfo(this.insuracneForm.staff_id);
+
+          this.buyInsurDialogVisible = false;
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+    // 编辑
+    editInsuranceBtn(id) {
+      this.isaddIns = false;
+      lookOneInsurance(id).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          console.log(data);
+          this.insuracneForm.customer_id = data.customer_id;
+          this.insuracneForm.safety_no = data.safety_no;
+          this.insuracneForm.time = data.time;
+          this.insuracneForm.content = data.content;
+          this.insuracneForm.staff_id = data.staff_id;
+          this.insuracneForm.id = data.id;
+
+          this.addInsurTile = `编辑保险`;
+          this.buyInsurDialogVisible = true;
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+    // 查看当前服务人员的订单
+    lookInsuranceBtn(staff_id, name) {
+      this.currenInsurTitle = `查看当前服务人员（${name}）的保险`;
+      // 发送请求
+      this.getOneStaffInsuranceInfo(staff_id);
+    },
+    // 定义保险列表函数
+    getOneStaffInsuranceInfo(staff_id) {
+      lookStaffInsurance(staff_id).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          this.insuracneFormData = data;
+          console.log(data);
+          this.lookInsuranceDialogVisible = true;
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+    // 购买保险按钮 saveInsuranceInfo
+    buyInsuranceBtn(order_id) {
+      this.insuracneForm.customer_id = order_id;
+      this.addInsurTile = `添加保险`;
+      this.buyInsurDialogVisible = true;
+      this.isaddIns = true;
+    },
+    // 关闭回调
+    buyInsuranceClose() {
+      console.log("jj");
+      this.$refs.insuracneForm.resetFields();
+      this.insuracneForm = {
+        customer_id: "",
+        safety_no: "",
+        time: [],
+        content: "",
+      };
+    },
+    // 保存保险
+    saveInsurance() {
+      this.$refs.insuracneForm.validate((valid) => {
+        if (valid) {
+          saveInsuranceInfo(this.insuracneForm).then((res) => {
+            let { code, msg } = res;
+            if (code === 200) {
+              this.$message.success(msg);
+              this.buyInsurDialogVisible = false;
+            } else {
+              this.$message.error(msg);
+            }
+          });
+        } else {
+          return false;
+        }
+      });
+    },
     // 定义搜索获取信息
     getSearchInfoData(options) {
       searchCustomerInfo(options).then((res) => {
@@ -1562,6 +1809,15 @@ export default {
         this.staffInfo = res.data;
       } else {
         this.$message.error(res.msg);
+      }
+    });
+
+    // 服务类型
+    getJob().then((res) => {
+      if (res.code === 200) {
+        this.service_types = res.data;
+      } else {
+        this.$message.waraing("获取岗位失败！");
       }
     });
 

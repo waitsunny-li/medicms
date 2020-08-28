@@ -10,7 +10,7 @@
           <el-card class="user-table-card" :style="{height: screenHeight}">
             <!-- 公共操作 -->
             <el-row>
-              <el-col :span="20">
+              <el-col :span="22">
                 <el-button type="primary" icon="el-icon-plus" size="mini" @click="addStaffBtn">新增</el-button>
                 <el-button
                   type="danger"
@@ -21,20 +21,9 @@
                 <el-button
                   type="warning"
                   icon="el-icon-printer"
-                  @click="createResume"
+                  @click="createResumeBtn"
                   size="mini"
                 >生成简历</el-button>
-              </el-col>
-
-              <el-col :span="2">
-                <el-tooltip class="item" effect="dark" content="增删改查" placement="top">
-                  <el-button
-                    icon="el-icon-takeaway-box"
-                    size="mini"
-                    @click="sourceListBtn"
-                    type="primary"
-                  >来源</el-button>
-                </el-tooltip>
               </el-col>
 
               <el-col :span="2">
@@ -338,14 +327,14 @@
                         <el-col :span="4">经理评价内容：</el-col>
                         <el-col :span="20">{{scope.row.evaluation}}</el-col>
                       </el-row>
-                      <el-row style="margin-top: 30px">
+                      <el-row style="margin-top: 30px" v-if="!scope.row.evaluation"> 
                         <el-col :span="3">评价：</el-col>
                         <el-col :span="10">
                           <el-input type="textarea" v-model="handleEvaluation"></el-input>
                         </el-col>
                       </el-row>
-                      <el-row style="margin-top: 30px">
-                        <el-col :span="5" :offset="12">
+                      <el-row style="margin-top: 30px" v-if="!scope.row.evaluation">
+                        <el-col :span="5" :offset="12" >
                           <el-button
                             @click="saveHandleEva(scope.row.id)"
                             type="primary"
@@ -1224,7 +1213,7 @@
         <div class="dialog-footer">
           <el-button @click="cancelAddStaff" size="mini">取 消</el-button>
           <el-button v-if="isDisplaySave" type="primary" @click="saveStaffBtn" size="mini">保 存</el-button>
-          <el-button v-else type="primary" @click="editSaveStaffBtn" size="mini">编 辑</el-button>
+          <el-button v-else type="primary" @click="editSaveStaffBtn" size="mini">保 存</el-button>
         </div>
       </div>
     </el-dialog>
@@ -1255,45 +1244,6 @@
       </el-table>
     </el-dialog>
 
-    <el-dialog title="来源列表" :visible.sync="sourceDialogVisible" width="600px" center>
-      <el-table class="sourceList" :data="sourceListData" style="width: 100%" height="400">
-        <el-table-column align="center" prop="id" label="编号" width="180"></el-table-column>
-        <el-table-column align="center" prop="name" label="名称" width="180"></el-table-column>
-        <el-table-column align="center" label="操作">
-          <template slot-scope="scope">
-            <el-button
-              type="primary"
-              size="mini"
-              icon="el-icon-edit"
-              @click="editSource(scope.row.id, scope.row.name)"
-              circle
-              style="margin-right: 5px"
-            ></el-button>
-
-            <el-popconfirm
-              confirmButtonText="好的"
-              cancelButtonText="不用了"
-              icon="el-icon-info"
-              iconColor="red"
-              title="你确定要删除吗？"
-              @onConfirm="deleteSource(scope.row.id)"
-            >
-              <el-button
-                type="danger"
-                size="mini"
-                icon="el-icon-delete"
-                circle
-                slot="reference"
-              ></el-button>
-            </el-popconfirm>
-          </template>
-        </el-table-column>
-      </el-table>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="sourceDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="addSource">新 增</el-button>
-      </span>
-    </el-dialog>
   </div>
 </template>
 
@@ -1318,7 +1268,9 @@ import {
   addSourceData,
   editSourceData,
   deleteSourceData,
+  createResume,
 } from "network/humanageRequest";
+import download from "downloadjs";
 
 import {
   getProvince,
@@ -1344,10 +1296,6 @@ export default {
       birthdayNumber: "",
       // 搜索字段
       searchForm: {},
-
-      // 来源增删改查
-      sourceDialogVisible: false,
-      sourceListData: [],
 
       // 用户列表数据
       userList: [],
@@ -1507,7 +1455,7 @@ export default {
         now_address_desc: [
           { required: true, message: "请输入现居地址", trigger: "blur" },
         ],
-        job: [{ required: true, message: "请输入岗位", trigger: "blur" }],
+        job: [{ required: true, message: "请输入岗位", trigger: "change" }],
         spare_time: [
           { required: true, message: "请输入空余时间", trigger: "blur" },
         ],
@@ -1620,87 +1568,7 @@ export default {
     Pagination,
   },
   methods: {
-    // 定义来源列表
-    getAllSourceList() {
-      getAllSource().then((res) => {
-        let { code, data, msg } = res;
-        if (code === 200) {
-          this.sourceListData = data;
-          console.log(res);
-        } else {
-          this.$message.error(msg);
-        }
-      });
-    },
-    // 来源按钮
-    sourceListBtn() {
-      this.getAllSourceList();
-      this.sourceDialogVisible = true;
-    },
 
-    // 新增来源
-    addSource() {
-      this.$prompt("请输入要增加的来源名", "新增", {
-        confirmButtonText: "保存",
-        cancelButtonText: "取消",
-      })
-        .then(({ value }) => {
-          addSourceData(value).then((res) => {
-            let { code, msg } = res;
-            if (code === 200) {
-              this.$message.success(msg);
-              this.getAllSourceList();
-            } else {
-              this.$message.error(msg);
-            }
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "取消输入",
-          });
-        });
-    },
-
-    // 编辑来源
-    editSource(source_id, name) {
-      this.$prompt("请输入更改后的来源名", "编辑", {
-        confirmButtonText: "保存",
-        cancelButtonText: "取消",
-        inputValue: name,
-      })
-        .then(({ value }) => {
-          editSourceData(source_id, value).then((res) => {
-            let { code, msg } = res;
-            if (code === 200) {
-              this.$message.success(msg);
-              this.getAllSourceList();
-            } else {
-              this.$message.error(msg);
-            }
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "取消输入",
-          });
-        });
-    },
-
-    // 删除来源
-    deleteSource(source_id) {
-      deleteSourceData(source_id).then((res) => {
-        let { code, msg } = res;
-        if (code === 200) {
-          this.$message.success(msg);
-          this.getAllSourceList();
-        } else {
-          this.$message.error(msg);
-        }
-      });
-    },
 
     // 生成分享链接
     shareShow(staff_id) {
@@ -1726,7 +1594,33 @@ export default {
       window.open(this.shareLink);
     },
     // 生成简历
-    createResume() {},
+    createResumeBtn() {
+      console.log(this.selected);
+      if (this.selected.length == 1) {
+        createResume(this.selected[0]).then((res) => {
+          let { code, data, msg } = res;
+          if (code === 200) {
+            // console.log(data.url);
+            var a = document.createElement("a");
+            a.setAttribute("href", data.url);
+            a.setAttribute("target", "_blank");
+            a.setAttribute("download", "");
+            a.setAttribute("id", "js_a");
+            //防止反复添加
+            if (document.getElementById("js_a")) {
+              document.body.removeChild(document.getElementById("js_a"));
+            }
+            document.body.appendChild(a);
+            a.click();
+            // download(data.url)
+          } else {
+            this.$message.error(msg);
+          }
+        });
+      } else {
+        this.$message.error("只能选中一个！");
+      }
+    },
     // 生日提醒
     birthdayBtn() {
       this.birthdayDialogVisible = true;
@@ -2643,18 +2537,6 @@ export default {
         width: 200px;
       }
     }
-  }
-}
-
-.sourceList {
-  /deep/.el-table__body-wrapper::-webkit-scrollbar {
-    width: 5px;
-    height: 10px;
-  }
-
-  /deep/.el-table__body-wrapper::-webkit-scrollbar-thumb {
-    background-color: #ccc;
-    border-radius: 20px;
   }
 }
 </style>

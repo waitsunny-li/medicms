@@ -94,14 +94,53 @@ export function distributeTeacher(customer_id, user_id) {
 /**
  * 订单列表
  */
-// 保存编辑订单数据
-export function saveEditOrderInfo(data) {
+// 添加保险
+export function saveInsuranceInfo(data) {
   return request({
-    url: "",
+    url: "/safety/save",
     method: "post",
     data: data
   })
 }
+// 查看保险列表
+export function lookStaffInsurance(staff_id) {
+  return request({
+    url: "/safety/index",
+    method: "get",
+    params: {
+      staff_id: staff_id
+    }
+  })
+}
+// 编辑保险
+export function lookOneInsurance(id) {
+  return request({
+    url: "/safety/edit",
+    method: "get",
+    params: {
+      id: id
+    }
+  })
+}
+// 更新保险
+export function updateOneInsurance(data) {
+  return request({
+    url: "/safety/update",
+    method: "post",
+    data: data
+  })
+}
+// 删除保险
+export function deleteInsurance(id) {
+  return request({
+    url: "/safety/delete",
+    method: "get",
+    params: {
+      id: id
+    }
+  })
+}
+
 // 删除订单
 export function deleteOrderInfo(id) {
   return request({

@@ -1,13 +1,15 @@
 <template>
-  <div class="pagination" :style="{width: screenWidth}">
-    <el-pagination
-      @current-change="handleCurrentChange"
-      :current-page.sync="currentpage"
-      :page-size="perpages"
-      layout="prev, pager, next, jumper"
-      :total="totalNumber"
-    ></el-pagination>
-  </div>
+  <el-row class="pagination" >
+    <el-col :span="7">
+      <el-pagination
+        @current-change="handleCurrentChange"
+        :current-page.sync="currentpage"
+        :page-size="perpages"
+        layout="prev, pager, next, jumper"
+        :total="totalNumber"
+      ></el-pagination>
+    </el-col>
+  </el-row>
 </template>
 
 <script>
@@ -17,45 +19,45 @@ export default {
   props: {
     currentPage: {
       type: Number,
-      default: 1
+      default: 1,
     },
     perpage: {
       type: Number,
-      default: 10
+      default: 10,
     },
     total: {
       type: Number,
-      default: null
-    }
+      default: null,
+    },
   },
   data() {
     return {
       currentpage: null,
       perpages: null,
-      totalNumber: null
+      totalNumber: null,
     };
   },
   computed: {
     screenWidth() {
-      return this.$store.state.screenWidth - 240 + 'px'
-    }
+      return this.$store.state.screenWidth - 240 + "px";
+    },
   },
   watch: {
     currentPage(val) {
-      this.currentpage = val
+      this.currentpage = val;
     },
     perpage(val) {
-      this.perpages = val
+      this.perpages = val;
     },
     total(val) {
-      this.totalNumber = val
-    }
+      this.totalNumber = val;
+    },
   },
   methods: {
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
       // console.log(currentpage);
-      this.$emit("handlecurrentchange", currentpage)
+      this.$emit("handlecurrentchange", currentpage);
     },
   },
 };

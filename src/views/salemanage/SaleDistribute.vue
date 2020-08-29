@@ -53,6 +53,7 @@
                     size="mini"
                     icon="el-icon-thumb"
                     @click="distributeSuccess(scope.row.id)"
+                  
                   ></el-button>
                 </el-tooltip>
               </template>
@@ -111,7 +112,10 @@
 import feedbackSearch from "components/common/search/feedbackSearch";
 import Pagination from "components/common/pagination/Pagination";
 import { feedMixin } from "common/promixin";
-import { searchNameSaleStaff, distributeSalesStaff } from "network/feedbackRequest";
+import {
+  searchNameSaleStaff,
+  distributeSalesStaff,
+} from "network/feedbackRequest";
 export default {
   name: "SaleDistribute",
   mixins: [feedMixin],
@@ -182,12 +186,13 @@ export default {
 
     // 分配给他
     distributeSheBtn(name, user_id) {
-      this.$confirm("是否要将此客户分配给售后服务人员" + name, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-           distributeSalesStaff(this.currentCustomId, user_id).then((res) => {
+      this.$confirm("是否要将此客户分配给售后服务人员" + name, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(() => {
+          distributeSalesStaff(this.currentCustomId, user_id).then((res) => {
             let { code, msg } = res;
             if (code === 200) {
               this.$message.success(msg);
@@ -198,11 +203,12 @@ export default {
               this.$message.error(msg);
             }
           });
-        }).catch(() => {
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+            type: "info",
+            message: "已取消删除",
+          });
         });
     },
   },

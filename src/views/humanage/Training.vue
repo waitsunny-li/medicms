@@ -62,6 +62,7 @@
                   size="mini"
                   icon="el-icon-plus"
                   @click="addTraningBtn(scope.row.id, scope.row.name)"
+                  v-has-power="{limitList: [1, 4, 6], role_id: $store.state.userInfo.role_id}"
                 ></el-button>
               </template>
             </el-table-column>
@@ -107,6 +108,7 @@
               @click="editTraningBtn(scope.row.id)"
               size="mini"
               icon="el-icon-edit"
+              v-has-power="{limitList: [1, 4, 6], role_id: $store.state.userInfo.role_id}"
             ></el-button>
             <el-popconfirm
               title="此经历内容确定永远删除吗？"
@@ -118,6 +120,7 @@
                 size="mini"
                 icon="el-icon-delete"
                 slot="reference"
+                v-has-power="{limitList: [1, 4, 6], role_id: $store.state.userInfo.role_id}"
               ></el-button>
             </el-popconfirm>
           </template>

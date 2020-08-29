@@ -42,6 +42,7 @@ const state = {
 
 // 方法
 const mutations = {
+  
   // 修改当前的nav的下标
   changeNavIndex(state, index) {
     state.navindex = index
@@ -54,6 +55,8 @@ const mutations = {
     state.userInfo.username = payload.username
     state.userInfo.last_login_time = payload.last_login_time
     state.userInfo.ip = payload.ip
+    state.userInfo.role_id = payload.role_id
+
     // 保存在sessionStorage中
     setItem('userInfo', payload)
   },

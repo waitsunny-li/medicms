@@ -5,15 +5,15 @@
         <div slot="icon"><i :class="objNav.icon"></i></div>
         <div slot="text">{{objNav.navname}}</div>
       </aside-item>-->
-      <el-menu-item
-        :index="objNav.path"
-        route
-        v-for="(objNav, index) in asideNavList[asideIndex]"
-        :key="index"
-      >
-        <i class="el-icon-edit-outline"></i>
-        <span slot="title">{{objNav.navname}}</span>
-      </el-menu-item>
+      
+        <el-menu-item
+          :index="objNav.path"
+          v-for="(objNav, index) in asideNavList[asideIndex]"
+          :key="index"
+        >
+          <i :class="objNav.icon" :style="{color: routerLink == objNav.path ? '#409EFF' : ''}"></i>
+          <span :style="{color: routerLink == objNav.path ? '#409EFF' : ''}"  slot="title">{{objNav.navname}}</span>
+        </el-menu-item>
     </aside-nav>
   </div>
 </template>
@@ -31,13 +31,20 @@ export default {
     },
   },
   data() {
-    return {};
+    return {
+      isCollapse: false,
+    };
   },
   computed: {
     // 计算出asideIndex
     asideIndex() {
       return this.$store.state.navindex;
     },
+
+    // 计算当前的router链接
+    routerLink() {
+      return this.$route.path
+    }
   },
   components: {
     AsideNav,

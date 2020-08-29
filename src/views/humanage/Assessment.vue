@@ -114,6 +114,7 @@
                 type="primary"
                 size="mini"
                 @click="assessOperation(scope.row.id, scope.row.staff_id)"
+                v-has-power="{limitList: [1, 4, 17], role_id: $store.state.userInfo.role_id}"
               >考核评价</el-button>
             </div>
             <div v-else>已审核完成</div>

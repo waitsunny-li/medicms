@@ -5,6 +5,7 @@
 </template>
 
 <script>
+import eventVue from "common/eventVue";
 export default {
   name: 'NavItem',
   props: {

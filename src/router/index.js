@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import {getItem} from '../common/utils'
+import {
+  getItem
+} from '../common/utils'
 import store from '../store'
 
 Vue.use(VueRouter)
@@ -269,21 +271,26 @@ router.beforeEach((to, from, next) => {
   if (to.path === '/login') {
     // 从from跳转到to
     document.title = to.meta.title
-    if(getItem('userInfo')['userToken']) {
+    if (getItem('userInfo')['userToken']) {
       next(from.path)
-    }else {
+    } else {
       next()
     }
   } else {
     let userToken = getItem('userInfo')['userToken']
     if (userToken == null || userToken == '') {
       next('/login')
-    }else {
+    } else {
       document.title = to.meta.title
       next()
     }
   }
 
 })
+
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
 
 export default router

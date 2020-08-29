@@ -17,8 +17,21 @@ Vue.config.productionTip = false
 // 全局绑定一个v-has-permission
 Vue.directive('hasPermission', {
   inserted: function(el, binding, vnode) {
-    console.log(el.parentNode, binding.value.powers, binding.value.curpower)
+    // console.log(el.parentNode, binding.value.powers, binding.value.curpower)
     if(!binding.value.powers.hasOwnProperty(binding.value.curpower)) {
+      // el.style.display = 'none'
+      el.parentNode.removeChild(el)
+    }
+  }
+})
+
+// 角色的所有的权限
+Vue.directive('hasPower', {
+  // console.log(el.parentNode, binding.value.limitList, binding.value.state)
+  inserted: function(el, binding, vnode) {
+    let role_id = parseInt(binding.value.role_id)
+    if(!binding.value.limitList.includes(role_id)) {
+      console.log('jjj')
       // el.style.display = 'none'
       el.parentNode.removeChild(el)
     }

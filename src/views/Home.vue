@@ -2,26 +2,36 @@
   <div class="home">
     <el-container :style="{height: screenHeight + 'px'}">
       <!-- 侧边栏 -->
-      <el-menu default-active="1-4-1" class="el-menu-vertical-demo" :collapse="isCollapse">
-        <el-aside
-          width="200px"
-          class="aside-wrap"
-          :style="{height: screenHeight + 'px', overflow: 'hidden'}"
+
+      <el-aside class="aside-wrap" style="position: relative">
+        <!-- -->
+        <div class="display-wrap">
+          <i v-show="isopened" @click="colseBtn" class="el-icon-d-arrow-left"></i>
+          <i v-show="!isopened" @click="colseBtn" class="el-icon-d-arrow-right"></i>
+        </div>
+
+        <el-menu
+          class="el-menu-vertical-demo"
+          router
+          :collapse="isCollapse"
+          background-color="#2d373f"
+          text-color="#909399"
+          :collapse-transition="false"
+          ref="elmenu"
         >
-          <!-- icon -->
           <div class="icon-wrap">
             <div class="img-wrap">
-              <img src="~assets/img/logo.png" alt />
+              <img class="biglogol" v-show="isshowlogo" src="~assets/logo1.png" alt />
+              <img class="smalllogol" v-show="!isshowlogo" src="~assets/logo.png" alt="">
             </div>
           </div>
-
           <!-- 功能栏 -->
-          <div class="aside" :style="{height: screenHeight + 'px'}">
+          <div class="aside">
             <aside-main-nav :asideNavList="asideNavList" />
-            
           </div>
-        </el-aside>
-      </el-menu>
+        </el-menu>
+      </el-aside>
+
       <!-- 内容 -->
       <el-container>
         <!-- 头部 -->
@@ -61,7 +71,7 @@
         <el-main :style="{height: screenHeight - 80 + 'px', overflow: 'hidden'}">
           <router-view name="content" />
         </el-main>
-        <el-footer class="footer">
+        <el-footer class="footer" height="50px">
           <!-- <pagination /> -->
         </el-footer>
       </el-container>
@@ -73,11 +83,14 @@
 import MainNav from "components/content/mainnav/MainNav";
 import AsideMainNav from "components/content/mainnav/AsideMainNav";
 import Pagination from "components/common/pagination/Pagination";
-
+import eventVue from "common/eventVue";
 export default {
   name: "Home",
   data() {
     return {
+      // logo变换
+      isshowlogo: true,
+      isopened: true,
       currentDate: "",
       isCollapse: false,
       // navList: [
@@ -92,110 +105,110 @@ export default {
       //     {
       //       navname: "资料录入",
       //       path: "/home/datainput",
-      //       icon: "icon el-icon-edit-outline",
+      //       icon: "el-icon-edit-outline",
       //     },
       //     {
       //       navname: "培训记录",
       //       path: "/home/training",
-      //       icon: "icon el-icon-timer",
+      //       icon: "el-icon-timer",
       //     },
       //     {
       //       navname: "考核评价",
       //       path: "/home/assessment",
-      //       icon: "icon el-icon-notebook-2",
+      //       icon: "el-icon-notebook-2",
       //     },
       //     {
       //       navname: "员工申诉",
       //       path: "/home/staffappeal",
-      //       icon: "icon el-icon-notebook-2",
+      //       icon: "el-icon-notebook-2",
       //     },
       //   ],
       //   [
       //     {
       //       navname: "客户需求",
       //       path: "/home/demand",
-      //       icon: "icon el-icon-document",
+      //       icon: "el-icon-document",
       //     },
       //     {
       //       navname: "手工分配",
       //       path: "/home/distribute",
-      //       icon: "icon el-icon-coin",
+      //       icon: "el-icon-coin",
       //     },
       //     {
       //       navname: "订单列表",
       //       path: "/home/ordergenerate",
-      //       icon: "icon el-icon-s-order",
+      //       icon: "el-icon-s-order",
       //     },
       //     {
       //       navname: "人员派出",
       //       path: "/home/persondispatch",
-      //       icon: "icon el-icon-place",
+      //       icon: "el-icon-place",
       //     },
       //     // {
       //     //   navname: "销售回访",
       //     //   path: "/home/salesvisit",
-      //     //   icon: "icon el-icon-refresh",
+      //     //   icon: "el-icon-refresh",
       //     // },
       //     {
       //       navname: "订单延期",
       //       path: "/home/orderdelay",
-      //       icon: "icon el-icon-date",
+      //       icon: "el-icon-date",
       //     },
       //     // {
       //     //   navname: "订单续签",
       //     //   path: "/home/orderrenewal",
-      //     //   icon: "icon el-icon-finished",
+      //     //   icon: "el-icon-finished",
       //     // },
       //   ],
       //   [
       //     {
       //       navname: "客户反馈",
       //       path: "/home/feedback",
-      //       icon: "icon el-icon-phone-outline",
+      //       icon: "el-icon-phone-outline",
       //     },
       //     {
       //       navname: "手工分配",
       //       path: "/home/saledistribute",
-      //       icon: "icon el-icon-coin",
+      //       icon: "el-icon-coin",
       //     },
       //     {
       //       navname: "处理结果",
       //       path: "/home/handle",
-      //       icon: "icon el-icon-finished",
+      //       icon: "el-icon-finished",
       //     },
       //     {
       //       navname: "客户回访",
       //       path: "/home/review",
-      //       icon: "icon el-icon-sort",
+      //       icon: "el-icon-sort",
       //     },
       //   ],
       //   [
       //     {
       //       navname: "客户查询",
       //       path: "/home/customquery",
-      //       icon: "icon el-icon-s-custom",
+      //       icon: "el-icon-s-custom",
       //     },
       //     {
       //       navname: "员工查询",
       //       path: "/home/staffquery",
-      //       icon: "icon el-icon-s-check",
+      //       icon: "el-icon-s-check",
       //     },
       //     {
       //       navname: "订单查询",
       //       path: "/home/orderquery",
-      //       icon: "icon el-icon-tickets",
+      //       icon: "el-icon-tickets",
       //     },
       //     {
       //       navname: "投诉查询",
       //       path: "/home/complaintquery",
-      //       icon: "icon el-icon-notebook-2",
+      //       icon: "el-icon-notebook-2",
       //     },
       //   ],
       //   [
       //     {
       //       navname: "系统设置",
       //       path: "/home/sysmanage",
-      //       icon: "icon el-icon-setting",
+      //       icon: "el-icon-setting",
       //     },
       //   ],
       // ],
@@ -218,6 +231,9 @@ export default {
       return this.$store.state.asideNavList;
     },
   },
+  created() {
+
+  },
   mounted() {
     // 初始化操作
     this.$store.commit("changeWidthHeight", {
@@ -239,6 +255,18 @@ export default {
     }, 1000);
   },
   methods: {
+    // 关闭功能
+    colseBtn() {
+      if (this.isopened) {
+        this.isopened = false;
+        this.isCollapse = true;
+        this.isshowlogo = false
+      } else {
+        this.isopened = true;
+        this.isCollapse = false;
+        this.isshowlogo = true
+      }
+    },
     // currentSelect(index) {
     //   let currentIndex = parseInt(index);
     //   this.selectAsides = this.asideNavList[currentIndex];
@@ -265,7 +293,20 @@ export default {
 }
 
 .aside-wrap {
+  width: auto !important;
   background: #2d373f;
+  overflow: hidden;
+
+  /deep/.el-menu {
+    border: none;
+
+    .el-menu-item {
+      i {
+        // color: #fff;
+      }
+    }
+  }
+
   .aside {
     background: #2d373f;
   }
@@ -326,10 +367,32 @@ export default {
     align-items: center;
     justify-content: center;
 
-    img {
+    .biglogol {
       width: 160px;
       height: 50px;
     }
+
+    .smalllogol {
+      width: 40px;
+      height: 40px;
+    }
+  }
+}
+
+.footer {
+  background-color: #fff;
+}
+
+.display-wrap {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  cursor: pointer;
+
+  i {
+    font-size: 20px;
+    color: #fff;
   }
 }
 </style>

@@ -112,7 +112,7 @@
                 </div>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
+            <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true" v-has-power="{limitList: [1, 4, 6], role_id: $store.state.userInfo.role_id}">
               <template slot-scope="scope">
                 <p v-if="scope.row.state == 0">审核中</p>
                 <p v-if="scope.row.state == 1">待进行</p>
@@ -141,6 +141,7 @@
                     circle
                     style="margin: 0 10px"
                     @click="distributeBtn(scope.row.id)"
+                    v-has-power="{limitList: [1, 4], role_id: $store.state.userInfo.role_id}"
                   ></el-button>
                 </el-tooltip>
               </template>

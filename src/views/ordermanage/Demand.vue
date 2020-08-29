@@ -4,18 +4,25 @@
       <el-col :span="24">
         <!-- 搜索框 -->
         <customer-search @searchBtn="searchBtn"></customer-search>
-
         <!-- 客户表单 -->
         <el-card class="table-content" :style="{height: screenHeight}">
           <!-- 公共操作 -->
           <el-row>
             <el-col :span="22">
-              <el-button type="primary" icon="el-icon-plus" size="mini" @click="addCustomerBtn">新增需求</el-button>
-              <el-button type="danger" icon="el-icon-delete" @click="selectDeleteBtn" size="mini">取消</el-button>
+              <el-button type="primary" icon="el-icon-plus" size="mini" @click="addCustomerBtn" 
+              v-has-power="{limitList: [1, 2, 4, 5], role_id: $store.state.userInfo.role_id}">新增需求</el-button>
+              <el-button
+                v-has-power="{limitList: [1, 4], role_id: $store.state.userInfo.role_id}"
+                type="danger"
+                icon="el-icon-delete"
+                @click="selectDeleteBtn"
+                size="mini"
+              >取消</el-button>
             </el-col>
             <el-col :span="2">
               <el-tooltip class="item" effect="dark" content="增删改查" placement="top">
                 <el-button
+                  v-has-power="{limitList: [1, 4], role_id: $store.state.userInfo.role_id}"
                   icon="el-icon-takeaway-box"
                   size="mini"
                   @click="sourceListBtn"
@@ -44,7 +51,7 @@
               width="35"
             ></el-table-column>
 
-            <el-table-column align="center" prop="name" label="姓名" width="100"></el-table-column>
+            <el-table-column align="center" prop="name" label="姓名" width="80"></el-table-column>
             <el-table-column align="center" prop="family_hometown" label="家庭成员籍贯" min-width="110"></el-table-column>
             <el-table-column
               class="identify"
@@ -52,7 +59,6 @@
               prop="service_type"
               label="服务类型"
               :show-overflow-tooltip="true"
-              width="100"
             >
               <template slot-scope="scope">
                 <div v-for="item in service_types" :key="item.id">
@@ -66,15 +72,16 @@
               :show-overflow-tooltip="true"
               label="需要服务"
             ></el-table-column>
-            <el-table-column width="180" align="center" label="家庭成员">
+            <el-table-column align="center" label="家庭成员" :show-overflow-tooltip="true">
               <template
                 slot-scope="scope"
               >{{scope.row.family_people.children}}小孩，{{scope.row.family_people.adlut}}成人，{{scope.row.family_people.old}}老人</template>
             </el-table-column>
-            <el-table-column align="center" prop="mobile" width="150px" label="手机号">
+            <el-table-column align="center" prop="mobile" label="手机号">
               <template slot-scope="scope">
-                <i class="el-icon-phone" style="color: red"></i>
-                {{scope.row.mobile}}
+                <el-tooltip class="item" effect="dark" :content="scope.row.mobile" placement="top">
+                  <i class="el-icon-phone" style="color: red; font-size: 20px"></i>
+                </el-tooltip>
               </template>
             </el-table-column>
             <el-table-column
@@ -173,6 +180,7 @@
                   icon="el-icon-edit"
                   @click="customerEditBtn(scope.row.name, scope.row.id)"
                   circle
+                  v-has-power="{limitList: [1, 2, 4, 5], role_id: $store.state.userInfo.role_id}"
                 ></el-button>
                 <el-popconfirm
                   confirmButtonText="好的"
@@ -183,6 +191,7 @@
                   @onConfirm="DeleteFormBtn(scope.row.id)"
                 >
                   <el-button
+                    v-has-power="{limitList: [1, 4], role_id: $store.state.userInfo.role_id}"
                     type="danger"
                     icon="el-icon-delete"
                     size="mini"
@@ -574,7 +583,7 @@ export default {
   name: "Demand",
   data() {
     return {
-       // 来源增删改查
+      // 来源增删改查
       sourceDialogVisible: false,
       sourceListData: [],
 

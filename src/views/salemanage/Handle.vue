@@ -31,14 +31,7 @@
             <el-table-column align="center" prop="status" label="是否解决" width="100">
               <template slot-scope="scope">
                 <div v-if="scope.row.status">
-                  <el-tooltip
-                    class="item"
-                    effect="dark"
-                    :content="scope.row.evaluation"
-                    placement="top"
-                  >
-                    <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
-                  </el-tooltip>
+                  <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
                 </div>
                 <div v-else>
                   <i style="color:#F56C6C; font-size: 28px" class="el-icon-circle-close"></i>
@@ -68,8 +61,19 @@
             </el-table-column>
             <el-table-column label="操作" align="center" min-width="150px">
               <template slot-scope="scope">
-                <el-button @click="rateBtn(scope.row.id)" type="success" size="mini">评价</el-button>
-                <el-button @click="handleRsultBtn(scope.row.id)" type="primary" size="mini">处理</el-button>
+                <el-button
+                  @click="rateBtn(scope.row.id)"
+                  type="success"
+                  size="mini"
+                  v-has-power="{limitList: [1, 4], role_id: $store.state.userInfo.role_id}"
+                >评价</el-button>
+                <el-button
+                  v-has-power="{limitList: [8,], role_id: $store.state.userInfo.role_id}"
+                  @click="handleRsultBtn(scope.row.id)"
+                  type="primary"
+                  size="mini"
+                  v-if="!scope.row.result"
+                >处理</el-button>
               </template>
             </el-table-column>
           </el-table>
@@ -200,10 +204,10 @@ export default {
     saveHandleResultBtn() {
       this.$refs.handleResultForm.validate((valid) => {
         if (valid) {
-          console.log(this.handleResultForm)
+          console.log(this.handleResultForm);
           handleResult(this.handleResultForm).then((res) => {
             let { code, msg } = res;
-            console.log(res)
+            console.log(res);
             if (code === 200) {
               this.$message.success(msg);
               this.resultDialogVisible = false;

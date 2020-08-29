@@ -10,7 +10,7 @@
           <!-- 公共操作 -->
           <el-row>
             <el-col :span="24">
-              <el-button type="primary" icon="el-icon-plus" size="mini" @click="addFeedbackBtn">新增投诉</el-button>
+              <el-button type="primary" icon="el-icon-plus" size="mini" @click="addFeedbackBtn" v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}">新增投诉</el-button>
             </el-col>
           </el-row>
           <!-- 表单 -->
@@ -63,7 +63,7 @@
                   title="你确定要删除该投诉吗？"
                   @onConfirm="deleteSuccess(scope.row.id)"
                 >
-                  <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete"></el-button>
+                  <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete" v-has-power="{limitList: [1, 4], role_id: $store.state.userInfo.role_id}"></el-button>
                 </el-popconfirm>
               </template>
             </el-table-column>

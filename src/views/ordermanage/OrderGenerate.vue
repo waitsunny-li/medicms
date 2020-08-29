@@ -115,6 +115,7 @@
                             circle
                             @click="editInterview(scope.row.id)"
                             style="margin-right: 5px"
+                            v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
                           ></el-button>
                           <el-popconfirm
                             confirmButtonText="确定"
@@ -130,6 +131,7 @@
                               icon="el-icon-delete"
                               size="mini"
                               circle
+                              v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
                             ></el-button>
                           </el-popconfirm>
                         </template>
@@ -143,12 +145,17 @@
                             type="primary"
                             size="mini"
                             @click="addInterviewBtn(scope.row.id)"
+                            v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
                           >添加面试</el-button>
                         </el-col>
                       </el-row>
                     </div>
                   </el-tab-pane>
-                  <el-tab-pane label="跟进记录" name="third">
+                  <el-tab-pane
+                    v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
+                    label="跟进记录"
+                    name="third"
+                  >
                     <!-- 表单 -->
                     <el-table
                       :data="followUpFormData"
@@ -354,13 +361,16 @@
             </el-table-column>
             <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                <p v-if="scope.row.state == 0">审核中</p>
-                <p v-if="scope.row.state == 1">待进行</p>
-                <p v-if="scope.row.state == 2">跟进中</p>
-                <p v-if="scope.row.state == 3">已完成</p>
-                <p v-if="scope.row.state == 4">已取消</p>
-                <p v-if="scope.row.state == 5">暂停中</p>
-                <p v-if="scope.row.state == 6">重新恢复</p>
+                <div v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}">
+                  <p v-if="scope.row.state == 0">审核中</p>
+                  <p v-if="scope.row.state == 1">待进行</p>
+                  <p v-if="scope.row.state == 2">跟进中</p>
+                  <p v-if="scope.row.state == 3">已完成</p>
+                  <p v-if="scope.row.state == 4">已取消</p>
+                  <p v-if="scope.row.state == 5">暂停中</p>
+                  <p v-if="scope.row.state == 6">重新恢复</p>
+                </div>
+                <span v-if="![1, 4, 5].includes($store.state.userInfo.role_id)">无权限查看</span>
               </template>
             </el-table-column>
             <el-table-column
@@ -402,7 +412,7 @@
                 <span
                   v-if="scope.row.staff_id != 0"
                 >
-                  <el-button type="text" size="mini" @click="buyInsuranceBtn(scope.row.id)">购买保险</el-button>
+                  <el-button type="text" size="mini" @click="buyInsuranceBtn(scope.row.id)" v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}">购买保险</el-button>
                 </span>
                 <span v-else></span>
               </template>
@@ -430,6 +440,7 @@
                         class="el-icon-user"
                         circle
                         style="margin-left: 5px"
+                        v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
                       ></el-button>
                     </el-tooltip>
 
@@ -447,10 +458,11 @@
                         class="el-icon-edit"
                         circle
                         style="margin-right: 5px"
+                        v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
                       ></el-button>
                     </el-tooltip>
 
-                    <span v-if="$store.state.userInfo.role_id == 1 || 4">
+                    <span v-has-power="{limitList: [1, 4], role_id: $store.state.userInfo.role_id}">
                       <el-tooltip
                         class="item"
                         effect="dark"
@@ -586,7 +598,7 @@
                         ></el-button>
                       </el-tooltip>
                     </span>
-                    <span v-else></span>
+                    <!-- <span v-else></span> -->
                   </div>
                   <el-button
                     slot="reference"
@@ -633,6 +645,7 @@
               @click="editInsuranceBtn(scope.row.id)"
               circle
               style="margin-right: 10px"
+              v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
             ></el-button>
             <el-popconfirm
               confirmButtonText="好的"
@@ -641,6 +654,7 @@
               iconColor="red"
               title="您确定要删除该保险吗？"
               @onConfirm="deleteInsuranceBtn(scope.row.id, scope.row.staff_id)"
+              v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
             >
               <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete" circle></el-button>
             </el-popconfirm>

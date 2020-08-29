@@ -11,18 +11,20 @@
             <!-- 公共操作 -->
             <el-row>
               <el-col :span="22">
-                <el-button type="primary" icon="el-icon-plus" size="mini" @click="addStaffBtn">新增</el-button>
+                <el-button type="primary" icon="el-icon-plus" size="mini" @click="addStaffBtn" v-has-power="{limitList: [1, 4, 5, 16], role_id: $store.state.userInfo.role_id}">新增</el-button>
                 <el-button
                   type="danger"
                   icon="el-icon-delete"
                   @click="selectDeleteBtn"
                   size="mini"
+                  v-has-power="{limitList: [1,], role_id: $store.state.userInfo.role_id}"
                 >删除</el-button>
                 <el-button
                   type="warning"
                   icon="el-icon-printer"
                   @click="createResumeBtn"
                   size="mini"
+                  v-has-power="{limitList: [1, 4, 5, 16], role_id: $store.state.userInfo.role_id}"
                 >生成简历</el-button>
               </el-col>
 
@@ -412,6 +414,7 @@
                     icon="el-icon-edit"
                     @click="editStaffBtn(scope.row.id, scope.row.name)"
                     circle
+                    v-has-power="{limitList: [1, 4, 5, 16], role_id: $store.state.userInfo.role_id}"
                   ></el-button>
                   <el-popconfirm
                     confirmButtonText="好的"
@@ -428,6 +431,7 @@
                       circle
                       slot="reference"
                       style="margin: 0 10px"
+                      v-has-power="{limitList: [1,], role_id: $store.state.userInfo.role_id}"
                     ></el-button>
                   </el-popconfirm>
 
@@ -445,6 +449,7 @@
                       size="mini"
                       icon="el-icon-picture-outline"
                       circle
+                      v-has-power="{limitList: [1, 4, 5, 16], role_id: $store.state.userInfo.role_id}"
                     ></el-button>
                   </el-tooltip>
                   <el-popover
@@ -476,6 +481,7 @@
                       slot="reference"
                       size="mini"
                       circle
+                      v-has-power="{limitList: [1, 4, 5, 16], role_id: $store.state.userInfo.role_id}"
                     ></el-button>
                   </el-popover>
                 </template>

@@ -12,13 +12,13 @@
             <el-row>
               <el-col :span="22">
                 <el-button type="primary" icon="el-icon-plus" size="mini" @click="addStaffBtn" v-has-power="{limitList: [1, 4, 5, 16], role_id: $store.state.userInfo.role_id}">新增</el-button>
-                <el-button
+                <!-- <el-button
                   type="danger"
                   icon="el-icon-delete"
                   @click="selectDeleteBtn"
                   size="mini"
                   v-has-power="{limitList: [1,], role_id: $store.state.userInfo.role_id}"
-                >删除</el-button>
+                >删除</el-button> -->
                 <el-button
                   type="warning"
                   icon="el-icon-printer"
@@ -120,11 +120,11 @@
                         </el-col>
                         <el-col :span="5">
                           <span class="label-text">服务技能</span>
-                          <span class="content-text">{{scope.row.service_skills}}</span>
+                          <span class="content-text">{{scope.row.service_skills.join('，')}}</span>
                         </el-col>
                         <el-col :span="5">
                           <span class="label-text">家用电器</span>
-                          <span class="content-text">{{scope.row.device}}</span>
+                          <span class="content-text">{{scope.row.device.join('，')}}</span>
                         </el-col>
                         <el-col :span="5">
                           <span class="label-text">入职来源</span>
@@ -183,7 +183,7 @@
                         </el-col>
                         <el-col :span="5">
                           <span class="label-text">语言能力</span>
-                          <span class="content-text">{{scope.row.language}}</span>
+                          <span class="content-text">{{scope.row.language.join('，')}}</span>
                         </el-col>
                       </el-row>
 
@@ -416,7 +416,7 @@
                     circle
                     v-has-power="{limitList: [1, 4, 5, 16], role_id: $store.state.userInfo.role_id}"
                   ></el-button>
-                  <el-popconfirm
+                  <!-- <el-popconfirm
                     confirmButtonText="好的"
                     cancelButtonText="不用了"
                     icon="el-icon-info"
@@ -433,7 +433,7 @@
                       style="margin: 0 10px"
                       v-has-power="{limitList: [1,], role_id: $store.state.userInfo.role_id}"
                     ></el-button>
-                  </el-popconfirm>
+                  </el-popconfirm> -->
 
                   <!-- 图片提示 -->
                   <el-tooltip

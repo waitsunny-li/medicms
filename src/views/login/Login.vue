@@ -37,7 +37,7 @@
           <div class="remember-wrap">
             <div class="remember">
               <!-- <el-checkbox v-model="loginForm.remember" class="remember-text">记住密码</el-checkbox>
-              <div class="forget">忘记密码?</div> -->
+              <div class="forget">忘记密码?</div>-->
             </div>
           </div>
 
@@ -94,21 +94,29 @@ export default {
           .then((res) => {
             if (res.code === 200) {
               console.log(res);
-              // 本地存储用户的基本信息
-              this.$store.commit("saveUserInfo", {
-                userToken: res.data.Authorization,
-                username: res.data.username,
-                last_login_time: res.data.last_login_time,
-                ip: res.data.ip,
-                role_id: res.data.role_id,
-              });
-              // 存储菜单
-              let navlist = this.navListData(res.data.role_id)
-              let asidelist = this.asideNavListData(res.data.role_id)
-              this.$store.commit("changeNavList", navlist)
-              this.$store.commit("changeAsideNavList", asidelist)
-              this.$message.success(res.msg);
-              this.$router.replace("/welcome");
+              if (
+                window.localStorage.getItem("username") === res.data.username
+              ) {
+                this.$message.error("你已经登陆过了！");
+              } else {
+                // 本地存储
+                window.localStorage.setItem("username", res.data.username);
+                // 本窗口存储用户的基本信息
+                this.$store.commit("saveUserInfo", {
+                  userToken: res.data.Authorization,
+                  username: res.data.username,
+                  last_login_time: res.data.last_login_time,
+                  ip: res.data.ip,
+                  role_id: res.data.role_id,
+                });
+                // 存储菜单
+                let navlist = this.navListData(res.data.role_id);
+                let asidelist = this.asideNavListData(res.data.role_id);
+                this.$store.commit("changeNavList", navlist);
+                this.$store.commit("changeAsideNavList", asidelist);
+                this.$message.success(res.msg);
+                this.$router.replace("/welcome");
+              }
             } else {
               this.$message.error(res.msg);
             }
@@ -177,21 +185,6 @@ export default {
               navname: "客户查询",
               path: "/home/customquery",
               icon: "el-icon-s-custom",
-            },
-            {
-              navname: "员工查询",
-              path: "/home/staffquery",
-              icon: "el-icon-s-check",
-            },
-            {
-              navname: "订单查询",
-              path: "/home/orderquery",
-              icon: "el-icon-tickets",
-            },
-            {
-              navname: "投诉查询",
-              path: "/home/complaintquery",
-              icon: "el-icon-notebook-2",
             },
           ],
         ];

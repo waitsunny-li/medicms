@@ -43,6 +43,8 @@
           </div>
           <!-- 右侧 -->
           <div class="right-wrap">
+
+            <div class="username">用户名：{{$store.state.userInfo.username}}</div>
             <div class="login-time">
               <span>当前时间：{{currentDate}}</span>
             </div>
@@ -275,6 +277,7 @@ export default {
     logoutBtn() {
       // token为空
       window.sessionStorage.clear();
+      window.localStorage.removeItem("username")
       this.$router.replace("/login");
       this.$message.success("退出成功！");
     },
@@ -321,12 +324,20 @@ export default {
   justify-content: space-between;
 
   .right-wrap {
-    width: 420px;
+    width: 505px;
     display: flex;
     justify-content: space-between;
 
+    .username {
+      width: 120px;
+      height: 40px;
+      line-height: 40px;
+      margin-right: 20px;
+      color: #fff;
+    }
+
     .login-time {
-      width: 350px;
+      width: 250px;
       height: 40px;
       margin-right: 20px;
       span {
@@ -343,7 +354,7 @@ export default {
     .home-wrap {
       display: flex;
       justify-content: space-around;
-      width: 180px;
+      width: 135px;
       .home {
         color: #fff;
       }

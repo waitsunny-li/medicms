@@ -75,7 +75,7 @@
                             @click="staffInfoBtn(scope.row.staff)"
                             type="text"
                             size="mini"
-                          >{{scope.row.staff.name}}</el-button>
+                          >{{scope.row.staff ? scope.row.staff.name : seatData}}</el-button>
                         </template>
                       </el-table-column>
                       <el-table-column align="center" label="电话" prop="staff.mobile"></el-table-column>
@@ -168,7 +168,7 @@
                       <el-table-column align="center" label="服务人员" width="180">
                         <template slot-scope="scope">
                           <i class="el-icon-user-solid"></i>
-                          {{scope.row.staff.name}}
+                          {{scope.row.staff ? scope.row.staff.name : seatData}}
                         </template>
                       </el-table-column>
                       <el-table-column prop="total_time" align="center" label="时长" width="180">
@@ -236,7 +236,11 @@
                               <el-tag type="danger" effect="dark">暂无服务人员</el-tag>
                             </div>
                             <div v-else>
-                              <el-input size="mini" disabled v-model="scope.row.staff.name"></el-input>
+                              <!-- <el-input size="mini" disabled v-model="scope.row.staff"></el-input> -->
+                              <el-tag
+                                type="info"
+                                effect="dark"
+                              >{{scope.row.staff?scope.row.staff.name:'已被删除的用户'}}</el-tag>
                             </div>
                           </el-form-item>
                         </el-col>
@@ -275,7 +279,9 @@
                       </el-col>
                     </el-row>
                   </el-tab-pane>
-                  <el-tab-pane label="保险" name="four"></el-tab-pane>
+                  <!-- <el-tab-pane label="保险" name="four">
+
+                  </el-tab-pane>-->
                 </el-tabs>
               </template>
             </el-table-column>
@@ -412,7 +418,12 @@
                 <span
                   v-if="scope.row.staff_id != 0"
                 >
-                  <el-button type="text" size="mini" @click="buyInsuranceBtn(scope.row.id)" v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}">购买保险</el-button>
+                  <el-button
+                    type="text"
+                    size="mini"
+                    @click="buyInsuranceBtn(scope.row.id)"
+                    v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
+                  >购买保险</el-button>
                 </span>
                 <span v-else></span>
               </template>
@@ -721,7 +732,7 @@
     <el-dialog
       title="编辑服务员工"
       :visible.sync="addFirstDialogVisible"
-      width="400px"
+      width="500px"
       @close="addFirstDialogClose"
       center
     >
@@ -730,7 +741,11 @@
         <el-form ref="orderSuccessForm" :model="orderSuccessForm">
           <el-row>
             <el-form-item label-width="80px" label="姓名" prop="name">
-              <el-select v-model="orderSuccessForm.staff_id" placeholder="请选择面试人员姓名">
+              <el-select
+                v-if="orderInterviewer.length != 0"
+                v-model="orderSuccessForm.staff_id"
+                placeholder="请选择面试人员姓名"
+              >
                 <el-option
                   v-for="item in orderInterviewer"
                   :key="item.id"
@@ -738,13 +753,27 @@
                   :value="item.staff_id"
                 ></el-option>
               </el-select>
+
+              <el-select
+                v-else
+                v-model="orderSuccessForm.staff_id"
+                placeholder="请选择面试人员姓名"
+                disabled
+              >
+                <el-option label="没有面试人员" :value="0"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-row>
+          <el-row>
+            <el-form-item label="更换原因" label-width="80px" prop="content">
+              <el-input type="textarea" v-model="orderSuccessForm.content"></el-input>
             </el-form-item>
           </el-row>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="addFirstDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="saveFirstStaff">保 存</el-button>
+        <el-button size="mini" @click="addFirstDialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="saveFirstStaff">保 存</el-button>
       </span>
     </el-dialog>
 
@@ -1121,6 +1150,7 @@ export default {
       orderSuccessForm: {
         staff_id: "",
         customer_id: "",
+        content: "",
       },
       // 订单完成规则
       orderSuccessRules: {
@@ -1301,6 +1331,7 @@ export default {
             if (code === 200) {
               this.$message.success(msg);
               this.buyInsurDialogVisible = false;
+              this.getSearchInfoData(this.searchForm);
             } else {
               this.$message.error(msg);
             }
@@ -1560,7 +1591,9 @@ export default {
         if (code === 200) {
           if (data) {
             this.orderInterviewer = data;
+            console.log(data)
           } else {
+            this.orderInterviewer = [];
             this.$message.error("无面试人员！请添加！");
           }
         } else {
@@ -1574,6 +1607,7 @@ export default {
       this.$refs.orderSuccessForm.resetFields();
       this.orderSuccessForm.staff_id = "";
       this.orderSuccessForm.customer_id = "";
+      this.orderSuccessForm.content = ""
     },
 
     // 保存首位服务人员
@@ -1608,6 +1642,7 @@ export default {
         console.log(res);
         if (code === 200) {
           this.interviewFormData = data;
+          console.log("面试记录", data);
           this.interviewLoading = false;
         } else {
           this.$message.error(msg);
@@ -1621,7 +1656,7 @@ export default {
       getFollowUpInfo({ customer_id: id }).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(res);
+          console.log("跟进记录", data);
           this.followUpFormData = data;
           this.followupLoading = false;
         } else {

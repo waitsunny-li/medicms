@@ -81,7 +81,7 @@
               <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" :content="scope.row.mobile" placement="top">
                   <i class="el-icon-phone" style="color: red; font-size: 20px"></i>
-                </el-tooltip>
+                </el-tooltip> 
               </template>
             </el-table-column>
             <el-table-column
@@ -705,7 +705,7 @@ export default {
       formRules: {
         name: [
           { required: true, message: "请输入客户姓名", trigger: "blur" },
-          { min: 2, max: 3, message: "长度在 2 到 3 个字符", trigger: "blur" },
+          { min: 2, max: 4, message: "长度在 2 到 4 个字符", trigger: "blur" },
         ],
         family_hometown: [
           { required: true, message: "请输入客户籍贯", trigger: "blur" },

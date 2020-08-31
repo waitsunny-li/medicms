@@ -22,10 +22,11 @@
             >{{item.navname}}</span>
           </div>
         </el-col>
-        <el-col :span="6" :offset="5">
-          <el-col :span="20">
+        <el-col :span="8" :offset="4">
+          <el-col :span="18">
             <!-- 时间-ip -->
             <div class="time-ip-wrap">
+              <div class="username">{{$store.state.userInfo.username}}</div>
               <div class="time">当前时间：{{currentDate}}</div>
               <div class="ip">IP：{{$store.state.userInfo.ip}}</div>
             </div>
@@ -96,7 +97,7 @@ export default {
         complaint: "",
         user: "",
       },
-      currentDate:"",
+      currentDate: "",
     };
   },
   computed: {
@@ -108,21 +109,20 @@ export default {
     request({
       url: "/index",
       method: "get",
-    }).then(res => {
-      let {code, data, msg} = res
-      if(code === 200) {
-        this.companyData = data
-        this.$message.success(msg)
-      }else {
-        this.$message.error(msg)
+    }).then((res) => {
+      let { code, data, msg } = res;
+      if (code === 200) {
+        this.companyData = data;
+      } else {
+        this.$message.error(msg);
       }
-    })
+    });
   },
   mounted() {
-    let _this = this; 
+    let _this = this;
     this.timer = setInterval(() => {
       _this.currentDate = new Date().toLocaleString(); // 修改数据date
-    }, 1000)
+    }, 1000);
   },
   beforeDestroy() {
     if (this.timer) {
@@ -134,6 +134,7 @@ export default {
     logoutBtn() {
       // token为空
       window.sessionStorage.clear();
+      window.localStorage.removeItem("username");
       this.$router.replace("/login");
       this.$message.success("退出成功！");
     },
@@ -214,6 +215,14 @@ export default {
       color: #fff;
       display: flex;
       align-content: center;
+
+      .username {
+        height: 60px;
+        line-height: 60px;
+        color: #fff;
+        font-size: 14px;
+        margin-right: 10px;
+      }
 
       .time {
         height: 60px;

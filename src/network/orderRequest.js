@@ -102,13 +102,23 @@ export function saveInsuranceInfo(data) {
     data: data
   })
 }
-// 查看保险列表
+// 查看员工保险列表
 export function lookStaffInsurance(staff_id) {
   return request({
     url: "/safety/index",
     method: "get",
     params: {
       staff_id: staff_id
+    }
+  })
+}
+// 查看订单上所有保险
+export function lookOrderInsurance(oarder_id) {
+  return request({
+    url: "/safety/index",
+    method: "get",
+    params: {
+      customer_id: oarder_id
     }
   })
 }
@@ -246,7 +256,7 @@ export function saveEditContract(data) {
 // 通过pass
 export function spassOrder(customer_id) {
   return request({
-    url: "/contract/pass",
+    url: "/customer/pass",
     method: "post",
     data: {
       customer_id: customer_id
@@ -322,6 +332,17 @@ export function dispatchOrder(customer_id) {
     method: "get",
     params: {
       customer_id: customer_id
+    }
+  })
+}
+
+// 查看换人记录
+export function lookChageStaffInfo(order_id) {
+  return request({
+    url: "/change_record/index",
+    method: "get",
+    params: {
+      customer_id: order_id
     }
   })
 }

@@ -136,7 +136,7 @@
               </template>
             </el-table-column>
             <!-- 操作 -->
-            <el-table-column fixed="right" label="操作" align="center" width="140px">
+            <el-table-column fixed="right" label="操作" align="center" width="170px">
               <template slot-scope="scope">
                 <el-tooltip
                   class="item"
@@ -166,6 +166,38 @@
                     size="mini"
                     icon="el-icon-date"
                     type="primary"
+                  ></el-button>
+                </el-tooltip>
+
+                <el-tooltip
+                  class="item"
+                  :enterable="false"
+                  effect="dark"
+                  content="查看保险"
+                  placement="top"
+                >
+                  <el-button
+                    @click="lookInsurance(scope.row.id)"
+                    circle
+                    size="mini"
+                    icon="el-icon-document"
+                    type="success"
+                  ></el-button>
+                </el-tooltip>
+
+                <el-tooltip
+                  class="item"
+                  :enterable="false"
+                  effect="dark"
+                  content="查看换人记录"
+                  placement="top"
+                >
+                  <el-button
+                    @click="lookChangeStaff(scope.row.id, scope.row.name)"
+                    circle
+                    size="mini"
+                    icon="el-icon-tickets"
+                    type="warning"
                   ></el-button>
                 </el-tooltip>
               </template>
@@ -274,6 +306,51 @@
     >
       <order-info :orderInfo="orderInfo" :orderInfoLoading="orderInfoLoading"></order-info>
     </el-dialog>
+
+    <!-- 查看当前保险 -->
+    <el-dialog title="该订单全部保险记录" :visible.sync="lookInsuranceDialogVisible" width="600px" center>
+      <el-table :data="insuracneFormData" height="350px" style="width: 100%">
+        <el-table-column align="center" prop="safety_no" label="保险单号"></el-table-column>
+        <el-table-column width="180" align="center" prop="time" label="起止时间">
+          <template slot-scope="scope">{{scope.row.time.join(' ~ ')}}</template>
+        </el-table-column>
+        <el-table-column align="center" prop="content" label="保险内容"></el-table-column>
+      </el-table>
+    </el-dialog>
+
+    <!-- 查看换人记录 -->
+    <el-dialog :title="changeTitle" :visible.sync="lookChangeDialogVisible" width="600px" center>
+      <el-table :data="changeStaffData" height="350px" style="width: 100%">
+        <el-table-column align="center" prop="create_time" label="时间" width="160"></el-table-column>
+        <el-table-column align="center" prop="staff.id" label="员工编号"></el-table-column>
+        <el-table-column align="center" label="姓名">
+          <template slot-scope="scope">{{scope.row.staff?scope.row.staff.name: '无'}}</template>
+        </el-table-column>
+        <el-table-column align="center" label="员工状态">
+          <template slot-scope="scope">
+            <!-- {{scope.row.staff}} -->
+            <div v-if="scope.row.staff">
+              <span class="content-text" v-if="scope.row.staff.person_state == 1">培训</span>
+              <span class="content-text" v-else-if="scope.row.staff.person_state == 2">考核</span>
+              <span class="content-text" v-else-if="scope.row.staff.person_state == 3">待岗</span>
+              <span class="content-text" v-else-if="scope.row.staff.person_state == 4">离职</span>
+              <span class="content-text" v-else-if="scope.row.staff.person_state == 5">黑名单</span>
+              <span class="content-text" v-else-if="scope.row.staff.person_state == 6">在岗</span>
+              <span class="content-text" v-else-if="scope.row.staff.person_state == 7">离职(下单)</span>
+            </div>
+            <div v-else>
+              
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column align="center" prop="content" label="换人原因">
+          <template slot-scope="scope">
+            <div v-if="scope.row.content == ''">首位服务人员</div>
+            <div v-else>{{scope.row.content}}</div>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -287,12 +364,22 @@ import {
   getOneCustomerInfo,
   searchCustomerInfo,
   getFollowUpInfo,
+  lookOrderInsurance,
+  lookChageStaffInfo,
 } from "network/orderRequest";
 import { getAllSource, getJob } from "network/select";
 export default {
   name: "OrderQuery",
   data() {
     return {
+      // 换人记录
+      changeTitle: "",
+      changeStaffData: [],
+      lookChangeDialogVisible: false,
+      // 保险
+      insuracneFormData: [],
+      lookInsuranceDialogVisible: false,
+
       searchForm: {},
       customers: [],
       // 当前页数
@@ -364,6 +451,36 @@ export default {
     });
   },
   methods: {
+    // 查看换人记录
+    lookChangeStaff(order_id, name) {
+      this.changeTitle = `${name}的换人记录`;
+      lookChageStaffInfo(order_id).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          console.log(data);
+          this.changeStaffData = data.data;
+          this.lookChangeDialogVisible = true;
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+    // 查看订单保险列表
+    getOrderInsurance(order_id) {
+      lookOrderInsurance(order_id).then((res) => {
+        let { code, data, msg } = res;
+        if (code === 200) {
+          this.insuracneFormData = data;
+          this.lookInsuranceDialogVisible = true;
+        } else {
+          this.$message.error(msg);
+        }
+      });
+    },
+    // 查看保险
+    lookInsurance(order_id) {
+      this.getOrderInsurance(order_id);
+    },
     // 定义搜索获取信息
     getSearchInfoData(options) {
       searchCustomerInfo(options).then((res) => {

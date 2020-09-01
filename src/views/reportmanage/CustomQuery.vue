@@ -90,10 +90,11 @@
                 slot-scope="scope"
               >{{scope.row.family_people.children}}小孩，{{scope.row.family_people.adlut}}成人，{{scope.row.family_people.old}}老人</template>
             </el-table-column>
-            <el-table-column align="center" prop="mobile" width="150px" label="手机号">
+            <el-table-column align="center" prop="mobile" width="100px" label="手机号">
               <template slot-scope="scope">
-                <i class="el-icon-phone" style="color: red"></i>
-                {{scope.row.mobile}}
+                <el-tooltip class="item" effect="dark" :content="scope.row.mobile" placement="top">
+                  <i class="el-icon-phone" style="color: red; font-size: 20px"></i>
+                </el-tooltip> 
               </template>
             </el-table-column>
             <el-table-column

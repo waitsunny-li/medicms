@@ -23,6 +23,12 @@
                 <span v-else-if="scope.row.sex == 2">女</span>
               </template>
             </el-table-column>
+            <el-table-column align="center" prop="mobile" width="160px" label="手机号">
+                <template slot-scope="scope">
+                  <i class="el-icon-phone" style="color: red"></i>
+                  {{scope.row.mobile}}
+                </template>
+              </el-table-column>
             <el-table-column
               class="identify"
               align="center"

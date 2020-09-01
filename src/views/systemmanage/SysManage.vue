@@ -37,7 +37,7 @@
         <el-row>
           <el-col :span="24">
             <el-button type="primary" icon="el-icon-user" @click="addBtn" size="mini">新增用户</el-button>
-            <el-button type="primary" icon="el-icon-s-check" @click="addRoleBtn" size="mini">新增角色</el-button>
+            <!-- <el-button type="primary" icon="el-icon-s-check" @click="addRoleBtn" size="mini">新增角色</el-button> -->
           </el-col>
         </el-row>
 
@@ -125,7 +125,7 @@
               <!-- 操作 -->
               <el-table-column label="操作" align="center" width="140px">
                 <template slot-scope="scope">
-                  <el-tooltip
+                  <!-- <el-tooltip
                     class="item"
                     effect="dark"
                     content="权限"
@@ -139,7 +139,7 @@
                       @click="showPowerBtn(scope.row.id)"
                       circle
                     ></el-button>
-                  </el-tooltip>
+                  </el-tooltip> -->
                   <el-button
                     size="mini"
                     type="primary"

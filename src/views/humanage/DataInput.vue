@@ -11,14 +11,20 @@
             <!-- 公共操作 -->
             <el-row>
               <el-col :span="22">
-                <el-button type="primary" icon="el-icon-plus" size="mini" @click="addStaffBtn" v-has-power="{limitList: [1, 4, 5, 16], role_id: $store.state.userInfo.role_id}">新增</el-button>
+                <el-button
+                  type="primary"
+                  icon="el-icon-plus"
+                  size="mini"
+                  @click="addStaffBtn"
+                  v-has-power="{limitList: [1, 4, 5, 16], role_id: $store.state.userInfo.role_id}"
+                >新增</el-button>
                 <!-- <el-button
                   type="danger"
                   icon="el-icon-delete"
                   @click="selectDeleteBtn"
                   size="mini"
                   v-has-power="{limitList: [1,], role_id: $store.state.userInfo.role_id}"
-                >删除</el-button> -->
+                >删除</el-button>-->
                 <el-button
                   type="warning"
                   icon="el-icon-printer"
@@ -202,6 +208,10 @@
                           <span class="label-text">安置协议</span>
                           <span class="content-text">{{scope.row.agreement_amount}}</span>
                         </el-col>
+                        <el-col :span="7">
+                          <span class="label-text">自我评价</span>
+                          <span class="content-text">{{scope.row.self_evaluation}}</span>
+                        </el-col>
                       </el-row>
 
                       <el-row class="expand-row">
@@ -235,11 +245,24 @@
                       <el-row class="expand-row">
                         <el-col :span="12" style="display: flex">
                           <span class="label-text">培训经历</span>
+                          <div
+                            class="content-text"
+                            v-for="(item, index) in scope.row.train"
+                            :key="index"
+                          >
+                            <el-col :span="24">{{item.project}}</el-col>
+                            <el-col :span="24">{{item.time}}</el-col>
+                            <el-col :span="24">{{item.address}}</el-col>
+                            <el-col :span="24">{{item.content}}</el-col>
+                          </div>
+                        </el-col>
+                        <el-col :span="12" style="display: flex">
+                          <span class="label-text">考核评价</span>
                           <div class="content-text">
                             <el-col :span="24">月嫂</el-col>
                             <el-col :span="24">2017年至2019年</el-col>
                             <el-col :span="24">本公司</el-col>
-                            <el-col :span="24">照顾小孩、老年人、宠物</el-col>
+                            <el-col :span="24">完美</el-col>
                           </div>
                         </el-col>
                       </el-row>
@@ -281,7 +304,22 @@
                         ></el-table-column>
                         <el-table-column label="操作" align="center">
                           <template slot-scope="scope">
-                            <el-button type="danger" icon="el-icon-delete" size="mini" circle></el-button>
+                            <el-popconfirm
+                              confirmButtonText="好的"
+                              cancelButtonText="不用了"
+                              icon="el-icon-info"
+                              iconColor="red"
+                              title="这是一段内容确定删除吗？"
+                              @onConfirm="deleteEventBtn(scope.row.id, scope.row.staff_id)"
+                            >
+                              <el-button
+                                type="danger"
+                                icon="el-icon-delete"
+                                size="mini"
+                                circle
+                                slot="reference"
+                              ></el-button>
+                            </el-popconfirm>
                           </template>
                         </el-table-column>
                       </el-table>
@@ -329,14 +367,14 @@
                         <el-col :span="4">经理评价内容：</el-col>
                         <el-col :span="20">{{scope.row.evaluation}}</el-col>
                       </el-row>
-                      <el-row style="margin-top: 30px" v-if="!scope.row.evaluation"> 
+                      <el-row style="margin-top: 30px" v-if="!scope.row.evaluation">
                         <el-col :span="3">评价：</el-col>
                         <el-col :span="10">
                           <el-input type="textarea" v-model="handleEvaluation"></el-input>
                         </el-col>
                       </el-row>
                       <el-row style="margin-top: 30px" v-if="!scope.row.evaluation">
-                        <el-col :span="5" :offset="12" >
+                        <el-col :span="5" :offset="12">
                           <el-button
                             @click="saveHandleEva(scope.row.id)"
                             type="primary"
@@ -433,7 +471,7 @@
                       style="margin: 0 10px"
                       v-has-power="{limitList: [1,], role_id: $store.state.userInfo.role_id}"
                     ></el-button>
-                  </el-popconfirm> -->
+                  </el-popconfirm>-->
 
                   <!-- 图片提示 -->
                   <el-tooltip
@@ -1249,7 +1287,6 @@
         </el-table-column>
       </el-table>
     </el-dialog>
-
   </div>
 </template>
 
@@ -1275,6 +1312,7 @@ import {
   editSourceData,
   deleteSourceData,
   createResume,
+  deleteEventInfo,
 } from "network/humanageRequest";
 import download from "downloadjs";
 
@@ -1472,6 +1510,7 @@ export default {
         lazy: true,
         lazyLoad(node, resolve) {
           const { level } = node;
+
           if (level === 0) {
             // 获取省
             getProvince().then((res) => {
@@ -1485,6 +1524,21 @@ export default {
           }
           // 获取市
           if (level === 1) {
+            let limit = [34967];
+            let limits = [34948, 34968];
+            if (limit.includes(node.value)) {
+              resolve([{ value: 34967, label: "台湾省", leaf: level >= 1 }]);
+            }
+            if (limits.includes(node.value)) {
+              getCity(node.value).then((res) => {
+                const nodes = res.data.map((item) => ({
+                  value: item.id,
+                  label: item.name,
+                  leaf: level >= 1,
+                }));
+                resolve(nodes);
+              });
+            }
             getCity(node.value).then((res) => {
               const nodes = res.data.map((item) => ({
                 value: item.id,
@@ -1574,8 +1628,6 @@ export default {
     Pagination,
   },
   methods: {
-
-
     // 生成分享链接
     shareShow(staff_id) {
       this.shareLink = `http://qqq.shihanphp.cn/get_pdf?id=${staff_id}`;
@@ -1631,6 +1683,19 @@ export default {
     birthdayBtn() {
       this.birthdayDialogVisible = true;
       this.getBirthdayData();
+    },
+
+    // 删除事件
+    deleteEventBtn(id, staff_id) {
+      deleteEventInfo(id).then(res => {
+        let {code, msg} = res
+        if(code === 200) {
+          this.$message.success(msg)
+          this.eventTabsShow(staff_id);
+        }else {
+          this.$message.error(msg)
+        }
+      })
     },
 
     // 定义生日获取函数
@@ -1870,6 +1935,7 @@ export default {
         let { code, data, msg } = res;
         if (code === 200) {
           this.eventData = data;
+          console.log(data)
         } else {
           this.$message.error(msg);
         }

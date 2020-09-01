@@ -143,14 +143,14 @@ export default {
       }
       if (role_id == 6) {
         return [
-          { navname: "人力管理", path: "/home/datainput" },
+          { navname: "人力管理", path: "/home/training" },
           { navname: "报表管理", path: "/home/customquery" },
         ];
       }
       if (role_id == 8) {
         return [
           { navname: "售后管理", path: "/home/feedback" },
-          { navname: "报表管理", path: "/home/customquery" },
+          { navname: "报表管理", path: "/home/orderquery" },
         ];
       }
       if (role_id == 1 || role_id == 4) {
@@ -162,6 +162,18 @@ export default {
           { navname: "系统管理", path: "/home/sysmanage" },
         ];
       }
+      if (role_id == 16) {
+        return [
+          { navname: "人力管理", path: "/home/datainput" },
+        ];
+      }
+      if (role_id == 17) {
+        return [
+          { navname: "人力管理", path: "/home/assessment" },
+          { navname: "报表管理", path: "/home/staffquery" },
+        ];
+      }
+      
       // return [
       //   { navname: "人力管理", path: "/home/datainput" },
       //   { navname: "订单管理", path: "/home/demand" },
@@ -298,24 +310,9 @@ export default {
           ],
           [
             {
-              navname: "客户查询",
-              path: "/home/customquery",
-              icon: "el-icon-s-custom",
-            },
-            {
-              navname: "员工查询",
-              path: "/home/staffquery",
-              icon: "el-icon-s-check",
-            },
-            {
               navname: "订单查询",
               path: "/home/orderquery",
               icon: "el-icon-tickets",
-            },
-            {
-              navname: "投诉查询",
-              path: "/home/complaintquery",
-              icon: "el-icon-notebook-2",
             },
           ],
         ];
@@ -430,6 +427,35 @@ export default {
               navname: "系统设置",
               path: "/home/sysmanage",
               icon: "el-icon-setting",
+            },
+          ],
+        ];
+      }
+      if (role_id == 16) {
+        return [
+          [
+            {
+              navname: "资料录入",
+              path: "/home/datainput",
+              icon: "el-icon-edit-outline",
+            },
+          ]
+        ];
+      }
+      if (role_id == 17) {
+        return [
+          [
+            {
+              navname: "考核评价",
+              path: "/home/assessment",
+              icon: "el-icon-notebook-2",
+            },
+          ],
+          [
+            {
+              navname: "员工查询",
+              path: "/home/staffquery",
+              icon: "el-icon-s-check",
             },
           ],
         ];

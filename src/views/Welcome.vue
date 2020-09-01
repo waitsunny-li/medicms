@@ -27,7 +27,7 @@
             <!-- 时间-ip -->
             <div class="time-ip-wrap">
               <div class="username">{{$store.state.userInfo.username}}</div>
-              <div class="time">当前时间：{{currentDate}}</div>
+              <div class="time"><i class="el-icon-time" style="margin-right: 5px"></i>{{currentDate}}</div>
               <div class="ip">IP：{{$store.state.userInfo.ip}}</div>
             </div>
           </el-col>
@@ -98,6 +98,8 @@ export default {
         user: "",
       },
       currentDate: "",
+      beforeUnloadTime: "",
+      gapTime: "",
     };
   },
   computed: {
@@ -119,6 +121,10 @@ export default {
     });
   },
   mounted() {
+    // 监听窗口关闭
+    window.addEventListener("beforeunload", (e) => this.beforeunloadHandler(e));
+    window.addEventListener("unload", (e) => this.unloadHandler(e));
+
     let _this = this;
     this.timer = setInterval(() => {
       _this.currentDate = new Date().toLocaleString(); // 修改数据date
@@ -130,6 +136,18 @@ export default {
     }
   },
   methods: {
+    beforeunloadHandler() {
+      this.beforeUnloadTime = new Date().getTime();
+    },
+    unloadHandler(e) {
+      this.gapTime = new Date().getTime() - this.beforeUnloadTime;
+      if (this.gapTime <= 5) {
+        console.log("jjj");
+        window.localStorage.removeItem("username");
+      } else {
+        console.log("我刷新了！");
+      }
+    },
     // 退出登录
     logoutBtn() {
       // token为空
@@ -142,6 +160,12 @@ export default {
       this.$router.push(path);
       this.$store.commit("changeNavIndex", index);
     },
+  },
+  destroyed() {
+    window.removeEventListener("beforeunload", (e) =>
+      this.beforeunloadHandler(e)
+    );
+    window.removeEventListener("unload", (e) => this.unloadHandler(e));
   },
 };
 </script>
@@ -210,7 +234,7 @@ export default {
 
     // 登陆时间
     .time-ip-wrap {
-      width: 400px;
+      width: 500px;
       height: 100%;
       color: #fff;
       display: flex;

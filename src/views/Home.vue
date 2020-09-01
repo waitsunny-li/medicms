@@ -22,7 +22,7 @@
           <div class="icon-wrap">
             <div class="img-wrap">
               <img class="biglogol" v-show="isshowlogo" src="~assets/logo1.png" alt />
-              <img class="smalllogol" v-show="!isshowlogo" src="~assets/logo.png" alt="">
+              <img class="smalllogol" v-show="!isshowlogo" src="~assets/logo.png" alt />
             </div>
           </div>
           <!-- 功能栏 -->
@@ -43,10 +43,15 @@
           </div>
           <!-- 右侧 -->
           <div class="right-wrap">
-
-            <div class="username">用户名：{{$store.state.userInfo.username}}</div>
+            <div class="username">
+              <i class="el-icon-user" style="margin-right: 10px"></i>
+              {{$store.state.userInfo.username}}
+            </div>
             <div class="login-time">
-              <span>当前时间：{{currentDate}}</span>
+              <span>
+                <i class="el-icon-time" style="margin-right: 5px"></i>
+                {{currentDate}}
+              </span>
             </div>
 
             <div class="home-wrap">
@@ -90,6 +95,8 @@ export default {
   name: "Home",
   data() {
     return {
+      beforeUnloadTime: "",
+      gapTime: "",
       // logo变换
       isshowlogo: true,
       isopened: true,
@@ -233,10 +240,11 @@ export default {
       return this.$store.state.asideNavList;
     },
   },
-  created() {
-
-  },
+  created() {},
   mounted() {
+    // 监听窗口关闭
+    window.addEventListener("beforeunload", (e) => this.beforeunloadHandler(e));
+    window.addEventListener("unload", (e) => this.unloadHandler(e));
     // 初始化操作
     this.$store.commit("changeWidthHeight", {
       width: window.innerWidth,
@@ -254,19 +262,31 @@ export default {
     let _this = this;
     this.timer = setInterval(() => {
       _this.currentDate = new Date().toLocaleString(); // 修改数据date
+      
     }, 1000);
   },
   methods: {
+    beforeunloadHandler() {
+      this.beforeUnloadTime = new Date().getTime();
+    },
+    unloadHandler(e) {
+      this.gapTime = new Date().getTime() - this.beforeUnloadTime;
+      if (this.gapTime <= 5) {
+        window.localStorage.removeItem("username");
+      } else {
+        console.log("我刷新了！");
+      }
+    },
     // 关闭功能
     colseBtn() {
       if (this.isopened) {
         this.isopened = false;
         this.isCollapse = true;
-        this.isshowlogo = false
+        this.isshowlogo = false;
       } else {
         this.isopened = true;
         this.isCollapse = false;
-        this.isshowlogo = true
+        this.isshowlogo = true;
       }
     },
     // currentSelect(index) {
@@ -277,7 +297,7 @@ export default {
     logoutBtn() {
       // token为空
       window.sessionStorage.clear();
-      window.localStorage.removeItem("username")
+      window.localStorage.removeItem("username");
       this.$router.replace("/login");
       this.$message.success("退出成功！");
     },
@@ -286,6 +306,12 @@ export default {
       console.log("jj");
       this.$router.push("/welcome");
     },
+  },
+  destroyed() {
+    window.removeEventListener("beforeunload", (e) =>
+      this.beforeunloadHandler(e)
+    );
+    window.removeEventListener("unload", (e) => this.unloadHandler(e));
   },
 };
 </script>
@@ -324,7 +350,7 @@ export default {
   justify-content: space-between;
 
   .right-wrap {
-    width: 505px;
+    width: 460px;
     display: flex;
     justify-content: space-between;
 
@@ -332,14 +358,12 @@ export default {
       width: 120px;
       height: 40px;
       line-height: 40px;
-      margin-right: 20px;
       color: #fff;
     }
 
     .login-time {
-      width: 250px;
+      width: 190px;
       height: 40px;
-      margin-right: 20px;
       span {
         display: block;
         width: 100%;
@@ -368,19 +392,19 @@ export default {
 
 .icon-wrap {
   width: 100%;
-  height: 80px;
+  height: 60px;
   background-color: #2d373f;
 
   .img-wrap {
     width: 100%;
-    height: 80px;
+    height: 60px;
     display: flex;
     align-items: center;
     justify-content: center;
 
     .biglogol {
-      width: 160px;
-      height: 50px;
+      width: 125px;
+      height: 40px;
     }
 
     .smalllogol {
@@ -398,12 +422,22 @@ export default {
   position: absolute;
   top: 50%;
   right: 0;
+  width: 50px;
+  text-align: right;
   transform: translateY(-50%);
+  transition: 0.4s;
   cursor: pointer;
 
   i {
     font-size: 20px;
-    color: #fff;
+    color: #c0c4cc;
+  }
+
+  &:hover {
+    right: 10px;
+    i{
+      color: #fff;
+    }
   }
 }
 </style>

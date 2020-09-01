@@ -522,7 +522,7 @@
       <span slot="footer" class="dialog-footer">
         <el-button size="mini" @click="addCustomerDialogVisible = false">取 消</el-button>
         <el-button size="mini" type="primary" @click="saveCustomerInfo" v-if="isAddForm">保 存</el-button>
-        <el-button size="mini" v-else type="primary" @click="saveEditCustomerInfo">编 辑</el-button>
+        <el-button size="mini" v-else type="primary" @click="saveEditCustomerInfo">保 存</el-button>
       </span>
     </el-dialog>
 

@@ -140,6 +140,17 @@ export function getEventInfo(staff_id) {
   })
 }
 
+// 删除事件
+export function deleteEventInfo(id) {
+  return request({
+    url: "/event/delete",
+    method: "get",
+    params: {
+      id: id
+    }
+  })
+}
+
 // 保存事件内容
 export function saveEventInfo(data) {
   return request({

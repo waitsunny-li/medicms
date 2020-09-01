@@ -97,10 +97,11 @@
                 slot-scope="scope"
               >{{scope.row.family_people.children}}小孩，{{scope.row.family_people.adlut}}成人，{{scope.row.family_people.old}}老人</template>
             </el-table-column>
-            <el-table-column align="center" prop="mobile" width="150px" label="手机号">
+            <el-table-column align="center" prop="mobile" width="100px" label="手机号">
               <template slot-scope="scope">
-                <i class="el-icon-phone" style="color: red"></i>
-                {{scope.row.mobile}}
+                <el-tooltip class="item" effect="dark" :content="scope.row.mobile" placement="top">
+                  <i class="el-icon-phone" style="color: red; font-size: 20px"></i>
+                </el-tooltip>
               </template>
             </el-table-column>
             <el-table-column
@@ -129,10 +130,13 @@
             </el-table-column>
             <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
               <template slot-scope="scope">
-                <p v-if="scope.row.state == 0">面试中</p>
-                <p v-if="scope.row.state == 1">进行中</p>
-                <p v-if="scope.row.state == 3">结束</p>
-                <p v-if="scope.row.state == 4">取消</p>
+                <p v-if="scope.row.state == 0">审核中</p>
+                <p v-if="scope.row.state == 1">待进行</p>
+                <p v-if="scope.row.state == 2">跟进中</p>
+                <p v-if="scope.row.state == 3">已完成</p>
+                <p v-if="scope.row.state == 4">已取消</p>
+                <p v-if="scope.row.state == 5">暂停中</p>
+                <p v-if="scope.row.state == 6">重新恢复</p>
               </template>
             </el-table-column>
             <!-- 操作 -->
@@ -338,9 +342,7 @@
               <span class="content-text" v-else-if="scope.row.staff.person_state == 6">在岗</span>
               <span class="content-text" v-else-if="scope.row.staff.person_state == 7">离职(下单)</span>
             </div>
-            <div v-else>
-              
-            </div>
+            <div v-else></div>
           </template>
         </el-table-column>
         <el-table-column align="center" prop="content" label="换人原因">

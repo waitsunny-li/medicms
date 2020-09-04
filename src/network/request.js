@@ -5,7 +5,7 @@ export function request(config) {
   // 1、创建一个实例
   const instance = axios.create({
     // baseURL : "http://106.54.54.237:8000/api/hy",
-    baseURL: 'http://qqq.shihanphp.cn/api',
+    baseURL: 'http://jiazhen.gz-isp.com/api',
     timeout: 5000
   })
 
@@ -24,9 +24,9 @@ export function request(config) {
   instance.interceptors.response.use(res => {
     // 响应的数据，包含一些东西
     return res.data //这样，就可以只拿到data 返回到.then()中
-  }, err => [
+  }, err => {
     console.log(err)
-  ])
+  })
 
   return instance(config)
 }

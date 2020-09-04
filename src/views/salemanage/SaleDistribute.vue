@@ -53,7 +53,6 @@
                     size="mini"
                     icon="el-icon-thumb"
                     @click="distributeSuccess(scope.row.id)"
-                  
                   ></el-button>
                 </el-tooltip>
               </template>
@@ -150,12 +149,15 @@ export default {
   watch: {},
   methods: {
     // 搜索按钮
-    searchBtn(searchForm) {
-      console.log("分派", searchForm);
+    searchBtn(val) {
+      this.searchForm = val;
+      this.getAllComplaints(this.searchForm);
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
       // console.log(currentpage);
+      this.searchForm.page = currentpage;
+      this.getAllComplaints(this.searchForm);
     },
 
     // 自定义搜索匹配老师数据
@@ -232,8 +234,6 @@ export default {
       margin-top: 20px;
 
       /deep/.el-table__body-wrapper {
-        overflow-x: hidden;
-
         /deep/.expand-row {
           border-bottom: 1px solid #f1f1f1;
           padding: 10px 0;
@@ -241,7 +241,7 @@ export default {
       }
 
       /deep/.el-table__body-wrapper::-webkit-scrollbar {
-        width: 3px;
+        width: 5px;
         height: 10px;
       }
 

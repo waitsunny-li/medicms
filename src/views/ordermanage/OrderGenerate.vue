@@ -279,9 +279,15 @@
                       </el-col>
                     </el-row>
                   </el-tab-pane>
-                  <!-- <el-tab-pane label="保险" name="four">
-
-                  </el-tab-pane>-->
+                  <el-tab-pane label="保险" name="four">
+                    <el-table :data="scope.row.safety" height="350px" style="width: 100%">
+                      <el-table-column align="center" prop="safety_no" label="保险单号"></el-table-column>
+                      <el-table-column width="200" align="center" prop="time" label="起止时间">
+                        <template slot-scope="scope">{{scope.row.time.join(' ~ ')}}</template>
+                      </el-table-column>
+                      <el-table-column align="center" prop="content" label="保险内容"></el-table-column>
+                    </el-table>
+                  </el-tab-pane>
                 </el-tabs>
               </template>
             </el-table-column>
@@ -404,27 +410,31 @@
               <template slot-scope="scope">
                 <span v-if="scope.row.safety.length == 0">无</span>
                 <span v-else>
-                  <el-button
-                    @click="lookInsuranceBtn(scope.row.staff_id, scope.row.staff.name)"
-                    type="text"
-                    size="mini"
-                  >查看</el-button>
+                  有
                 </span>
               </template>
             </el-table-column>
             <el-table-column align="center" label="当前服务人员">
               <template slot-scope="scope">
                 {{scope.row.staff ? scope.row.staff.name : seatData}}
-                <span
+                <div
                   v-if="scope.row.staff_id != 0"
                 >
-                  <el-button
-                    type="text"
-                    size="mini"
-                    @click="buyInsuranceBtn(scope.row.id)"
-                    v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
-                  >购买保险</el-button>
-                </span>
+                  <el-popover placement="right" style="width: 80px !import" trigger="hover">
+                    <el-button
+                      @click="lookInsuranceBtn(scope.row.staff_id, scope.row.staff.name)"
+                      type="success"
+                      size="mini"
+                    >查看</el-button>
+                    <el-button
+                      type="primary"
+                      size="mini"
+                      @click="buyInsuranceBtn(scope.row.id)"
+                      v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
+                    >购买保险</el-button>
+                    <el-button type="text" size="mini" slot="reference">保 险</el-button>
+                  </el-popover>
+                </div>
                 <span v-else></span>
               </template>
             </el-table-column>
@@ -742,10 +752,21 @@
           <el-row>
             <el-form-item label-width="80px" label="姓名" prop="name">
               <el-select
-                v-if="orderInterviewer.length != 0"
+                v-if="orderInterviewer.length == 0"
                 v-model="orderSuccessForm.staff_id"
                 placeholder="请选择面试人员姓名"
+                disabled
+                :key="0"
               >
+                <el-option label="没有面试人员" :value="0"></el-option>
+              </el-select>
+
+              <el-select
+                v-else
+                v-model="orderSuccessForm.staff_id"
+                placeholder="请选择面试人员姓名"
+                :key="1"
+              > 
                 <el-option
                   v-for="item in orderInterviewer"
                   :key="item.id"
@@ -753,15 +774,7 @@
                   :value="item.staff_id"
                 ></el-option>
               </el-select>
-
-              <el-select
-                v-else
-                v-model="orderSuccessForm.staff_id"
-                placeholder="请选择面试人员姓名"
-                disabled
-              >
-                <el-option label="没有面试人员" :value="0"></el-option>
-              </el-select>
+              
             </el-form-item>
           </el-row>
           <el-row>
@@ -1520,6 +1533,7 @@ export default {
             if (code === 200) {
               this.$message.success(msg);
               this.editDialogVisible = false;
+              this.getAllOrderInfo()
             } else {
               this.$message.error(msg);
             }
@@ -1578,20 +1592,22 @@ export default {
       this.staffInfoDialogVisible = true;
       this.staffInfo = staff;
     },
+    
 
     // 添加完成订单
     addSuccessOrder(staff_id, order_id) {
+      
       // 显示添加界面
       this.addFirstDialogVisible = true;
       this.orderSuccessForm.customer_id = order_id;
-      this.orderSuccessForm.staff_id = staff_id;
+      this.orderSuccessForm.staff_id = staff_id ? staff_id:'';
 
       getInterviewInfo({ customer_id: order_id }).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
           if (data) {
             this.orderInterviewer = data;
-            console.log(data)
+            console.log(data);
           } else {
             this.orderInterviewer = [];
             this.$message.error("无面试人员！请添加！");
@@ -1607,7 +1623,7 @@ export default {
       this.$refs.orderSuccessForm.resetFields();
       this.orderSuccessForm.staff_id = "";
       this.orderSuccessForm.customer_id = "";
-      this.orderSuccessForm.content = ""
+      this.orderSuccessForm.content = "";
     },
 
     // 保存首位服务人员
@@ -1905,7 +1921,6 @@ export default {
       }
 
       /deep/.el-table__body-wrapper {
-        overflow-x: hidden;
 
         /deep/.expand-row {
           border-bottom: 1px solid #f1f1f1;
@@ -1914,7 +1929,7 @@ export default {
       }
 
       /deep/.el-table__body-wrapper::-webkit-scrollbar {
-        width: 3px;
+        width: 5px;
         height: 10px;
       }
 

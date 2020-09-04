@@ -55,7 +55,6 @@
                 <el-option label="已取消" value="4"></el-option>
                 <el-option label="暂停中" value="5"></el-option>
                 <el-option label="重新恢复" value="6"></el-option>
-
               </el-select>
             </el-form-item>
           </el-col>
@@ -129,8 +128,8 @@ export default {
     // 清除操作
     clearBtn() {
       this.$refs.searchForm.resetFields();
-      this.time = []
-      this.searchBtn()
+      this.time = [];
+      this.searchBtn();
     },
 
     // 搜索操作
@@ -146,7 +145,7 @@ export default {
         res.mobile = this.CustomerSearchForm.mobile;
         res.source_id = this.CustomerSearchForm.source_id;
         res.create_time = this.CustomerSearchForm.create_time;
-        console.log('else: ', res)
+        console.log("else: ", res);
         this.$emit("searchBtn", res);
       }
     },
@@ -160,6 +159,7 @@ export default {
 }
 
 .search-wrap {
+  overflow: auto;
   border-top: 2px solid #75cbf4;
   box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1);
 
@@ -176,5 +176,15 @@ export default {
   .handle {
     width: 60px;
   }
+}
+
+.search-wrap::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.search-wrap::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 20px;
 }
 </style>

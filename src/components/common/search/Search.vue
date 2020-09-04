@@ -116,6 +116,7 @@ export default {
 }
 
 .search-wrap {
+  overflow: auto;
   border-top: 2px solid #75cbf4;
   box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1);
 
@@ -134,5 +135,15 @@ export default {
   .handle {
     // width: 80px;
   }
+}
+
+.search-wrap::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.search-wrap::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 20px;
 }
 </style>

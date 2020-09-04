@@ -5,9 +5,9 @@
 
       <el-aside class="aside-wrap" style="position: relative">
         <!-- -->
-        <div class="display-wrap">
-          <i v-show="isopened" @click="colseBtn" class="el-icon-d-arrow-left"></i>
-          <i v-show="!isopened" @click="colseBtn" class="el-icon-d-arrow-right"></i>
+        <div class="display-wrap" @click="colseBtn">
+          <i v-show="isopened"  class="el-icon-d-arrow-left"></i>
+          <i v-show="!isopened"  class="el-icon-d-arrow-right"></i>
         </div>
 
         <el-menu
@@ -262,7 +262,6 @@ export default {
     let _this = this;
     this.timer = setInterval(() => {
       _this.currentDate = new Date().toLocaleString(); // 修改数据date
-      
     }, 1000);
   },
   methods: {
@@ -425,19 +424,33 @@ export default {
   width: 50px;
   text-align: right;
   transform: translateY(-50%);
-  transition: 0.4s;
   cursor: pointer;
 
   i {
     font-size: 20px;
     color: #c0c4cc;
+    transition: 0.4s;
   }
 
   &:hover {
-    right: 10px;
-    i{
+    i {
+      margin-right: 10px;
       color: #fff;
     }
   }
 }
+
+/deep/.el-table__body-wrapper {
+  overflow: auto;
+}
+
+// /deep/.el-table__body-wrapper::-webkit-scrollbar {
+//   width: 5px;
+//   height: 10px;
+// }
+
+// /deep/.el-table__body-wrapper::-webkit-scrollbar-thumb {
+//   background-color: #ccc;
+//   border-radius: 20px;
+// }
 </style>

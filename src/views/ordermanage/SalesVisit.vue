@@ -267,7 +267,6 @@ export default {
       margin-top: 20px;
 
       /deep/.el-table__body-wrapper {
-        overflow-x: hidden;
 
         /deep/.expand-row {
           border-bottom: 1px solid #f1f1f1;

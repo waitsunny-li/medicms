@@ -23,7 +23,7 @@
                 {{scope.row.mobile}}
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="family_address" label="地址" width="180"></el-table-column>
+            <el-table-column align="center" prop="family_address" label="地址" min-width="180"></el-table-column>
             <el-table-column align="center" prop="service_type" label="服务类型" width="100">
               <template slot-scope="scope">
                 <div v-for="item in service_types" :key="item.id">
@@ -44,6 +44,7 @@
                 <p v-if="scope.row.state == 3">已完成</p>
                 <p v-if="scope.row.state == 4">已取消</p>
                 <p v-if="scope.row.state == 5">暂停中</p>
+                <p v-if="scope.row.state == 6">重新恢复</p>
               </template>
             </el-table-column>
             <el-table-column align="center" label="操作" width="180">
@@ -279,7 +280,6 @@ export default {
       margin-top: 20px;
 
       /deep/.el-table__body-wrapper {
-        overflow-x: hidden;
 
         /deep/.expand-row {
           border-bottom: 1px solid #f1f1f1;
@@ -288,7 +288,7 @@ export default {
       }
 
       /deep/.el-table__body-wrapper::-webkit-scrollbar {
-        width: 3px;
+        width: 5px;
         height: 10px;
       }
 

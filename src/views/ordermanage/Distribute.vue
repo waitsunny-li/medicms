@@ -124,6 +124,9 @@
 
               </template>
             </el-table-column>
+            <el-table-column align="center" label="跟单老师" :show-overflow-tooltip="true">
+              <template slot-scope="scope">{{scope.row.match ? scope.row.match.username : '无'}}</template>
+            </el-table-column>
             <!-- 操作 -->
             <el-table-column label="操作" align="center" width="140px">
               <template slot-scope="scope">
@@ -354,6 +357,8 @@ export default {
               this.$message.success(msg);
               // 关闭分配弹框
               this.distributeDialogVisible = false;
+              // 重新刷新列表
+              this.getAllCustomerInfo()
             } else {
               this.$message.error(msg);
             }
@@ -392,7 +397,6 @@ export default {
       margin-top: 20px;
 
       /deep/.el-table__body-wrapper {
-        overflow-x: hidden;
 
         /deep/.expand-row {
           border-bottom: 1px solid #f1f1f1;

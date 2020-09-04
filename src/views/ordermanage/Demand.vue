@@ -1136,7 +1136,6 @@ export default {
       margin-top: 20px;
 
       /deep/.el-table__body-wrapper {
-        overflow-x: hidden;
 
         /deep/.expand-row {
           border-bottom: 1px solid #f1f1f1;
@@ -1145,7 +1144,7 @@ export default {
       }
 
       /deep/.el-table__body-wrapper::-webkit-scrollbar {
-        width: 3px;
+        width: 5px;
         height: 10px;
       }
 

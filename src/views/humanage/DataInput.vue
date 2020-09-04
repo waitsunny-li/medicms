@@ -251,18 +251,19 @@
                             :key="index"
                           >
                             <el-col :span="24">{{item.project}}</el-col>
-                            <el-col :span="24">{{item.time}}</el-col>
+                            <el-col :span="24">{{timestampToTime(item.start_time)}}~{{timestampToTime(item.end_time)}}</el-col>
                             <el-col :span="24">{{item.address}}</el-col>
                             <el-col :span="24">{{item.content}}</el-col>
                           </div>
                         </el-col>
                         <el-col :span="12" style="display: flex">
                           <span class="label-text">考核评价</span>
-                          <div class="content-text">
-                            <el-col :span="24">月嫂</el-col>
-                            <el-col :span="24">2017年至2019年</el-col>
-                            <el-col :span="24">本公司</el-col>
-                            <el-col :span="24">完美</el-col>
+                          <div class="content-text" v-for="(item, index) in scope.row.train"
+                            :key="index">
+                            <el-col :span="24">{{item.project}}</el-col>
+                            <el-col :span="24">{{timestampToTime(item.start_time)}}~{{timestampToTime(item.end_time)}}</el-col>
+                            <el-col :span="24">{{item.is_by?'通过':'没有通过'}}</el-col>
+                            <el-col :span="24">{{item.assess_content}}</el-col>
                           </div>
                         </el-col>
                       </el-row>
@@ -544,7 +545,7 @@
                 <span>身份证:</span>
               </p>
               <el-upload
-                action="http://qqq.shihanphp.cn/api/upload"
+                :action="baseurl + 'api/upload'"
                 list-type="picture-card"
                 :headers="{Authorization: $store.state.userInfo.userToken}"
                 :on-preview="handleIdentyPreview"
@@ -568,7 +569,7 @@
                 <span>体检证件:</span>
               </p>
               <el-upload
-                action="http://qqq.shihanphp.cn/api/upload"
+                :action="baseurl + 'api/upload'"
                 list-type="picture-card"
                 :headers="{Authorization: $store.state.userInfo.userToken}"
                 :on-preview="handleBodyPreview"
@@ -592,7 +593,7 @@
                 <span>生活照片:</span>
               </p>
               <el-upload
-                action="http://qqq.shihanphp.cn/api/upload"
+                :action="baseurl + 'api/upload'"
                 list-type="picture-card"
                 :headers="{Authorization: $store.state.userInfo.userToken}"
                 :on-preview="handleLifePreview"
@@ -617,7 +618,7 @@
                 <span>技能照片:</span>
               </p>
               <el-upload
-                action="http://qqq.shihanphp.cn/api/upload"
+                :action="baseurl + 'api/upload'"
                 list-type="picture-card"
                 :headers="{Authorization: $store.state.userInfo.userToken}"
                 :on-preview="handleSkillPreview"
@@ -642,7 +643,7 @@
                 <span>厨艺展示:</span>
               </p>
               <el-upload
-                action="http://qqq.shihanphp.cn/api/upload"
+                :action="baseurl + 'api/upload'"
                 list-type="picture-card"
                 :headers="{Authorization: $store.state.userInfo.userToken}"
                 :on-preview="handleCookingPreview"
@@ -667,7 +668,7 @@
                 <span>育婴照片:</span>
               </p>
               <el-upload
-                action="http://qqq.shihanphp.cn/api/upload"
+                :action="baseurl + 'api/upload'"
                 list-type="picture-card"
                 :headers="{Authorization: $store.state.userInfo.userToken}"
                 :on-preview="handleBadyPreview"
@@ -692,7 +693,7 @@
                 <span>其他照片:</span>
               </p>
               <el-upload
-                action="http://qqq.shihanphp.cn/api/upload"
+                :action="baseurl + 'api/upload'"
                 list-type="picture-card"
                 :headers="{Authorization: $store.state.userInfo.userToken}"
                 :on-preview="handleOtherPreview"
@@ -1375,7 +1376,7 @@ export default {
       // 默认显示客户详情
       activeName: "first",
       // 域名
-      baseurl: "http://qqq.shihanphp.cn/",
+      baseurl: "http://jiazhen.gz-isp.com/",
       // 新增事件数据
       eventData: [],
       // 新增事件表单
@@ -1499,7 +1500,7 @@ export default {
         now_address_desc: [
           { required: true, message: "请输入现居地址", trigger: "blur" },
         ],
-        job: [{ required: true, message: "请输入岗位", trigger: "change" }],
+        job: [{ required: true, message: "请选择岗位", trigger: "blur" }],
         spare_time: [
           { required: true, message: "请输入空余时间", trigger: "blur" },
         ],
@@ -1628,9 +1629,19 @@ export default {
     Pagination,
   },
   methods: {
+    timestampToTime(times) {
+      let date = new Date(parseInt(times) * 1000);
+      let Y = date.getFullYear() + "-";
+      let M =
+        (date.getMonth() + 1 < 10
+          ? "0" + (date.getMonth() + 1)
+          : date.getMonth() + 1) + "-";
+      let D = date.getDate() + " ";
+      return Y+M+D
+    },
     // 生成分享链接
     shareShow(staff_id) {
-      this.shareLink = `http://qqq.shihanphp.cn/get_pdf?id=${staff_id}`;
+      this.shareLink = `http://jiazhen.gz-isp.com/get_pdf?id=${staff_id}`;
     },
     // 复制分享链接回调
     copyBtn(e, index) {
@@ -1687,15 +1698,15 @@ export default {
 
     // 删除事件
     deleteEventBtn(id, staff_id) {
-      deleteEventInfo(id).then(res => {
-        let {code, msg} = res
-        if(code === 200) {
-          this.$message.success(msg)
+      deleteEventInfo(id).then((res) => {
+        let { code, msg } = res;
+        if (code === 200) {
+          this.$message.success(msg);
           this.eventTabsShow(staff_id);
-        }else {
-          this.$message.error(msg)
+        } else {
+          this.$message.error(msg);
         }
-      })
+      });
     },
 
     // 定义生日获取函数
@@ -1935,7 +1946,7 @@ export default {
         let { code, data, msg } = res;
         if (code === 200) {
           this.eventData = data;
-          console.log(data)
+          console.log(data);
         } else {
           this.$message.error(msg);
         }
@@ -2308,8 +2319,6 @@ export default {
       }
 
       /deep/.el-table__body-wrapper {
-        overflow-x: hidden;
-
         /deep/.expand-row {
           border-bottom: 1px solid #f1f1f1;
           padding: 10px 0;

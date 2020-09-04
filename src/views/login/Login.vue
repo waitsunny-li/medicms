@@ -144,13 +144,12 @@ export default {
       if (role_id == 6) {
         return [
           { navname: "人力管理", path: "/home/training" },
-          { navname: "报表管理", path: "/home/customquery" },
+          { navname: "报表管理", path: "/home/staffquery" },
         ];
       }
       if (role_id == 8) {
         return [
           { navname: "售后管理", path: "/home/feedback" },
-          { navname: "报表管理", path: "/home/orderquery" },
         ];
       }
       if (role_id == 1 || role_id == 4) {
@@ -234,19 +233,9 @@ export default {
               icon: "el-icon-s-custom",
             },
             {
-              navname: "员工查询",
-              path: "/home/staffquery",
-              icon: "el-icon-s-check",
-            },
-            {
               navname: "订单查询",
               path: "/home/orderquery",
               icon: "el-icon-tickets",
-            },
-            {
-              navname: "投诉查询",
-              path: "/home/complaintquery",
-              icon: "el-icon-notebook-2",
             },
           ],
         ];
@@ -259,32 +248,12 @@ export default {
               path: "/home/training",
               icon: "el-icon-timer",
             },
-            {
-              navname: "考核评价",
-              path: "/home/assessment",
-              icon: "el-icon-notebook-2",
-            },
           ],
           [
-            {
-              navname: "客户查询",
-              path: "/home/customquery",
-              icon: "el-icon-s-custom",
-            },
             {
               navname: "员工查询",
               path: "/home/staffquery",
               icon: "el-icon-s-check",
-            },
-            {
-              navname: "订单查询",
-              path: "/home/orderquery",
-              icon: "el-icon-tickets",
-            },
-            {
-              navname: "投诉查询",
-              path: "/home/complaintquery",
-              icon: "el-icon-notebook-2",
             },
           ],
         ];
@@ -306,13 +275,6 @@ export default {
               navname: "客户回访",
               path: "/home/review",
               icon: "el-icon-sort",
-            },
-          ],
-          [
-            {
-              navname: "订单查询",
-              path: "/home/orderquery",
-              icon: "el-icon-tickets",
             },
           ],
         ];

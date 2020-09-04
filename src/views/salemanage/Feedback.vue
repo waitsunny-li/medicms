@@ -53,6 +53,8 @@
               </template>
             </el-table-column>
 
+            <el-table-column align="center" prop="assign_user_id" label="售后服务人员" width="180"></el-table-column>
+
             <el-table-column align="center" label="操作">
               <template slot-scope="scope">
                 <el-popconfirm
@@ -254,7 +256,6 @@ export default {
       margin-top: 20px;
 
       /deep/.el-table__body-wrapper {
-        overflow-x: hidden;
 
         /deep/.expand-row {
           border-bottom: 1px solid #f1f1f1;
@@ -263,7 +264,7 @@ export default {
       }
 
       /deep/.el-table__body-wrapper::-webkit-scrollbar {
-        width: 3px;
+        width: 5px;
         height: 10px;
       }
 

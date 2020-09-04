@@ -59,9 +59,10 @@
                 <p v-else>暂无评价</p>
               </template>
             </el-table-column>
-            <el-table-column label="操作" align="center" min-width="150px">
+            <el-table-column label="操作" align="center" min-width="80px">
               <template slot-scope="scope">
                 <el-button
+                  v-if="scope.row.star == 0"
                   @click="rateBtn(scope.row.id)"
                   type="success"
                   size="mini"
@@ -188,12 +189,15 @@ export default {
   watch: {},
   methods: {
     // 搜索按钮
-    searchBtn(searchForm) {
-      console.log("处理结果", searchForm);
+    searchBtn(val) {
+      this.searchForm = val
+      this.getAllComplaints(this.searchForm)
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
       // console.log(currentpage);
+      this.searchForm.page = currentpage
+      this.getAllComplaints(this.searchForm)
     },
     // 评价按钮
     rateBtn(id) {
@@ -275,7 +279,6 @@ export default {
       margin-top: 20px;
 
       /deep/.el-table__body-wrapper {
-        overflow-x: hidden;
 
         /deep/.expand-row {
           border-bottom: 1px solid #f1f1f1;
@@ -284,7 +287,7 @@ export default {
       }
 
       /deep/.el-table__body-wrapper::-webkit-scrollbar {
-        width: 3px;
+        width: 5px;
         height: 10px;
       }
 

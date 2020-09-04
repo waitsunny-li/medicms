@@ -11,8 +11,8 @@
           v-for="(objNav, index) in asideNavList[asideIndex]"
           :key="index"
         >
-          <i :class="objNav.icon" :style="{color: routerLink == objNav.path ? '#409EFF' : ''}"></i>
-          <span :style="{color: routerLink == objNav.path ? '#409EFF' : ''}"  slot="title">{{objNav.navname}}</span>
+          <i :class="objNav.icon" :style="{color: routerLink === objNav.path ? '#409EFF' : 'rgb(144, 147, 153)'}"></i>
+          <span :style="{color: routerLink === objNav.path ? '#409EFF' : 'rgb(144, 147, 153)'}"  slot="title">{{objNav.navname}}</span>
         </el-menu-item>
     </aside-nav>
   </div>
@@ -43,6 +43,7 @@ export default {
 
     // 计算当前的router链接
     routerLink() {
+      console.log(this.$route.path)
       return this.$route.path
     }
   },

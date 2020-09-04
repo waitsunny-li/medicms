@@ -80,11 +80,11 @@
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">服务技能</span>
-                    <span class="content-text">{{scope.row.service_skills}}</span>
+                    <span class="content-text">{{scope.row.service_skills.join('，')}}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">家用电器</span>
-                    <span class="content-text">{{scope.row.device}}</span>
+                    <span class="content-text">{{scope.row.device.join('，')}}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">入职来源</span>
@@ -109,7 +109,14 @@
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">员工状态</span>
-                    <span class="content-text">{{scope.row.person_state}}</span>
+                    <span class="content-text" v-if="scope.row.person_state == 1">培训</span>
+                    <span class="content-text" v-else-if="scope.row.person_state == 2">考核</span>
+                    <span class="content-text" v-else-if="scope.row.person_state == 3">待岗</span>
+                    <span class="content-text" v-else-if="scope.row.person_state == 4">离职</span>
+                    <span class="content-text" v-else-if="scope.row.person_state == 5">黑名单</span>
+                    <span class="content-text" v-else-if="scope.row.person_state == 6">在岗</span>
+                    <span class="content-text" v-else-if="scope.row.person_state == 7">离职(下单)</span>
+                    <span class="content-text" v-else>错误</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">保险</span>
@@ -136,7 +143,7 @@
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">语言能力</span>
-                    <span class="content-text">{{scope.row.language}}</span>
+                    <span class="content-text">{{scope.row.language.join('，')}}</span>
                   </el-col>
                 </el-row>
 
@@ -152,6 +159,10 @@
                   <el-col :span="8">
                     <span class="label-text">安置协议</span>
                     <span class="content-text">{{scope.row.agreement_amount}}</span>
+                  </el-col>
+                  <el-col :span="7">
+                    <span class="label-text">自我评价</span>
+                    <span class="content-text">{{scope.row.self_evaluation}}</span>
                   </el-col>
                 </el-row>
 
@@ -186,11 +197,24 @@
                 <el-row class="expand-row">
                   <el-col :span="12" style="display: flex">
                     <span class="label-text">培训经历</span>
-                    <div class="content-text">
-                      <el-col :span="24">月嫂</el-col>
-                      <el-col :span="24">2017年至2019年</el-col>
-                      <el-col :span="24">本公司</el-col>
-                      <el-col :span="24">照顾小孩、老年人、宠物</el-col>
+                    <div class="content-text" v-for="(item, index) in scope.row.train" :key="index">
+                      <el-col :span="24">{{item.project}}</el-col>
+                      <el-col
+                        :span="24"
+                      >{{timestampToTime(item.start_time)}}~{{timestampToTime(item.end_time)}}</el-col>
+                      <el-col :span="24">{{item.address}}</el-col>
+                      <el-col :span="24">{{item.content}}</el-col>
+                    </div>
+                  </el-col>
+                  <el-col :span="12" style="display: flex">
+                    <span class="label-text">考核评价</span>
+                    <div class="content-text" v-for="(item, index) in scope.row.train" :key="index">
+                      <el-col :span="24">{{item.project}}</el-col>
+                      <el-col
+                        :span="24"
+                      >{{timestampToTime(item.start_time)}}~{{timestampToTime(item.end_time)}}</el-col>
+                      <el-col :span="24">{{item.is_by?'通过':'没有通过'}}</el-col>
+                      <el-col :span="24">{{item.assess_content}}</el-col>
                     </div>
                   </el-col>
                 </el-row>
@@ -299,7 +323,7 @@
                 >{{scope.row.customer_id}}</el-button>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="客户名" prop="time"></el-table-column>
+            <el-table-column align="center" label="客户名" prop="cust_name"></el-table-column>
             <el-table-column align="center" label="面试内容" prop="content"></el-table-column>
             <el-table-column align="center" label="是否面试完成">
               <template slot-scope="scope">
@@ -320,7 +344,7 @@
             </el-table-column>
           </el-table>
         </el-tab-pane>
-        <el-tab-pane label="已服务的">
+        <!-- <el-tab-pane label="已服务的">
           <el-table stripe :data="serviceDFormData" style="width: 100%" height="400px">
             <el-table-column align="center" label="时间起止" prop="start_end" width="180"></el-table-column>
             <el-table-column align="center" label="订单号" prop="order_number">
@@ -352,7 +376,7 @@
               </template>
             </el-table-column>
           </el-table>
-        </el-tab-pane>
+        </el-tab-pane>-->
       </el-tabs>
     </el-dialog>
 
@@ -368,7 +392,10 @@ import Search from "components/common/search/Search";
 import OrderInfo from "components/common/table/OrderInfo";
 import Pagination from "components/common/pagination/Pagination";
 import eventVue from "common/eventVue";
-import { requestUserListDate, searchAppointStaff } from "network/humanageRequest";
+import {
+  requestUserListDate,
+  searchAppointStaff,
+} from "network/humanageRequest";
 import { getInterviewInfo, getOneCustomerInfo } from "network/orderRequest";
 export default {
   name: "StaffQuery",
@@ -475,6 +502,16 @@ export default {
   },
   watch: {},
   methods: {
+    timestampToTime(times) {
+      let date = new Date(parseInt(times) * 1000);
+      let Y = date.getFullYear() + "-";
+      let M =
+        (date.getMonth() + 1 < 10
+          ? "0" + (date.getMonth() + 1)
+          : date.getMonth() + 1) + "-";
+      let D = date.getDate() + " ";
+      return Y + M + D;
+    },
     // 定义搜索数据函数
     searchAppointData(options) {
       searchAppointStaff(options).then((res) => {
@@ -536,7 +573,7 @@ export default {
 
     // 展示该订单号
     showOrderInfo(customer_id) {
-      this.orderInfoLoading = true
+      this.orderInfoLoading = true;
       getOneCustomerInfo(customer_id).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
@@ -574,8 +611,6 @@ export default {
         margin-top: 20px;
 
         /deep/.el-table__body-wrapper {
-          overflow-x: hidden;
-
           /deep/.expand-row {
             border-bottom: 1px solid #f1f1f1;
             padding: 10px 0;

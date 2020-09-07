@@ -243,8 +243,8 @@ export default {
   created() {},
   mounted() {
     // 监听窗口关闭
-    window.addEventListener("beforeunload", (e) => this.beforeunloadHandler(e));
-    window.addEventListener("unload", (e) => this.unloadHandler(e));
+    // window.addEventListener("beforeunload", (e) => this.beforeunloadHandler(e));
+    // window.addEventListener("unload", (e) => this.unloadHandler(e));
     // 初始化操作
     this.$store.commit("changeWidthHeight", {
       width: window.innerWidth,
@@ -252,7 +252,6 @@ export default {
     });
     // 窗口改变时获取窗口的高度
     window.onresize = () => {
-      console.log(window.innerHeight - 40);
       this.$store.commit("changeWidthHeight", {
         width: window.innerWidth,
         height: window.innerHeight,
@@ -265,17 +264,17 @@ export default {
     }, 1000);
   },
   methods: {
-    beforeunloadHandler() {
-      this.beforeUnloadTime = new Date().getTime();
-    },
-    unloadHandler(e) {
-      this.gapTime = new Date().getTime() - this.beforeUnloadTime;
-      if (this.gapTime <= 5) {
-        window.localStorage.removeItem("username");
-      } else {
-        console.log("我刷新了！");
-      }
-    },
+    // beforeunloadHandler() {
+    //   this.beforeUnloadTime = new Date().getTime();
+    // },
+    // unloadHandler(e) {
+    //   this.gapTime = new Date().getTime() - this.beforeUnloadTime;
+    //   if (this.gapTime <= 5) {
+    //     window.localStorage.removeItem("username");
+    //   } else {
+    //     console.log("我刷新了！");
+    //   }
+    // },
     // 关闭功能
     colseBtn() {
       if (this.isopened) {
@@ -296,7 +295,7 @@ export default {
     logoutBtn() {
       // token为空
       window.sessionStorage.clear();
-      window.localStorage.removeItem("username");
+      // window.localStorage.removeItem("username");
       this.$router.replace("/login");
       this.$message.success("退出成功！");
     },

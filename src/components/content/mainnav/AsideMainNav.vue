@@ -43,7 +43,6 @@ export default {
 
     // 计算当前的router链接
     routerLink() {
-      console.log(this.$route.path)
       return this.$route.path
     }
   },

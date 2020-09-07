@@ -44,8 +44,27 @@
                 <div v-else>未分配</div>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="result" label="处理结果"></el-table-column>
-            <el-table-column align="center" prop="rate" width label="客户满意度">
+            
+            <el-table-column align="center" prop="assign_user_id" label="售后服务人员" width="180">
+              <template slot-scope="scope">
+                <p v-if="scope.row.assign_user_id">
+                  {{scope.row.assign_user_id}}
+                </p>
+                <p v-else>暂无</p> 
+              </template>
+            </el-table-column>
+
+            <el-table-column align="center" prop="result" label="处理结果">
+              <template slot-scope="scope">
+                <p v-if="scope.row.result">
+                  {{scope.row.result}}
+                </p>
+                <p v-else>
+                  暂无结果
+                </p>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" prop="rate" width="160" label="客户满意度">
               <template slot-scope="scope">
                 <p v-if="scope.row.status">
                   <el-rate
@@ -53,7 +72,6 @@
                     :value="scope.row.star"
                     :texts="texts"
                     :colors="colors"
-                    show-text
                   ></el-rate>
                 </p>
                 <p v-else>暂无评价</p>
@@ -63,7 +81,7 @@
               <template slot-scope="scope">
                 <el-button
                   v-if="scope.row.star == 0"
-                  @click="rateBtn(scope.row.id)"
+                  @click="rateBtn(scope.row.id, scope.row.result)"
                   type="success"
                   size="mini"
                   v-has-power="{limitList: [1, 4], role_id: $store.state.userInfo.role_id}"
@@ -73,7 +91,7 @@
                   @click="handleRsultBtn(scope.row.id)"
                   type="primary"
                   size="mini"
-                  v-if="!scope.row.result"
+                  v-if="!scope.row.result" 
                 >处理</el-button>
               </template>
             </el-table-column>
@@ -200,9 +218,13 @@ export default {
       this.getAllComplaints(this.searchForm)
     },
     // 评价按钮
-    rateBtn(id) {
-      this.rateDialogVisible = true;
-      this.rateForm.complaint_id = id;
+    rateBtn(id, result) {
+      if(result) {
+        this.rateDialogVisible = true;
+        this.rateForm.complaint_id = id;
+      }else {
+        this.$message.error('该投诉还没有处理！请先处理！')
+      }
     },
     // 保存处理结果
     saveHandleResultBtn() {

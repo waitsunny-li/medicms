@@ -122,8 +122,8 @@ export default {
   },
   mounted() {
     // 监听窗口关闭
-    window.addEventListener("beforeunload", (e) => this.beforeunloadHandler(e));
-    window.addEventListener("unload", (e) => this.unloadHandler(e));
+    // window.addEventListener("beforeunload", (e) => this.beforeunloadHandler(e));
+    // window.addEventListener("unload", (e) => this.unloadHandler(e));
 
     let _this = this;
     this.timer = setInterval(() => {
@@ -136,23 +136,23 @@ export default {
     }
   },
   methods: {
-    beforeunloadHandler() {
-      this.beforeUnloadTime = new Date().getTime();
-    },
-    unloadHandler(e) {
-      this.gapTime = new Date().getTime() - this.beforeUnloadTime;
-      if (this.gapTime <= 5) {
-        console.log("jjj");
-        window.localStorage.removeItem("username");
-      } else {
-        console.log("我刷新了！");
-      }
-    },
+    // beforeunloadHandler() {
+    //   this.beforeUnloadTime = new Date().getTime();
+    // },
+    // unloadHandler(e) {
+    //   this.gapTime = new Date().getTime() - this.beforeUnloadTime;
+    //   if (this.gapTime <= 5) {
+    //     console.log("jjj");
+    //     window.localStorage.removeItem("username");
+    //   } else {
+    //     console.log("我刷新了！");
+    //   }
+    // },
     // 退出登录
     logoutBtn() {
       // token为空
       window.sessionStorage.clear();
-      window.localStorage.removeItem("username");
+      // window.localStorage.removeItem("username");
       this.$router.replace("/login");
       this.$message.success("退出成功！");
     },
@@ -162,10 +162,10 @@ export default {
     },
   },
   destroyed() {
-    window.removeEventListener("beforeunload", (e) =>
-      this.beforeunloadHandler(e)
-    );
-    window.removeEventListener("unload", (e) => this.unloadHandler(e));
+    // window.removeEventListener("beforeunload", (e) =>
+    //   this.beforeunloadHandler(e)
+    // );
+    // window.removeEventListener("unload", (e) => this.unloadHandler(e));
   },
 };
 </script>

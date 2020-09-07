@@ -147,7 +147,7 @@
                     @click="editRoleBtn(scope.row.id, scope.row.name)"
                     circle
                   ></el-button>
-                  <el-popconfirm
+                  <!-- <el-popconfirm
                     confirmButtonText="好的"
                     cancelButtonText="不用了"
                     icon="el-icon-info"
@@ -163,7 +163,7 @@
                       slot="reference"
                       style="margin: 0 10px"
                     ></el-button>
-                  </el-popconfirm>
+                  </el-popconfirm> -->
                 </template>
               </el-table-column>
             </el-table>

@@ -161,6 +161,48 @@
           </div>
         </el-col>
       </el-row>
+
+      <!-- 考核评价和培训经历 -->
+      <el-row class="expand-row">
+        <el-col :span="12" style="display: flex">
+          <span class="label-text">培训经历</span>
+          <div class="content-text" v-for="(item, index) in staffInfo.train" :key="index">
+            <el-col :span="24">{{item.project}}</el-col>
+            <el-col
+              :span="24"
+            >{{timestampToTime(item.start_time)}}~{{timestampToTime(item.end_time)}}</el-col>
+            <el-col :span="24">{{item.address}}</el-col>
+            <el-col :span="24">{{item.content}}</el-col>
+          </div>
+        </el-col>
+        <el-col :span="12" style="display: flex">
+          <span class="label-text">考核评价</span>
+          <div class="content-text" v-for="(item, index) in staffInfo.train" :key="index">
+            <el-col :span="24">{{item.project}}</el-col>
+            <el-col
+              :span="24"
+            >{{timestampToTime(item.start_time)}}~{{timestampToTime(item.end_time)}}</el-col>
+            <el-col :span="24">
+              <span v-if="item.is_by==1" style="color:#67C23A">
+                <i class="el-icon-check" style="color:#67C23A"></i> 通过
+              </span>
+              <span v-else-if="item.is_by==0" style="color:#E6A23C">
+                <i class="el-icon-loading" style="color:#E6A23C"></i> 审核中
+              </span>
+              <span v-else style="color:#F56C6C">
+                <i class="el-icon-close" style="color:#F56C6C"></i>
+                没有通过
+              </span>
+            </el-col>
+            <el-col :span="24">
+              <span v-if="item.assess_content">{{item.assess_content}}</span>
+              <span v-else>
+                <i class="el-icon-loading"></i> 审核中
+              </span>
+            </el-col>
+          </div>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>

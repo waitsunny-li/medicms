@@ -94,29 +94,23 @@ export default {
           .then((res) => {
             if (res.code === 200) {
               console.log(res);
-              if (
-                window.localStorage.getItem("username") === res.data.username
-              ) {
-                this.$message.error("你已经登陆过了！");
-              } else {
-                // 本地存储
-                window.localStorage.setItem("username", res.data.username);
-                // 本窗口存储用户的基本信息
-                this.$store.commit("saveUserInfo", {
-                  userToken: res.data.Authorization,
-                  username: res.data.username,
-                  last_login_time: res.data.last_login_time,
-                  ip: res.data.ip,
-                  role_id: res.data.role_id,
-                });
-                // 存储菜单
-                let navlist = this.navListData(res.data.role_id);
-                let asidelist = this.asideNavListData(res.data.role_id);
-                this.$store.commit("changeNavList", navlist);
-                this.$store.commit("changeAsideNavList", asidelist);
-                this.$message.success(res.msg);
-                this.$router.replace("/welcome");
-              }
+              // 本地存储
+              window.localStorage.setItem("username", res.data.username);
+              // 本窗口存储用户的基本信息
+              this.$store.commit("saveUserInfo", {
+                userToken: res.data.Authorization,
+                username: res.data.username,
+                last_login_time: res.data.last_login_time,
+                ip: res.data.ip,
+                role_id: res.data.role_id,
+              });
+              // 存储菜单
+              let navlist = this.navListData(res.data.role_id);
+              let asidelist = this.asideNavListData(res.data.role_id);
+              this.$store.commit("changeNavList", navlist);
+              this.$store.commit("changeAsideNavList", asidelist);
+              this.$message.success(res.msg);
+              this.$router.replace("/welcome");
             } else {
               this.$message.error(res.msg);
             }
@@ -148,9 +142,7 @@ export default {
         ];
       }
       if (role_id == 8) {
-        return [
-          { navname: "售后管理", path: "/home/feedback" },
-        ];
+        return [{ navname: "售后管理", path: "/home/feedback" }];
       }
       if (role_id == 1 || role_id == 4) {
         return [
@@ -162,9 +154,7 @@ export default {
         ];
       }
       if (role_id == 16) {
-        return [
-          { navname: "人力管理", path: "/home/datainput" },
-        ];
+        return [{ navname: "人力管理", path: "/home/datainput" }];
       }
       if (role_id == 17) {
         return [
@@ -172,7 +162,7 @@ export default {
           { navname: "报表管理", path: "/home/staffquery" },
         ];
       }
-      
+
       // return [
       //   { navname: "人力管理", path: "/home/datainput" },
       //   { navname: "订单管理", path: "/home/demand" },
@@ -401,7 +391,7 @@ export default {
               path: "/home/datainput",
               icon: "el-icon-edit-outline",
             },
-          ]
+          ],
         ];
       }
       if (role_id == 17) {

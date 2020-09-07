@@ -623,7 +623,7 @@ export default {
       }
 
       /deep/.el-table__body-wrapper::-webkit-scrollbar {
-        width: 3px;
+        width: 5px;
         height: 10px;
       }
 

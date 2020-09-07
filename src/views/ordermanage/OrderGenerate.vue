@@ -79,13 +79,21 @@
                         </template>
                       </el-table-column>
                       <el-table-column align="center" label="电话" prop="staff.mobile"></el-table-column>
-                      <el-table-column align="center" label="状态">
+                      <el-table-column align="center" label="人员状态">
                         <template slot-scope="scope">
-                          <p v-if="scope.row.status == 0">面试中</p>
+                          <!-- <p v-if="scope.row.status == 0">面试中</p>
                           <p v-if="scope.row.status == 1">进行中</p>
 
                           <p v-if="scope.row.status == 3">结束</p>
-                          <p v-if="scope.row.status == 4">取消</p>
+                          <p v-if="scope.row.status == 4">取消</p>-->
+                          <p v-if="scope.row.staff.person_state == 1">培训</p>
+                          <p v-else-if="scope.row.staff.person_state == 2">考核</p>
+                          <p v-else-if="scope.row.staff.person_state == 3">待岗</p>
+                          <p v-else-if="scope.row.staff.person_state == 4">离职</p>
+                          <p v-else-if="scope.row.staff.person_state == 5">黑名单</p>
+                          <p v-else-if="scope.row.staff.person_state == 6">在岗</p>
+                          <p v-else-if="scope.row.staff.person_state == 7">离职(下单)</p>
+                          <p v-else>错误</p>
                         </template>
                       </el-table-column>
                       <el-table-column align="center" label="面试内容" prop="content"></el-table-column>
@@ -409,17 +417,13 @@
             <el-table-column align="center" label="保险购买" :show-overflow-tooltip="true">
               <template slot-scope="scope">
                 <span v-if="scope.row.safety.length == 0">无</span>
-                <span v-else>
-                  有
-                </span>
+                <span v-else>有</span>
               </template>
             </el-table-column>
             <el-table-column align="center" label="当前服务人员">
               <template slot-scope="scope">
                 {{scope.row.staff ? scope.row.staff.name : seatData}}
-                <div
-                  v-if="scope.row.staff_id != 0"
-                >
+                <div v-if="scope.row.staff_id != 0">
                   <el-popover placement="right" style="width: 80px !import" trigger="hover">
                     <el-button
                       @click="lookInsuranceBtn(scope.row.staff_id, scope.row.staff.name)"
@@ -445,7 +449,7 @@
             <!-- 操作 -->
             <el-table-column label="操作" width="110px" align="center">
               <template slot-scope="scope">
-                <el-popover placement="left" trigger="click">
+                <el-popover v-if="scope.row.state != 4" placement="left" trigger="click">
                   <div class="click-content">
                     <el-tooltip
                       class="item"
@@ -453,6 +457,7 @@
                       :enterable="false"
                       content="编辑员工"
                       placement="top"
+                      v-if="[1,2,6].includes(scope.row.state)"
                     >
                       <el-button
                         @click="addSuccessOrder(scope.row.staff_id, scope.row.id)"
@@ -471,6 +476,7 @@
                       :enterable="false"
                       content="编辑合同"
                       placement="top"
+                      v-order-state="{limitList: [1,2,6], state: scope.row.state}"
                     >
                       <el-button
                         @click="editBtn(scope.row.name, scope.row.id, scope.row.contract)"
@@ -490,6 +496,7 @@
                         :enterable="false"
                         content="取消订单"
                         placement="top"
+                        v-order-state="{limitList: [0,1,2,5,6], state: scope.row.state}"
                       >
                         <el-popconfirm
                           confirmButtonText="好的"
@@ -537,6 +544,7 @@
                           content="暂停"
                           placement="top"
                           slot="reference"
+                          v-order-state="{limitList: [1,2,6], state: scope.row.state}"
                         >
                           <el-button
                             @click="stopBtn(scope.row.id)"
@@ -555,7 +563,7 @@
                         :enterable="false"
                         content="恢复"
                         placement="top"
-                        v-order-state="{limitList: [0,1,2,3,4,6], state: scope.row.state}"
+                        v-order-state="{limitList: [5], state: scope.row.state}"
                       >
                         <el-button
                           @click="restoreBtn(scope.row.id)"
@@ -573,6 +581,7 @@
                         :enterable="false"
                         content="审核"
                         placement="top"
+                        v-order-state="{limitList: [0,], state: scope.row.state}"
                       >
                         <el-button
                           @click="examineBtn(scope.row.id)"
@@ -590,6 +599,7 @@
                         :enterable="false"
                         content="完成"
                         placement="top"
+                        v-order-state="{limitList: [1,2,6], state: scope.row.state}"
                       >
                         <el-button
                           @click="completeBtn(scope.row.id)"
@@ -608,6 +618,7 @@
                         content="续签"
                         placement="top"
                         v-if="scope.row.state == 3"
+                        v-order-state="{limitList: [3,], state: scope.row.state}"
                       >
                         <el-button
                           @click="copyBtn(scope.row.id)"
@@ -766,7 +777,7 @@
                 v-model="orderSuccessForm.staff_id"
                 placeholder="请选择面试人员姓名"
                 :key="1"
-              > 
+              >
                 <el-option
                   v-for="item in orderInterviewer"
                   :key="item.id"
@@ -774,7 +785,6 @@
                   :value="item.staff_id"
                 ></el-option>
               </el-select>
-              
             </el-form-item>
           </el-row>
           <el-row>
@@ -1533,7 +1543,7 @@ export default {
             if (code === 200) {
               this.$message.success(msg);
               this.editDialogVisible = false;
-              this.getAllOrderInfo()
+              this.getAllOrderInfo();
             } else {
               this.$message.error(msg);
             }
@@ -1592,15 +1602,13 @@ export default {
       this.staffInfoDialogVisible = true;
       this.staffInfo = staff;
     },
-    
 
     // 添加完成订单
     addSuccessOrder(staff_id, order_id) {
-      
       // 显示添加界面
       this.addFirstDialogVisible = true;
       this.orderSuccessForm.customer_id = order_id;
-      this.orderSuccessForm.staff_id = staff_id ? staff_id:'';
+      this.orderSuccessForm.staff_id = staff_id ? staff_id : "";
 
       getInterviewInfo({ customer_id: order_id }).then((res) => {
         let { code, data, msg } = res;
@@ -1921,7 +1929,6 @@ export default {
       }
 
       /deep/.el-table__body-wrapper {
-
         /deep/.expand-row {
           border-bottom: 1px solid #f1f1f1;
           padding: 10px 0;

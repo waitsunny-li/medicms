@@ -45,6 +45,15 @@
               </template>
             </el-table-column>
 
+            <el-table-column align="center" prop="assign_user_id" label="售后服务人员" width="180">
+              <template slot-scope="scope">
+                <p v-if="scope.row.assign_user_id">
+                  {{scope.row.assign_user_id}}
+                </p>
+                <p v-else>暂无</p> 
+              </template>
+            </el-table-column>
+
             <el-table-column align="center" label="操作">
               <template slot-scope="scope">
                 <el-tooltip class="item" effect="dark" content="分配" placement="top">

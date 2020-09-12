@@ -189,7 +189,6 @@ export default {
         if (res.code === 200) {
           // 获取客户数据
           this.customers = res.data.data;
-          console.log(res.data.data);
           // 页数赋值
           this.currentPage = res.data.current_page;
           // 总数据条数
@@ -225,7 +224,6 @@ export default {
     lookVisitBtn(name, visit) {
       this.lookTitle = `查看客户（${name}）的回访记录`;
       this.customerVisitList = visit;
-      console.log(visit)
       this.visitDialogVisible = true;
     },
 

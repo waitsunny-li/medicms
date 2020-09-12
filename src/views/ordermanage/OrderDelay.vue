@@ -176,6 +176,7 @@
                   :enterable="false"
                   content="恢复"
                   placement="top"
+                  v-if="[5].includes(scope.row.state)"
                 >
                   <el-button
                     @click="restoreOrder(scope.row.id)"
@@ -183,6 +184,7 @@
                     icon="el-icon-refresh"
                     size="mini"
                     circle
+                    v-if="scope.row"
                   ></el-button>
                 </el-tooltip>
               </template>
@@ -255,7 +257,6 @@ export default {
         if (res.code === 200) {
           // 获取客户数据
           this.customers = res.data.data;
-          console.log(res.data.data);
           // 页数赋值
           this.currentPage = res.data.current_page;
           // 总数据条数
@@ -297,6 +298,7 @@ export default {
             let { code, msg} = res
             if(code === 200) {
               this.$message.success(msg)
+              this.getAllOrderInfo(this.searchForm)
             }else {
               this.$message.error(msg)
             }

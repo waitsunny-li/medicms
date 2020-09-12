@@ -47,8 +47,8 @@
             
             <el-table-column align="center" prop="assign_user_id" label="售后服务人员" width="180">
               <template slot-scope="scope">
-                <p v-if="scope.row.assign_user_id">
-                  {{scope.row.assign_user_id}}
+                <p v-if="scope.row.username">
+                  {{scope.row.username}}
                 </p>
                 <p v-else>暂无</p> 
               </template>
@@ -213,7 +213,6 @@ export default {
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      // console.log(currentpage);
       this.searchForm.page = currentpage
       this.getAllComplaints(this.searchForm)
     },
@@ -230,10 +229,8 @@ export default {
     saveHandleResultBtn() {
       this.$refs.handleResultForm.validate((valid) => {
         if (valid) {
-          console.log(this.handleResultForm);
           handleResult(this.handleResultForm).then((res) => {
             let { code, msg } = res;
-            console.log(res);
             if (code === 200) {
               this.$message.success(msg);
               this.resultDialogVisible = false;
@@ -261,7 +258,6 @@ export default {
     },
     // 保存按钮
     saveRateBtn() {
-      console.log(this.rateForm);
       this.$refs.rateForm.validate((valid) => {
         if (valid) {
           handleComplaint(this.rateForm).then((res) => {

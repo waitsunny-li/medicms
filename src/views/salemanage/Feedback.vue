@@ -55,8 +55,8 @@
 
             <el-table-column align="center" prop="assign_user_id" label="售后服务人员" width="180">
               <template slot-scope="scope">
-                <p v-if="scope.row.assign_user_id">
-                  {{scope.row.assign_user_id}}
+                <p v-if="scope.row.username">
+                  {{scope.row.username}}
                 </p>
                 <p v-else>暂无</p> 
               </template>
@@ -229,7 +229,6 @@ export default {
 
     // 删除
     deleteSuccess(id) {
-      console.log(id);
       deleteComplaint(id).then(res => {
         let { code, msg } = res;
         if (code === 200) {

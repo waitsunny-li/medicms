@@ -832,7 +832,6 @@ export default {
         let { code, data, msg } = res;
         if (code === 200) {
           this.sourceListData = data;
-          console.log(res);
         } else {
           this.$message.error(msg);
         }
@@ -913,7 +912,6 @@ export default {
         if (res.code === 200) {
           // 获取客户数据
           this.customers = res.data.data;
-          console.log(res.data.data);
           // 页数赋值
           this.currentPage = res.data.current_page;
           // 总数据条数
@@ -989,7 +987,6 @@ export default {
         let { code, data, msg } = res;
         if (code === 200) {
           this.editCustomerForm = data;
-          console.log(this.editCustomerForm);
           let wage = this.editCustomerForm.demand_salary.split("~");
           this.wages_start = wage[0];
           this.wages_end = wage[1];
@@ -1066,7 +1063,6 @@ export default {
     DeleteFormBtn(id) {
       deleteCustomer(id).then((res) => {
         let { code, msg } = res;
-        console.log(res);
         if (code === 200) {
           this.$message.success(msg);
           this.getAllCustomerInfo();

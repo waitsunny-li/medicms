@@ -244,7 +244,7 @@ export default {
       searchAppointStaff(options).then((res) => {
         let { code, data, msg } = res;
         if (res.code === 200) {
-          console.log(res.data);
+          // console.log(res.data);
           this.userList = data.data;
           this.currentPage = data.current_page;
           this.total = data.total;
@@ -259,7 +259,7 @@ export default {
     },
 
     searchBtn(val) {
-      console.log(val);
+      // console.log(val);
       this.searchForm = val;
       this.searchAppointData(this.searchForm);
     },
@@ -282,7 +282,7 @@ export default {
       getTrainingsData(staff_id).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(data);
+          // console.log(data);
           this.assessData = data;
           this.showTrainLoading = false;
         } else {

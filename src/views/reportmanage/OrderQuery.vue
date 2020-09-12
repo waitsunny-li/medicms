@@ -459,7 +459,6 @@ export default {
       lookChageStaffInfo(order_id).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(data);
           this.changeStaffData = data.data;
           this.lookChangeDialogVisible = true;
         } else {
@@ -489,7 +488,6 @@ export default {
         if (res.code === 200) {
           // 获取客户数据
           this.customers = res.data.data;
-          console.log(res.data.data);
           // 页数赋值
           this.currentPage = res.data.current_page;
           // 总数据条数
@@ -531,7 +529,6 @@ export default {
       getFollowUpInfo({ customer_id: customer_id }).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(res);
           this.followUpFormData = data;
           this.followupLoading = false;
         } else {
@@ -573,7 +570,6 @@ export default {
       getOneCustomerInfo(id).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(data);
           this.orderInfo = data;
 
           this.orderInfoTitle = `（${name}）订单的基本信息`;

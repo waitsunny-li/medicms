@@ -568,7 +568,6 @@ export default {
       getInterviewInfo({ staff_id: staff_id }).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(data ? data : []);
           this.interviewFormData = data ? data : [];
           // 关闭等待
           this.interviewedLoading = false;
@@ -593,7 +592,6 @@ export default {
       getOneCustomerInfo(customer_id).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(data);
           this.orderInfo = data;
 
           this.orderInfoTitle = `（${data.name}）订单的基本信息`;

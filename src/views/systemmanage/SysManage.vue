@@ -412,7 +412,6 @@ export default {
         let { code, data, msg } = res;
         if (code === 200) {
           this.userList = data.data;
-          console.log(data.data);
           // 页数赋值
           this.currentPage = data.current_page;
           // 总数据条数
@@ -496,7 +495,6 @@ export default {
 
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      console.log(currentpage);
       this.searchForm.page = currentpage;
       this.getAllUserListData(this.searchForm);
     },
@@ -572,7 +570,6 @@ export default {
 
     // 保存管理员信息
     addSystemManager() {
-      console.log(this.form);
       this.$refs.form.validate((valid) => {
         if (valid) {
           saveSysManager(this.form).then((res) => {

@@ -47,8 +47,8 @@
 
             <el-table-column align="center" prop="assign_user_id" label="售后服务人员" width="180">
               <template slot-scope="scope">
-                <p v-if="scope.row.assign_user_id">
-                  {{scope.row.assign_user_id}}
+                <p v-if="scope.row.username">
+                  {{scope.row.username}}
                 </p>
                 <p v-else>暂无</p> 
               </template>
@@ -164,7 +164,6 @@ export default {
     },
     // 当前页改变时触发
     handleCurrentChange(currentpage) {
-      // console.log(currentpage);
       this.searchForm.page = currentpage;
       this.getAllComplaints(this.searchForm);
     },
@@ -174,7 +173,6 @@ export default {
       searchNameSaleStaff(this.queryStaffName).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(res);
           this.defalutStaffData = data.slice(0, 10);
         } else {
           this.$message.error(msg);
@@ -191,7 +189,6 @@ export default {
 
     // 点击搜索按钮事件
     queryStaffBtn() {
-      console.log(this.queryStaffName);
       this.searchSaleStaffInfo(this.queryStaffName);
     },
 

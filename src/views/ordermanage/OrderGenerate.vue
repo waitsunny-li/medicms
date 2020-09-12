@@ -476,7 +476,7 @@
                       :enterable="false"
                       content="编辑合同"
                       placement="top"
-                      v-order-state="{limitList: [1,2,6], state: scope.row.state}"
+                      v-if="[1,2,6].includes(scope.row.state)"
                     >
                       <el-button
                         @click="editBtn(scope.row.name, scope.row.id, scope.row.contract)"
@@ -496,7 +496,7 @@
                         :enterable="false"
                         content="取消订单"
                         placement="top"
-                        v-order-state="{limitList: [0,1,2,5,6], state: scope.row.state}"
+                        v-if="[0,1,2,5,6].includes(scope.row.state)"
                       >
                         <el-popconfirm
                           confirmButtonText="好的"
@@ -516,7 +516,7 @@
                         </el-popconfirm>
                       </el-tooltip>
 
-                      <el-popover placement="bottom" trigger="click">
+                      <el-popover placement="bottom" trigger="hover" style="min-width:60px" class="prople">
                         <el-form ref="pauseOrderForm" :model="pauseOrderForm" label-width="80px">
                           <el-row>
                             <el-col :span="18">
@@ -544,7 +544,7 @@
                           content="暂停"
                           placement="top"
                           slot="reference"
-                          v-order-state="{limitList: [1,2,6], state: scope.row.state}"
+                          v-if="[1,2,6].includes(scope.row.state)"
                         >
                           <el-button
                             @click="stopBtn(scope.row.id)"
@@ -556,14 +556,14 @@
                           ></el-button>
                         </el-tooltip>
                       </el-popover>
-
+                      <!-- 
                       <el-tooltip
                         class="item"
                         effect="dark"
                         :enterable="false"
                         content="恢复"
                         placement="top"
-                        v-order-state="{limitList: [5], state: scope.row.state}"
+                        v-if="[5].includes(scope.row.state)"
                       >
                         <el-button
                           @click="restoreBtn(scope.row.id)"
@@ -573,7 +573,7 @@
                           circle
                           style="margin-left: 5px"
                         ></el-button>
-                      </el-tooltip>
+                      </el-tooltip>-->
 
                       <el-tooltip
                         class="item"
@@ -581,7 +581,7 @@
                         :enterable="false"
                         content="审核"
                         placement="top"
-                        v-order-state="{limitList: [0,], state: scope.row.state}"
+                        v-if="[0].includes(scope.row.state)"
                       >
                         <el-button
                           @click="examineBtn(scope.row.id)"
@@ -599,7 +599,7 @@
                         :enterable="false"
                         content="完成"
                         placement="top"
-                        v-order-state="{limitList: [1,2,6], state: scope.row.state}"
+                        v-if="[1,2,6].includes(scope.row.state)"
                       >
                         <el-button
                           @click="completeBtn(scope.row.id)"
@@ -617,8 +617,7 @@
                         :enterable="false"
                         content="续签"
                         placement="top"
-                        v-if="scope.row.state == 3"
-                        v-order-state="{limitList: [3,], state: scope.row.state}"
+                        v-if="[3].includes(scope.row.state)"
                       >
                         <el-button
                           @click="copyBtn(scope.row.id)"
@@ -1264,7 +1263,6 @@ export default {
     deleteInsuranceBtn(insruance_id, staff_id) {
       deleteInsurance(insruance_id).then((res) => {
         let { code, msg } = res;
-        console.log(res);
         if (code === 200) {
           this.$message.success(msg);
           this.getOneStaffInsuranceInfo(staff_id);
@@ -1293,7 +1291,6 @@ export default {
       lookOneInsurance(id).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(data);
           this.insuracneForm.customer_id = data.customer_id;
           this.insuracneForm.safety_no = data.safety_no;
           this.insuracneForm.time = data.time;
@@ -1320,7 +1317,6 @@ export default {
         let { code, data, msg } = res;
         if (code === 200) {
           this.insuracneFormData = data;
-          console.log(data);
           this.lookInsuranceDialogVisible = true;
         } else {
           this.$message.error(msg);
@@ -1336,7 +1332,6 @@ export default {
     },
     // 关闭回调
     buyInsuranceClose() {
-      console.log("jj");
       this.$refs.insuracneForm.resetFields();
       this.insuracneForm = {
         customer_id: "",
@@ -1370,7 +1365,6 @@ export default {
         if (res.code === 200) {
           // 获取客户数据
           this.customers = res.data.data;
-          console.log(res.data.data);
           // 页数赋值
           this.currentPage = res.data.current_page;
           // 总数据条数
@@ -1402,7 +1396,6 @@ export default {
 
     // 是否删除该订单
     formDeleteBtn(id) {
-      console.log(id);
       deleteOrderInfo(id).then((res) => {
         let { code, msg } = res;
         if (code === 200) {
@@ -1561,7 +1554,6 @@ export default {
       this.currentOrderId = row.id;
       this.addFollowUpForm.customer_id = row.id;
 
-      console.log(row.id);
       // // 获取面试记录
       this.getAllInterviewInfo(row.id);
       // // 获取跟进记录
@@ -1570,7 +1562,6 @@ export default {
 
     // 搜索选中
     handleSelect(item) {
-      console.log(item);
     },
 
     // 编辑订单弹框的关闭回调
@@ -1586,7 +1577,6 @@ export default {
       getOneCustomerInfo(id).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(data);
           this.orderInfo = data;
           this.orderInfoLoading = false;
         } else {
@@ -1615,7 +1605,6 @@ export default {
         if (code === 200) {
           if (data) {
             this.orderInterviewer = data;
-            console.log(data);
           } else {
             this.orderInterviewer = [];
             this.$message.error("无面试人员！请添加！");
@@ -1663,10 +1652,8 @@ export default {
       this.interviewLoading = true;
       getInterviewInfo({ customer_id: id }).then((res) => {
         let { code, data, msg } = res;
-        console.log(res);
         if (code === 200) {
           this.interviewFormData = data;
-          console.log("面试记录", data);
           this.interviewLoading = false;
         } else {
           this.$message.error(msg);
@@ -1680,7 +1667,6 @@ export default {
       getFollowUpInfo({ customer_id: id }).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log("跟进记录", data);
           this.followUpFormData = data;
           this.followupLoading = false;
         } else {
@@ -1692,11 +1678,9 @@ export default {
 
     // 编辑面试显示
     editInterview(id) {
-      console.log(id);
       getOneInterview(id).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(data);
           this.editInterviewState.id = data.id;
           this.editInterviewState.content = data.content;
           this.editInterviewState.status = data.status;
@@ -1716,7 +1700,6 @@ export default {
       // this.getAllInterviewInfo(id)
     },
     inaterviewhide() {
-      console.log("jjj");
       this.$refs.interviewform.resetFields();
       this.$refs.addFollowUpForm.resetFields();
     },
@@ -1728,10 +1711,8 @@ export default {
       searchStaffNmae(queryString).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(data);
           if (!data) return;
           data.forEach((item) => {
-            console.log(item);
             let obj = {};
             obj.value = item.name;
             obj.mobile = item.mobile;
@@ -1747,7 +1728,6 @@ export default {
 
     // 处理面试人员编号框选择事件
     handleSelect(item) {
-      console.log(item);
       this.interviewForm.name = item.value;
       this.interviewForm.mobile = item.mobile;
       this.interviewForm.staff_id = item.id;
@@ -1831,7 +1811,6 @@ export default {
      */
     // 保存跟进内容
     saveFollowUp(id) {
-      console.log(id);
       this.$refs.addFollowUpForm.validate((valid) => {
         if (valid) {
           saveFollowUpInfo(this.addFollowUpForm).then((res) => {
@@ -1852,7 +1831,6 @@ export default {
     },
     // 跟进删除
     followUpDeleteBtn(id) {
-      console.log(id);
       deleteFollowUp(id).then((res) => {
         let { code, msg } = res;
         if (code === 200) {
@@ -1932,6 +1910,10 @@ export default {
         /deep/.expand-row {
           border-bottom: 1px solid #f1f1f1;
           padding: 10px 0;
+        }
+
+        /deep/.el-popover {
+          min-width: 60px;
         }
       }
 

@@ -285,7 +285,6 @@ export default {
         if (res.code === 200) {
           // 获取客户数据
           this.customers = res.data.data;
-          console.log(res.data.data);
           // 页数赋值
           this.currentPage = res.data.current_page;
           // 总数据条数
@@ -328,8 +327,7 @@ export default {
       searchNameTeacher(this.queryStaffName).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(res)
-          this.defalutTeacherData = data.slice(0, 10);
+          this.defalutTeacherData = data?data.slice(0, 10):[];
         } else {
           this.$message.error(msg);
         }
@@ -338,7 +336,6 @@ export default {
 
     // 点击搜索按钮事件
     queryStaffBtn() {
-      console.log(this.queryStaffName);
       this.distributeDialogVisible = true;
       this.searchTeacherInfo(this.queryStaffName);
     },

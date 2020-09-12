@@ -4,8 +4,8 @@ import {getItem} from 'common/utils'
 export function request(config) {
   // 1、创建一个实例
   const instance = axios.create({
-    // baseURL : "http://106.54.54.237:8000/api/hy",
-    baseURL: 'http://jiazhen.gz-isp.com/api',
+    baseURL : "http://jz.i4ig.com/api/",
+    // baseURL: 'http://www.jz.com/api',
     timeout: 5000
   })
 

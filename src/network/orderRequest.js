@@ -326,13 +326,11 @@ export function saveSalesVisitInfo(data) {
 }
 
 // 派出单
-export function dispatchOrder(customer_id) {
+export function dispatchOrder(data) {
   return request({
     url: "/dispatch_order/send",
-    method: "get",
-    params: {
-      customer_id: customer_id
-    }
+    method: "post",
+    data: data
   })
 }
 

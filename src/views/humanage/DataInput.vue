@@ -1160,8 +1160,8 @@
               </el-col>
 
               <el-col :span="8">
-                <el-form-item label="面试评价" prop>
-                  <el-input :autosize="{ minRows: 3, maxRows: 4}" type="textarea"></el-input>
+                <el-form-item label="面试评价" prop="interview_evaluation">
+                  <el-input :autosize="{ minRows: 3, maxRows: 4}" type="textarea" v-model="staffForm.interview_evaluation"></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -1401,7 +1401,8 @@ export default {
       // 默认显示客户详情
       activeName: "first",
       // 域名
-      baseurl: "http://jiazhen.gz-isp.com/",
+      baseurl: "http://jz.i4ig.com/",
+      // baseurl: "http://jiazhen.gz-isp.com/",
       // 新增事件数据
       eventData: [],
       // 新增事件表单
@@ -1429,7 +1430,7 @@ export default {
         education: "",
         blood: "",
         entry_person: "",
-        person_state: "1",
+        person_state: "",
         recruiters_name: "",
         recruiters_mobile: "",
         spare_time: "",
@@ -1457,6 +1458,8 @@ export default {
         service_skills: [],
         device: [],
         job: [],
+        // 面试评价
+        interview_evaluation: "",
 
         // 工作经历
         work_experience: [
@@ -1666,7 +1669,7 @@ export default {
     },
     // 生成分享链接
     shareShow(staff_id) {
-      this.shareLink = `http://jiazhen.gz-isp.com/get_pdf?id=${staff_id}`;
+      this.shareLink = `http://jz.i4ig.com/get_pdf?id=${staff_id}`;
     },
     // 复制分享链接回调
     copyBtn(e, index) {
@@ -1689,7 +1692,7 @@ export default {
     },
     // 生成简历
     createResumeBtn() {
-      console.log(this.selected);
+      // console.log(this.selected);
       if (this.selected.length == 1) {
         createResume(this.selected[0]).then((res) => {
           let { code, data, msg } = res;
@@ -1773,7 +1776,7 @@ export default {
       searchAppointStaff(options).then((res) => {
         let { code, data, msg } = res;
         if (res.code === 200) {
-          console.log(res.data);
+          // console.log(res.data);
           this.userList = data.data;
           this.currentPage = data.current_page;
           this.total = data.total;
@@ -1820,7 +1823,7 @@ export default {
       getOneStaffImage(id).then((res) => {
         if (res.code === 200) {
           let data = res.data;
-          console.log(res.data);
+          // console.log(res.data);
           // pictureData赋值（防止保存图片错误，使数据丢失）
           this.pictureData.staff_id = data.staff_id;
           this.pictureData.identity = data.identity;
@@ -1971,7 +1974,7 @@ export default {
         let { code, data, msg } = res;
         if (code === 200) {
           this.eventData = data;
-          console.log(data);
+          // console.log(data);
         } else {
           this.$message.error(msg);
         }

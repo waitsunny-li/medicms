@@ -63,6 +63,36 @@
       :total="total"
       @handlecurrentchange="handleCurrentChange"
     />
+
+    <!-- 派出单 -->
+    <el-dialog title="派出单" :visible.sync="dispathDialogVisible" @close="dispathClose" width="500px" center>
+      <el-form
+        :model="dispathForm"
+        :rules="dispathFormRules"
+        ref="dispathForm"
+        label-width="100px"
+        class="demo-ruleForm"
+      >
+        <el-form-item label="上单日期" prop="stime">
+          <el-date-picker
+            v-model="dispathForm.stime"
+            type="datetime"
+            placeholder="选择日期"
+            format="yyyy-MM-dd HH:mm:ss"
+            value-format="yyyy-MM-dd HH:mm:ss"
+            size="mini"
+            style="width:180px"
+          ></el-date-picker>
+        </el-form-item>
+        <el-form-item label="注意事项" prop="attention">
+          <el-input type="textarea" :autosize="{ minRows: 2, maxRows: 4}" v-model="dispathForm.attention"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="mini" @click="dispathDialogVisible = false">取 消</el-button>
+        <el-button size="mini" type="primary" @click="saveDispath">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -89,6 +119,21 @@ export default {
 
       // 服务类型
       service_types: [],
+
+      dispathDialogVisible: false,
+      dispathForm: {
+        customer_id: "",
+        stime: "",
+        attention: "",
+      },
+      dispathFormRules: {
+        stime: [
+          { required: true, message: "请选择上单日期", trigger: "change" },
+        ],
+        attention: [
+          { required: true, message: "请填写注意事项", trigger: "blur" },
+        ],
+      },
     };
   },
   computed: {
@@ -120,7 +165,6 @@ export default {
           if (res.code === 200) {
             // 获取客户数据
             this.customers = res.data.data;
-            console.log(res.data.data);
             // 页数赋值
             this.currentPage = res.data.current_page;
             // 总数据条数
@@ -155,43 +199,42 @@ export default {
 
     // 打印派出单
     printDispatchBtn(oarder_id) {
-      this.$confirm("是否打印派出单", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning",
-      })
-        .then(() => {
-          dispatchOrder(oarder_id).then((res) => {
+      this.dispathForm.customer_id = oarder_id;
+      this.dispathDialogVisible = true;
+    },
+
+    // 关闭回调
+    dispathClose() {
+      this.$refs.dispathForm.resetFields()
+    },
+
+    // 保存
+    saveDispath() {
+      this.$refs.dispathForm.validate((valid) => {
+        if (valid) {
+          dispatchOrder(this.dispathForm).then((res) => {
             let { code, data, msg } = res;
             if (code === 200) {
-              // console.log(data.url);
-              // var a = document.createElement("a");
-              // a.setAttribute("href", data.url);
-              // a.setAttribute("target", "_blank");
-              // a.setAttribute("download", "");
-              // a.setAttribute("id", "js_a");
+              var a = document.createElement("a");
+              a.setAttribute("href", data.url);
+              a.setAttribute("target", "_blank");
+              a.setAttribute("download", "");
+              a.setAttribute("id", "js_a");
               // //防止反复添加
-              // if (document.getElementById("js_a")) {
-              //   document.body.removeChild(document.getElementById("js_a"));
-              // }
-              // document.body.appendChild(a);
-              download(data.url)
+              if (document.getElementById("js_a")) {
+                document.body.removeChild(document.getElementById("js_a"));
+              }
+              document.body.appendChild(a);
               a.click();
+              this.dispathDialogVisible = false
             } else {
               this.$message.error(msg);
             }
           });
-          this.$message({
-            type: "success",
-            message: "打印成功!",
-          });
-        })
-        .catch(() => {
-          this.$message({
-            type: "info",
-            message: "已取消",
-          });
-        });
+        } else {
+          return false;
+        }
+      });
     },
   },
   components: {
@@ -214,7 +257,6 @@ export default {
       margin-top: 20px;
 
       /deep/.el-table__body-wrapper {
-
         /deep/.expand-row {
           border-bottom: 1px solid #f1f1f1;
           padding: 10px 0;

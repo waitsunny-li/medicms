@@ -50,7 +50,7 @@
               :show-overflow-tooltip="false"
               width="35"
             ></el-table-column>
-
+            <el-table-column align="center" prop="num" label="编号" width="100"></el-table-column>
             <el-table-column align="center" prop="name" label="姓名" width="80"></el-table-column>
             <el-table-column align="center" prop="family_hometown" label="家庭成员籍贯" min-width="110"></el-table-column>
             <el-table-column
@@ -966,7 +966,7 @@ export default {
             let { code, msg } = res;
             if (code === 200) {
               this.$message.success(msg);
-              this.addCustomerDialogVisible = false;
+              // this.addCustomerDialogVisible = false;
               this.getAllCustomerInfo();
             } else {
               this.$message.error(msg);

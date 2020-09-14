@@ -15,7 +15,7 @@
             v-loading="loading"
             :height="scrollHeight"
           >
-            <el-table-column type="index" width="50" align="center"></el-table-column>
+            <el-table-column prop="num" label="编号" align="center" width="100"></el-table-column>
             <el-table-column prop="name" align="center" label="姓名"></el-table-column>
             <el-table-column align="center" prop="sex" label="性别">
               <template slot-scope="scope">

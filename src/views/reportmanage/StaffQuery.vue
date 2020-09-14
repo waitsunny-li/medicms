@@ -236,6 +236,7 @@
                 </el-row>
               </template>
             </el-table-column>
+            <el-table-column align="center" prop="num" label="编号" width="100"></el-table-column>
             <el-table-column align="center" prop="name" label="姓名" width="100"></el-table-column>
             <el-table-column align="center" prop="sex" label="性别" width="80">
               <template slot-scope="scope">

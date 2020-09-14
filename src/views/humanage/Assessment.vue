@@ -15,7 +15,7 @@
             :height="scrollHeight"
             class="user-table-wrap"
           >
-            <el-table-column prop="id" width="100" align="center" label="编号"></el-table-column>
+            <el-table-column prop="num" width="100" align="center" label="编号"></el-table-column>
             <el-table-column prop="name" width="100" align="center" label="姓名"></el-table-column>
             <el-table-column align="center" width="80" prop="sex" label="性别">
               <template slot-scope="scope">

@@ -299,13 +299,13 @@
                 </el-tabs>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="id" label="订单号">
+            <el-table-column align="center" prop="num" label="编号" width="100">
               <template slot-scope="scope">
                 <el-button
                   type="text"
                   size="mini"
                   @click="orderInfoBtn(scope.row.name, scope.row.id)"
-                >{{scope.row.id}}</el-button>
+                >{{scope.row.num}}</el-button>
               </template>
             </el-table-column>
             <el-table-column align="center" label="名字">
@@ -1365,6 +1365,7 @@ export default {
         if (res.code === 200) {
           // 获取客户数据
           this.customers = res.data.data;
+          console.log(this.customers)
           // 页数赋值
           this.currentPage = res.data.current_page;
           // 总数据条数
@@ -1654,6 +1655,7 @@ export default {
         let { code, data, msg } = res;
         if (code === 200) {
           this.interviewFormData = data;
+          console.log(this.interviewFormData)
           this.interviewLoading = false;
         } else {
           this.$message.error(msg);

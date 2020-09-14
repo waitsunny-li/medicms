@@ -4,6 +4,17 @@
       <el-form size="small" :inline="true" ref="searchForm" :model="searchForm">
         <el-row>
           <el-col :span="3">
+            <el-form-item prop="num">
+              <el-input
+                size="mini"
+                v-model="searchForm.num"
+                placeholder="员工编号"
+                clearable
+                @keyup.native.enter="searchBtn"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="3">
             <el-form-item prop="name">
               <el-input
                 size="mini"
@@ -82,6 +93,7 @@ export default {
   data() {
     return {
       searchForm: {
+        num: "",
         name: "",
         mobile: "",
         identity: "",

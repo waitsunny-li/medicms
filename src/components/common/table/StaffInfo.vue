@@ -107,11 +107,11 @@
       <el-row class="expand-row">
         <el-col :span="4">
           <span class="label-text">身高</span>
-          <span class="content-text">{{staffInfo.height}}</span>
+          <span class="content-text">{{staffInfo.height}}cm</span>
         </el-col>
         <el-col :span="5">
           <span class="label-text">体重</span>
-          <span class="content-text">{{staffInfo.weight}}</span>
+          <span class="content-text">{{staffInfo.weight}}kg</span>
         </el-col>
         <el-col :span="5">
           <span class="label-text">籍贯</span>
@@ -165,7 +165,7 @@
       <!-- 考核评价和培训经历 -->
       <el-row class="expand-row">
         <el-col :span="12" style="display: flex">
-          <span class="label-text">培训经历</span>
+          <span class="label-text">培训经历</span>{{staffInfo.train}}
           <div class="content-text" v-for="(item, index) in staffInfo.train" :key="index">
             <el-col :span="24">{{item.project}}</el-col>
             <el-col

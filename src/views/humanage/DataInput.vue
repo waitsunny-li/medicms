@@ -173,11 +173,11 @@
                       <el-row class="expand-row">
                         <el-col :span="4">
                           <span class="label-text">身高</span>
-                          <span class="content-text">{{scope.row.height}}</span>
+                          <span class="content-text">{{scope.row.height}}cm</span>
                         </el-col>
                         <el-col :span="5">
                           <span class="label-text">体重</span>
-                          <span class="content-text">{{scope.row.weight}}</span>
+                          <span class="content-text">{{scope.row.weight}}kg</span>
                         </el-col>
                         <el-col :span="5">
                           <span class="label-text">籍贯</span>
@@ -273,18 +273,16 @@
                               <span v-if="item.is_by==1" style="color:#67C23A">
                                 <i class="el-icon-check" style="color:#67C23A"></i> 通过
                               </span>
-                               <span v-else-if="item.is_by==0" style="color:#E6A23C">
+                              <span v-else-if="item.is_by==0" style="color:#E6A23C">
                                 <i class="el-icon-loading" style="color:#E6A23C"></i> 审核中
                               </span>
                               <span v-else style="color:#F56C6C">
-                                <i class="el-icon-close" style="color:#F56C6C"></i> 
+                                <i class="el-icon-close" style="color:#F56C6C"></i>
                                 没有通过
-                              </span> 
+                              </span>
                             </el-col>
                             <el-col :span="24">
-                              <span v-if="item.assess_content">
-                                {{item.assess_content}}
-                              </span>
+                              <span v-if="item.assess_content">{{item.assess_content}}</span>
                               <span v-else>
                                 <i class="el-icon-loading"></i> 审核中
                               </span>
@@ -412,10 +410,11 @@
                   </el-tabs>
                 </template>
               </el-table-column>
+              <el-table-column align="center" prop="num" label="编号" width="100"></el-table-column>
               <el-table-column align="center" prop="name" label="姓名" width="100">
                 <template slot-scope="scope">
                   <div class="name-wrap">
-                    <span style="margin-left: 10px">{{scope.row.name}}</span>
+                    <span>{{scope.row.name}}</span>
                   </div>
                 </template>
               </el-table-column>
@@ -884,7 +883,7 @@
               </el-col>
               <el-col :span="5">
                 <el-form-item label="体重" prop="weight">
-                  <el-input v-model="staffForm.weight" size="mini"></el-input>
+                  <el-input style="width:80px" type="number" v-model="staffForm.weight" size="mini"></el-input>kg
                 </el-form-item>
               </el-col>
               <el-col :span="6">
@@ -990,7 +989,7 @@
               </el-col>
               <el-col :span="5">
                 <el-form-item label="身高" prop="height" class="height">
-                  <el-input v-model="staffForm.height" size="mini"></el-input>
+                  <el-input style="width:80px" v-model="staffForm.height" size="mini" type="number"></el-input>cm
                 </el-form-item>
               </el-col>
               <el-col :span="5">
@@ -1161,7 +1160,11 @@
 
               <el-col :span="8">
                 <el-form-item label="面试评价" prop="interview_evaluation">
-                  <el-input :autosize="{ minRows: 3, maxRows: 4}" type="textarea" v-model="staffForm.interview_evaluation"></el-input>
+                  <el-input
+                    :autosize="{ minRows: 3, maxRows: 4}"
+                    type="textarea"
+                    v-model="staffForm.interview_evaluation"
+                  ></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -1956,7 +1959,8 @@ export default {
           this.staffForm = res.data;
           this.editnow_id = res.data.now_id;
           this.editcensus_id = res.data.census_id;
-
+          this.staffForm.work_experience = Object.values(res.data.work_experience)
+          this.staffForm.family_member = Object.values(res.data.family_member)
           this.staffForm.now_id = [];
           this.staffForm.census_id = [];
           this.staffForm.census_text = res.data.census_text.join("/");

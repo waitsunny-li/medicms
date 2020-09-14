@@ -62,12 +62,12 @@
                 </el-form>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="id" label="订单号" width="100">
+            <el-table-column align="center" prop="num" label="编号" width="100">
               <template slot-scope="scope">
                 <el-button
                   type="text"
                   @click="orderInfoBtn(scope.row.name, scope.row.id)"
-                >{{scope.row.id}}</el-button>
+                >{{scope.row.num}}</el-button>
               </template>
             </el-table-column>
             <el-table-column align="center" prop="name" label="名字" width="100"></el-table-column>

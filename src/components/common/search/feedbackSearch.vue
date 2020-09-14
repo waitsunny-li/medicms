@@ -20,7 +20,7 @@
               <el-input
                 size="mini"
                 v-model="feedbacksearchForm.mobile"
-                placeholder="请输入客户手机号"
+                placeholder="投诉人手机号"
                 clearable
                 @keyup.native.enter="searchBtn"
               ></el-input>

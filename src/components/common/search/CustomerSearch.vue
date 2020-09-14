@@ -4,10 +4,10 @@
       <el-form size="small" :inline="true" ref="searchForm" :model="CustomerSearchForm">
         <el-row>
           <el-col :span="3">
-            <el-form-item prop="name">
+            <el-form-item prop="num">
               <el-input
-                v-model="CustomerSearchForm.name"
-                placeholder="请输入客户姓名"
+                v-model="CustomerSearchForm.num"
+                placeholder="订单编号"
                 clearable
                 style="width: 140px"
                 @keyup.native.enter="searchBtn"
@@ -15,18 +15,30 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="4">
+          <el-col :span="3">
+            <el-form-item prop="name">
+              <el-input
+                v-model="CustomerSearchForm.name"
+                placeholder="客户姓名"
+                clearable
+                style="width: 140px"
+                @keyup.native.enter="searchBtn"
+              ></el-input>
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="3">
             <el-form-item prop="mobile">
               <el-input
                 v-model="CustomerSearchForm.mobile"
-                placeholder="请输入客户手机号"
+                placeholder="客户手机号"
                 clearable
                 @keyup.native.enter="searchBtn"
               ></el-input>
             </el-form-item>
           </el-col>
 
-          <el-col :span="4">
+          <el-col :span="3">
             <!-- 需求来源 -->
             <el-form-item prop="source_id">
               <el-select
@@ -44,7 +56,7 @@
             </el-form-item>
           </el-col>
 
-          <el-col :span="4">
+          <el-col :span="3">
             <!-- 需求来源 -->
             <el-form-item prop="state">
               <el-select v-model="CustomerSearchForm.state" placeholder="订单状态" @change="searchBtn">
@@ -103,6 +115,7 @@ export default {
   data() {
     return {
       CustomerSearchForm: {
+        num: "",
         name: "",
         mobile: "",
         source_id: "",
@@ -145,6 +158,7 @@ export default {
         res.mobile = this.CustomerSearchForm.mobile;
         res.source_id = this.CustomerSearchForm.source_id;
         res.create_time = this.CustomerSearchForm.create_time;
+        res.num = this.CustomerSearchForm.num 
         console.log("else: ", res);
         this.$emit("searchBtn", res);
       }

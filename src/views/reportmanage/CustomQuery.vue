@@ -63,6 +63,7 @@
                 </el-form>
               </template>
             </el-table-column>
+            <el-table-column align="center" prop="num" label="编号" width="100"></el-table-column>
             <el-table-column align="center" prop="name" label="姓名" width="100"></el-table-column>
             <el-table-column align="center" prop="family_hometown" label="家庭成员籍贯" min-width="110"></el-table-column>
             <el-table-column
@@ -217,7 +218,6 @@ export default {
         if (res.code === 200) {
           // 获取客户数据
           this.customers = res.data.data;
-          console.log(res.data.data);
           // 页数赋值
           this.currentPage = res.data.current_page;
           // 总数据条数

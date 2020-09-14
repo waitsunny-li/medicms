@@ -16,6 +16,7 @@
             :height="scrollHeight"
             v-loading="loading"
           >
+            <el-table-column align="center" prop="num" label="编号" width="100"></el-table-column>
             <el-table-column prop="name" align="center" label="客户姓名" width="100"></el-table-column>
             <el-table-column align="center" prop="mobile" label="联络电话" width="180">
               <template slot-scope="scope">

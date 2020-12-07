@@ -142,7 +142,7 @@ export default {
       return this.$store.state.screenHeight - 210 + "px";
     },
     scrollHeight() {
-      return this.$store.state.screenHeight - 240 + "px";
+      return this.$store.state.screenHeight - 230 + "px";
     },
   },
   watch: {},

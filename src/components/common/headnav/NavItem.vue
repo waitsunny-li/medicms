@@ -1,3 +1,4 @@
+
 <template>
   <div class="nav-item" @click="clickNav" :class="{actived: isactived}">
     <slot></slot>
@@ -45,7 +46,7 @@ export default {
   color: #fff;
   cursor: pointer;
   transition: 0.3s;
-  font-size: 14px;
+  font-size: 15px;
   border-radius: 5px;
   user-select: none;
   border-right: 1px solid #000;

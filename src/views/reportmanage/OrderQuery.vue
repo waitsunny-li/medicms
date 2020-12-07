@@ -150,7 +150,7 @@
                   placement="top"
                 >
                   <el-button
-                    @click="interviewDisplayBtn(scope.row.id)"
+                    @click="interviewDisplayBtn(scope.row.id, scope.row.num)"
                     circle
                     size="mini"
                     icon="el-icon-camera"
@@ -225,12 +225,11 @@
       :visible.sync="interviewDialogVisible"
       width="870px"
       center
-      v-loading="interviewedLoading"
     >
       <div class="interview-content">
-        <el-table stripe :data="interviewFormData" style="width: 100%" height="400px">
+        <el-table stripe :data="interviewFormData" style="width: 100%" height="400px" v-loading="interviewedLoading">
           <el-table-column prop="interview_time" align="center" label="面试时间" width="150px"></el-table-column>
-          <el-table-column prop="staff_id" align="center" label="面试人员编号" width="120"></el-table-column>
+          <el-table-column prop="staff.num" align="center" label="面试人员编号" width="120"></el-table-column>
           <el-table-column align="center" label="姓名" width="100">
             <template slot-scope="scope">
               <el-button @click="staffInfoBtn(scope.row.staff)" type="text">{{scope.row.staff.name}}</el-button>
@@ -267,10 +266,9 @@
       :visible.sync="followUpDialogVisible"
       width="800px"
       center
-      v-loading="followupLoading"
     >
       <div class="followup-content">
-        <el-table :data="followUpFormData" stripe style="width: 100%" height="400px">
+        <el-table :data="followUpFormData" stripe style="width: 100%" height="400px" v-loading="followupLoading">
           <el-table-column prop="start_time" align="center" label="日期" width="150"></el-table-column>
           <el-table-column prop="total_time" align="center" label="时长" width="180"></el-table-column>
 
@@ -304,7 +302,7 @@
     <el-dialog
       :title="orderInfoTitle"
       :visible.sync="orderInfoDialogVisible"
-      width="870px"
+      width="950px"
       center
       append-to-body
     >
@@ -421,15 +419,7 @@ export default {
       service_types: [],
     };
   },
-  computed: {
-    screenHeight() {
-      return this.$store.state.screenHeight - 210 + "px";
-    },
-    scrollHeight() {
-      return this.$store.state.screenHeight - 290 + "px";
-    },
-  },
-  watch: {},
+  
   created() {
     this.getAllCustomerInfo();
 
@@ -550,9 +540,9 @@ export default {
     },
 
     // 面试记录按钮事件
-    interviewDisplayBtn(id) {
+    interviewDisplayBtn(id, num) {
       this.getAllStaffInterviewInfo(id);
-      this.interviewTitle = `订单号（${id}）的面试记录`;
+      this.interviewTitle = `编号（${num}）的面试记录`;
       this.interviewDialogVisible = true;
     },
 
@@ -587,6 +577,14 @@ export default {
       this.getAllFollowUpInfo(id);
       this.followUpTitle = `订单号（${id}）的跟进情况`;
       this.followUpDialogVisible = true;
+    },
+  },
+  computed: {
+    screenHeight() {
+      return this.$store.state.screenHeight - 210 + "px";
+    },
+    scrollHeight() {
+      return this.$store.state.screenHeight - 250 + "px";
     },
   },
   components: {

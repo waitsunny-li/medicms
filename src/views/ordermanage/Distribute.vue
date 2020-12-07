@@ -19,7 +19,7 @@
             <!-- 展示 -->
             <el-table-column type="expand">
               <template slot-scope="scope">
-                <p class="title-need">
+                <p class="title-need" style="padding: 0 20px">
                   <el-button type="text">
                     对家政员的需求
                     <i class="el-icon-bottom"></i>
@@ -253,7 +253,7 @@ export default {
       return this.$store.state.screenHeight - 210 + "px";
     },
     scrollHeight() {
-      return this.$store.state.screenHeight - 290 + "px";
+      return this.$store.state.screenHeight - 240 + "px";
     },
   },
   watch: {},
@@ -392,7 +392,7 @@ export default {
 
   .el-card__body {
     .user-table-wrap {
-      margin-top: 20px;
+      margin-top: 0px;
 
       /deep/.el-table__body-wrapper {
 

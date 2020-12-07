@@ -730,7 +730,7 @@ export default {
 
   .el-card__body {
     .user-table-wrap {
-      margin-top: 20px;
+      margin-top: 0px;
 
       /deep/.staffInfo-wrap {
         margin-left: 70px;

@@ -136,6 +136,7 @@
       width="700px"
       center
       @close="addTrainingFormClose"
+      :close-on-click-modal="false"
     >
       <!-- 表单内容 -->
       <el-form
@@ -356,7 +357,7 @@ export default {
       return this.$store.state.screenHeight - 210 + "px";
     },
     scrollHeight() {
-      return this.$store.state.screenHeight - 290 + "px";
+      return this.$store.state.screenHeight - 260 + "px";
     },
   },
   watch: {

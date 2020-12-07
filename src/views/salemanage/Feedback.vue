@@ -8,9 +8,9 @@
         <!-- 表单 -->
         <el-card class="table-content" :style="{height: screenHeight}">
           <!-- 公共操作 -->
-          <el-row>
+          <el-row style="padding-bottom: 10px">
             <el-col :span="24">
-              <el-button type="primary" icon="el-icon-plus" size="mini" @click="addFeedbackBtn" v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}">新增投诉</el-button>
+              <el-button type="primary" icon="el-icon-plus" size="mini" @click="addFeedbackBtn" v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}">新增反馈</el-button>
             </el-col>
           </el-row>
           <!-- 表单 -->
@@ -96,6 +96,7 @@
       @close="addFeedDialogClose"
       width="500px"
       center
+      :close-on-click-modal="false"
     >
       <!-- 表单 -->
       <el-form ref="form" :rules="addFeedRules" :model="form" label-width="80px">
@@ -173,7 +174,7 @@ export default {
       return this.$store.state.screenHeight - 210 + "px";
     },
     scrollHeight() {
-      return this.$store.state.screenHeight - 290 + "px";
+      return this.$store.state.screenHeight - 270 + "px";
     },
   },
   watch: {},
@@ -259,7 +260,7 @@ export default {
 
   .el-card__body {
     .user-table-wrap {
-      margin-top: 20px;
+      margin-top: 0px;
 
       /deep/.el-table__body-wrapper {
 

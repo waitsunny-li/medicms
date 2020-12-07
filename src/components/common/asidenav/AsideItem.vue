@@ -1,3 +1,7 @@
+<!--
+ * @Author: liweilong
+ * @Date: 2020-08-24 08:59:40
+-->
 <template>
   <div class="aside-item" @click="clickPath" :class="{actived: isactived}">
     <div class="content">
@@ -46,7 +50,7 @@ export default {
   line-height: 45px;
   text-align: center;
   color: #fff;
-  font-size: 14px;
+  font-size: 16px;
   user-select: none;
   cursor: pointer;
   transition: 0.3s;

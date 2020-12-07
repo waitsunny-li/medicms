@@ -78,7 +78,7 @@
     />
 
     <!-- 查看培训记录 -->
-    <el-dialog :title="staff_name + '的考核记录'" :visible.sync="assessDialogVisible" width="70%" center>
+    <el-dialog :title="staff_name + '---考核记录'" :visible.sync="assessDialogVisible" width="70%" center>
       <!-- 表单内容 -->
       <el-table
         height="500"
@@ -137,6 +137,7 @@
       :visible.sync="evaluateVisible"
       append-to-body
       @close="evaluateVisibleClose"
+      :close-on-click-modal="false"
     >
       <!-- 表单 -->
       <el-form
@@ -230,7 +231,7 @@ export default {
       return this.$store.state.screenHeight - 210 + "px";
     },
     scrollHeight() {
-      return this.$store.state.screenHeight - 290 + "px";
+      return this.$store.state.screenHeight - 250 + "px";
     },
   },
   components: {

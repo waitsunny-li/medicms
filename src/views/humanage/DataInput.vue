@@ -9,7 +9,7 @@
         <div class="user-table">
           <el-card class="user-table-card" :style="{height: screenHeight}">
             <!-- 公共操作 -->
-            <el-row>
+            <el-row style="padding-bottom: 10px">
               <el-col :span="22">
                 <el-button
                   type="primary"
@@ -760,6 +760,7 @@
       :visible.sync="addUserFormVisible"
       @close="closeAddDialog"
       width="1060px"
+      :close-on-click-modal="false"
     >
       <div class="add-staff">
         <el-form
@@ -883,7 +884,7 @@
               </el-col>
               <el-col :span="5">
                 <el-form-item label="体重" prop="weight">
-                  <el-input style="width:80px" type="number" v-model="staffForm.weight" size="mini"></el-input>kg
+                  <el-input style="width:80px" type="number" v-model="staffForm.weight" size="mini"></el-input> kg
                 </el-form-item>
               </el-col>
               <el-col :span="6">
@@ -981,7 +982,7 @@
               </el-col>
             </el-row>
 
-            <el-row>
+            <el-row class="phone">
               <el-col :span="4">
                 <el-form-item label="电话" prop="mobile">
                   <el-input size="mini" v-model="staffForm.mobile"></el-input>
@@ -989,7 +990,7 @@
               </el-col>
               <el-col :span="5">
                 <el-form-item label="身高" prop="height" class="height">
-                  <el-input style="width:80px" v-model="staffForm.height" size="mini" type="number"></el-input>cm
+                  <el-input style="width:80px" v-model="staffForm.height" size="mini" type="number"></el-input> cm
                 </el-form-item>
               </el-col>
               <el-col :span="5">
@@ -1036,9 +1037,13 @@
                 </el-form-item>
               </el-col>
               <el-col :span="5">
-                <el-form-item label="身份证" prop="identity" class="identity">
-                  <el-input v-model="staffForm.identity" size="mini"></el-input>
+                <el-form-item label="户口类型" prop="census_type">
+                  <el-select size="mini" v-model="staffForm.census_type" placeholder="请选择">
+                    <el-option label="农村户口" value="农村户口"></el-option>
+                    <el-option label="非农村户口" value="非农村户口"></el-option>
+                  </el-select>
                 </el-form-item>
+                
               </el-col>
               <el-col :span="5">
                 <el-form-item label="空余时间" prop="spare_time">
@@ -1063,12 +1068,13 @@
                     <el-option label="1~2年" value="1~2年"></el-option>
                     <el-option label="3~5年" value="3~5年"></el-option>
                     <el-option label="5~10年" value="5~10年"></el-option>
+                    <el-option label="10年以上" value="5~10年"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
             </el-row>
 
-            <el-row>
+            <el-row class="birthday">
               <el-col :span="4">
                 <el-form-item label="生日" prop="birthday">
                   <el-date-picker
@@ -1084,6 +1090,7 @@
                 <el-form-item label="宗教信仰" prop="religion">
                   <el-select size="mini" v-model="staffForm.religion" placeholder="请选择">
                     <el-option label="佛教" value="佛教"></el-option>
+                    <el-option label="伊斯兰教" value="伊斯兰教"></el-option>
                     <el-option label="基督教" value="基督教"></el-option>
                   </el-select>
                 </el-form-item>
@@ -1119,31 +1126,29 @@
               </el-col>
             </el-row>
 
-            <el-row>
+            <el-row class="iden">
               <el-col :span="4">
                 <el-form-item label="血型" prop="blood">
                   <el-select size="mini" v-model="staffForm.blood" placeholder="请选择">
                     <el-option label="A型" value="A型"></el-option>
                     <el-option label="B型" value="B型"></el-option>
+                    <el-option label="AB型" value="AB型"></el-option>
                     <el-option label="O型" value="O型"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
               <el-col :span="5">
-                <el-form-item label="安置协议" prop="agreement_amount" class="identity">
+                <el-form-item label="安置协议" prop="agreement_amount" class="">
                   <el-input v-model="staffForm.agreement_amount" size="mini"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="5"></el-col>
-              <el-col :span="5">
-                <el-form-item label="户口类型" prop="census_type">
-                  <el-select size="mini" v-model="staffForm.census_type" placeholder="请选择">
-                    <el-option label="农村户口" value="农村户口"></el-option>
-                    <el-option label="非农村户口" value="非农村户口"></el-option>
-                  </el-select>
+              <el-col :span="8">
+                <el-form-item label="身份证" prop="identity" class="identity">
+                  <el-input v-model="staffForm.identity" size="mini"></el-input>
                 </el-form-item>
               </el-col>
-              <el-col :span="5"></el-col>
+              <!-- <el-col :span="5"></el-col> -->
             </el-row>
 
             <!-- 自我评价 -->
@@ -1404,8 +1409,8 @@ export default {
       // 默认显示客户详情
       activeName: "first",
       // 域名
-      baseurl: "http://jz.i4ig.com/",
-      // baseurl: "http://jiazhen.gz-isp.com/",
+      // baseurl: "http://jz.i4ig.com/",
+      baseurl: "http://jzn.gz-isp.com/",
       // 新增事件数据
       eventData: [],
       // 新增事件表单
@@ -1652,7 +1657,7 @@ export default {
       return this.$store.state.screenHeight - 210 + "px";
     },
     scrollHeight() {
-      return this.$store.state.screenHeight - 290 + "px";
+      return this.$store.state.screenHeight - 270 + "px";
     },
   },
   components: {
@@ -1672,7 +1677,7 @@ export default {
     },
     // 生成分享链接
     shareShow(staff_id) {
-      this.shareLink = `http://jz.i4ig.com/get_pdf?id=${staff_id}`;
+      this.shareLink = `http://jzn.gz-isp.com/get_pdf?id=${staff_id}`;
     },
     // 复制分享链接回调
     copyBtn(e, index) {
@@ -1884,7 +1889,29 @@ export default {
 
     // 添加按钮关闭回调
     closeAddDialog() {
+
       this.$refs.addForm.resetFields();
+      // 初始化
+      this.addUserForm.work_experience = [
+          {
+            time: [],
+            job: "",
+            address: " ",
+            content: "",
+          }
+        ]
+      this.addUserForm.family_member = [
+          {
+            name: "",
+            relation: "",
+            current_situation: "",
+          },
+          {
+            name: "",
+            relation: "",
+            current_situation: "",
+          }
+        ]
     },
 
     // 当前页改变时触发
@@ -2344,7 +2371,7 @@ export default {
 
   .el-card__body {
     .user-table-wrap {
-      margin-top: 20px;
+      margin-top: 0px;
 
       /deep/.staffInfo-wrap {
         margin-left: 70px;
@@ -2532,6 +2559,27 @@ export default {
         /deep/.el-form-item__label {
           font-size: 12px;
           width: 90px;
+        }
+      }
+
+      .birthday {
+        /deep/.el-input--prefix .el-input__inner {
+          width: 120px;
+          padding-right: 10px;
+        }
+      }
+
+       .phone {
+        /deep/.el-input__inner {
+          padding: 0 10px;
+        }
+      }
+
+      .iden {
+        .identity {
+          /deep/.el-input__inner {
+            width: 160px;
+          }
         }
       }
 

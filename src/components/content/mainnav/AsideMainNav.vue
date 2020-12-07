@@ -1,3 +1,4 @@
+
 <template>
   <div class="aside-main-nav">
     <aside-nav>
@@ -12,7 +13,7 @@
           :key="index"
         >
           <i :class="objNav.icon" :style="{color: routerLink === objNav.path ? '#409EFF' : 'rgb(144, 147, 153)'}"></i>
-          <span :style="{color: routerLink === objNav.path ? '#409EFF' : 'rgb(144, 147, 153)'}"  slot="title">{{objNav.navname}}</span>
+          <span class="asidetext" :style="{color: routerLink === objNav.path ? '#409EFF' : 'rgb(144, 147, 153)'}"  slot="title">{{objNav.navname}}</span>
         </el-menu-item>
     </aside-nav>
   </div>
@@ -59,5 +60,11 @@ export default {
   width: 100%;
   display: flex;
   justify-content: center;
+
+
+}
+
+.asidetext {
+  font-size: 15px;
 }
 </style>

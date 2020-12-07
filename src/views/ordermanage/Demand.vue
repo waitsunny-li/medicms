@@ -7,7 +7,7 @@
         <!-- 客户表单 -->
         <el-card class="table-content" :style="{height: screenHeight}">
           <!-- 公共操作 -->
-          <el-row>
+          <el-row style="padding-bottom: 10px">
             <el-col :span="22">
               <el-button type="primary" icon="el-icon-plus" size="mini" @click="addCustomerBtn" 
               v-has-power="{limitList: [1, 2, 4, 5], role_id: $store.state.userInfo.role_id}">新增需求</el-button>
@@ -223,6 +223,7 @@
       class="addFormDialog"
       width="850px"
       center
+      :close-on-click-modal="false"
     >
       <!-- 表单内容 -->
       <el-form
@@ -717,25 +718,28 @@ export default {
           { required: true, message: "请输入家庭面积", trigger: "blur" },
         ],
         demand_age: [
-          { required: true, message: "请输入员工年龄", trigger: "blur" },
+          { required: true, message: "请输入员工年龄", trigger: "change" },
         ],
         demand_job: [
-          { required: true, message: "请输入员工岗位", trigger: "blur" },
+          { required: true, message: "请输入员工岗位", trigger: "change" },
         ],
         demand_experience: [
-          { required: true, message: "请输入员工从业经验", trigger: "blur" },
+          { required: true, message: "请输入员工从业经验", trigger: "change" },
         ],
         demand_census: [
           { required: true, message: "请输入员工籍贯", trigger: "blur" },
         ],
         demand_service_skill: [
-          { required: true, message: "请输入服务技能", trigger: "blur" },
+          { required: true, message: "请输入服务技能", trigger: "change" },
         ],
         demand_sex: [
-          { required: true, message: "请输入员工性别", trigger: "blur" },
+          { required: true, message: "请输入员工性别", trigger: "change" },
         ],
         demand_cooking: [
-          { required: true, message: "请输入员工厨艺", trigger: "blur" },
+          { required: true, message: "请输入员工厨艺", trigger: "change" },
+        ],
+        service_type: [
+          { required: true, message: "请输入服务类型", trigger: "change" },
         ],
 
         mobile: [
@@ -751,7 +755,7 @@ export default {
       return this.$store.state.screenHeight - 210 + "px";
     },
     scrollHeight() {
-      return this.$store.state.screenHeight - 290 + "px";
+      return this.$store.state.screenHeight - 270 + "px";
     },
   },
   watch: {
@@ -1129,7 +1133,7 @@ export default {
 
   .el-card__body {
     .user-table-wrap {
-      margin-top: 20px;
+      margin-top: 0px;
 
       /deep/.el-table__body-wrapper {
 

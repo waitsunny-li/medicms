@@ -1,13 +1,20 @@
+/*
+ * @Author: liweilong
+ * @Date: 2020-08-24 08:59:40
+ */
 import axios from 'axios'
 import {getItem} from 'common/utils'
 
 export function request(config) {
   // 1、创建一个实例
   const instance = axios.create({
-    baseURL : "http://jz.i4ig.com/api/",
+    // baseURL : "http://jz.i4ig.com/api/",
+    baseURL : "http://jzn.gz-isp.com/api/",
     // baseURL: 'http://www.jz.com/api',
     timeout: 5000
+    
   })
+
 
   // 请求拦截器的使用
   instance.interceptors.request.use(config => {

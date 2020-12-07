@@ -148,7 +148,7 @@
 
                     <div class="add-wrap" style="margin-top: 20px; ">
                       <el-row>
-                        <el-col :span="2" :offset="22">
+                        <el-col :span="2" :offset="11">
                           <el-button
                             type="primary"
                             size="mini"
@@ -739,7 +739,7 @@
     </el-dialog>
 
     <!-- 调出家政员的基本信息 -->
-    <el-dialog :title="staffInfoTitle" :visible.sync="staffInfoDialogVisible" width="870px" center>
+    <el-dialog :title="staffInfoTitle" :visible.sync="staffInfoDialogVisible" width="1000px" center>
       <staff-info :staffInfo="staffInfo" :staffInfoLoading="staffInfoLoading"></staff-info>
     </el-dialog>
 
@@ -806,6 +806,7 @@
       @close="editDialogClose"
       width="800px"
       center
+      :close-on-click-modal="false"
     >
       <div class="content">
         <el-form
@@ -853,8 +854,8 @@
               <el-col :span="5">
                 <el-form-item label="保险单位" prop="is_insurance">
                   <el-select v-model="editForm.is_insurance" size="mini">
-                    <el-option label="有" value="1"></el-option>
-                    <el-option label="无" value="0"></el-option>
+                    <el-option label="有" :value="1"></el-option>
+                    <el-option label="无" :value="0"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -937,6 +938,7 @@
       center
       @close="inaterviewhide"
       append-to-body
+      :close-on-click-modal="false"
     >
       <el-form
         ref="interviewform"
@@ -1254,7 +1256,7 @@ export default {
       return this.$store.state.screenHeight - 210 + "px";
     },
     scrollHeight() {
-      return this.$store.state.screenHeight - 290 + "px";
+      return this.$store.state.screenHeight - 230 + "px";
     },
   },
   watch: {},
@@ -1604,6 +1606,7 @@ export default {
       getInterviewInfo({ customer_id: order_id }).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
+          console.log(data)
           if (data) {
             this.orderInterviewer = data;
           } else {
@@ -1898,11 +1901,11 @@ export default {
   border-top: 2px solid #75cbf4;
   box-shadow: 0 0 3px 0 rgba(3, 3, 3, 0.1);
   position: relative;
-  height: 700px;
+  height: 500px;
 
   .el-card__body {
     .user-table-wrap {
-      margin-top: 20px;
+      margin-top: 0px;
 
       /deep/.staffInfo-wrap {
         margin-left: 70px;

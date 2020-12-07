@@ -301,7 +301,6 @@ export default {
     },
     // 主页按钮
     homeBtn() {
-      console.log("jj");
       this.$router.push("/welcome");
     },
   },
@@ -317,6 +316,11 @@ export default {
 <style lang="less" scoped>
 .home {
   width: 100%;
+}
+
+/deep/.el-input__inner {
+  // padding: 0 1px;
+  padding-right: 12rpx;
 }
 
 .aside-wrap {
@@ -452,4 +456,13 @@ export default {
 //   background-color: #ccc;
 //   border-radius: 20px;
 // }
+
+ /deep/.el-table td, .el-table th {
+   padding: 6px 0;
+ }
+
+ /deep/.el-table .el-tabs__nav-scroll{
+   padding-left: 20px;
+   padding-right: 20px;
+ }
 </style>

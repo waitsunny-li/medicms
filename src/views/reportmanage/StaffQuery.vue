@@ -332,12 +332,12 @@
             v-loading="interviewedLoading"
           >
             <el-table-column align="center" label="面试日期" prop="interview_time" width="150px"></el-table-column>
-            <el-table-column align="center" label="订单号" prop="customer_id">
+            <el-table-column align="center" label="编号" prop="customer_id">
               <template slot-scope="scope">
                 <el-button
                   @click="showOrderInfo(scope.row.customer_id)"
                   type="text"
-                >{{scope.row.customer_id}}</el-button>
+                >{{scope.row.cust_num}}</el-button>
               </template>
             </el-table-column>
             <el-table-column align="center" label="客户名" prop="cust_name"></el-table-column>
@@ -514,7 +514,7 @@ export default {
       return this.$store.state.screenHeight - 210 + "px";
     },
     scrollHeight() {
-      return this.$store.state.screenHeight - 290 + "px";
+      return this.$store.state.screenHeight - 250 + "px";
     },
   },
   watch: {},
@@ -570,6 +570,7 @@ export default {
         let { code, data, msg } = res;
         if (code === 200) {
           this.interviewFormData = data ? data : [];
+
           // 关闭等待
           this.interviewedLoading = false;
         } else {

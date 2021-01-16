@@ -215,17 +215,20 @@
                       </el-row>
 
                       <el-row class="expand-row">
-                        <el-col :span="12" style="display: flex">
-                          <span class="label-text">工作经历</span>
-                          <div
+                        <el-col :span="12" style="display: flex;">
+                          <span class="label-text" style="width: 50px">工作经历</span>
+                          <div class="wrap" style="display: flex;width: 70%;flex-wrap: wrap;">
+                            <div
                             class="content-text"
                             v-for="(item, index) in scope.row.work_experience"
                             :key="index"
+                            style="width: 39%;margin-right:20px;margin-bottom: 20px"
                           >
                             <el-col :span="24">{{item.job}}</el-col>
                             <el-col :span="24">{{item.time.join('~')}}</el-col>
                             <el-col :span="24">{{item.address}}</el-col>
                             <el-col :span="24">{{item.content}}</el-col>
+                          </div>
                           </div>
                         </el-col>
                         <el-col :span="12" style="display: flex">
@@ -1065,10 +1068,11 @@
               <el-col :span="5">
                 <el-form-item label="家政经验" class="work_years" prop="work_years">
                   <el-select size="mini" v-model="staffForm.work_years" placeholder="请选择">
+                    <el-option label="无" value="无"></el-option>
                     <el-option label="1~2年" value="1~2年"></el-option>
                     <el-option label="3~5年" value="3~5年"></el-option>
                     <el-option label="5~10年" value="5~10年"></el-option>
-                    <el-option label="10年以上" value="5~10年"></el-option>
+                    <el-option label="10年以上" value="10年以上"></el-option>
                   </el-select>
                 </el-form-item>
               </el-col>
@@ -1089,6 +1093,7 @@
               <el-col :span="5">
                 <el-form-item label="宗教信仰" prop="religion">
                   <el-select size="mini" v-model="staffForm.religion" placeholder="请选择">
+                    <el-option label="无" value="无"></el-option>
                     <el-option label="佛教" value="佛教"></el-option>
                     <el-option label="伊斯兰教" value="伊斯兰教"></el-option>
                     <el-option label="基督教" value="基督教"></el-option>
@@ -1457,7 +1462,7 @@ export default {
         agreement_amount: "", // 安置协议
         political_status: "",
         marital_status: "",
-        now_id: [],
+        now_id: [1,331,342],
         now_address_desc: "",
         health: "",
         english: "",

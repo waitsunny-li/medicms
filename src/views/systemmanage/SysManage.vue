@@ -3,47 +3,75 @@
     <!-- 搜索 -->
     <div class="search">
       <el-card class="search-wrap">
-        <el-form size="small" :inline="true" ref="searchForm" :model="searchForm">
-          <el-form-item prop="username">
-            <el-input size="mini" v-model="searchForm.username" placeholder="姓名" clearable @keyup.native.enter="searchBtn"></el-input>
-          </el-form-item>
+        <el-row>
+          <el-col :span="16">
+            <el-form
+              size="small"
+              :inline="true"
+              ref="searchForm"
+              :model="searchForm"
+              :span="6"
+            >
+              <el-form-item prop="username">
+                <el-input
+                  size="mini"
+                  v-model="searchForm.username"
+                  placeholder="姓名"
+                  clearable
+                  @keyup.native.enter="searchBtn"
+                ></el-input>
+              </el-form-item>
 
-          <!-- 角色 -->
-          <el-form-item prop="role_id">
-            <el-select v-model="searchForm.role_id" placeholder="职位" @change="searchBtn">
-              <el-option
-                v-for="item in roleIdList"
-                :key="item.value"
-                :label="item.name"
-                :value="item.id"
-              ></el-option>
-            </el-select>
-          </el-form-item>
-          <!-- 操作 -->
-          <el-form-item class="handle">
-            <el-button type="primary" icon="el-icon-search" @click="searchBtn">搜索</el-button>
-          </el-form-item>
-          <el-form-item>
-            <el-button icon="el-icon-delete" @click="clearBtn">清除查询</el-button>
-          </el-form-item>
-        </el-form>
+              <!-- 角色 -->
+              <el-form-item prop="role_id">
+                <el-select
+                  v-model="searchForm.role_id"
+                  placeholder="职位"
+                  @change="searchBtn"
+                >
+                  <el-option
+                    v-for="item in roleIdList"
+                    :key="item.value"
+                    :label="item.name"
+                    :value="item.id"
+                  ></el-option>
+                </el-select>
+              </el-form-item>
+              <!-- 操作 -->
+              <el-form-item class="handle">
+                <el-button
+                  type="primary"
+                  icon="el-icon-search"
+                  @click="searchBtn"
+                  >搜索</el-button
+                >
+              </el-form-item>
+              <el-form-item>
+                <el-button icon="el-icon-delete" @click="clearBtn"
+                  >清除查询</el-button
+                >
+              </el-form-item>
+            </el-form>
+          </el-col>
+          <el-col :span="3" :offset="5">
+            <el-button
+              type="primary"
+              icon="el-icon-user"
+              @click="addBtn"
+              size="mini"
+              >新增用户</el-button
+            >
+          </el-col>
+        </el-row>
       </el-card>
     </div>
 
     <!-- 左边用户列表 -->
     <div class="user-table">
-      <el-card class="user-table-card" :style="{height: screenHeight}">
-        <!-- 公共操作 -->
-        <el-row>
-          <el-col :span="24">
-            <el-button type="primary" icon="el-icon-user" @click="addBtn" size="mini">新增用户</el-button>
-            <!-- <el-button type="primary" icon="el-icon-s-check" @click="addRoleBtn" size="mini">新增角色</el-button> -->
-          </el-col>
-        </el-row>
-
+      <el-card class="user-table-card" :style="{ height: screenHeight }">
         <!-- 表格 -->
         <el-row>
-          <el-col :span="13">
+          <el-col :span="14">
             <el-col :span="24">
               <p class="list-name">
                 <el-tag>用户列表</el-tag>
@@ -58,15 +86,30 @@
               v-loading="loading"
               border
             >
-              <el-table-column align="center" label="编号" prop="id" width="100"></el-table-column>
+              <el-table-column
+                align="center"
+                label="编号"
+                prop="id"
+                width="100"
+              ></el-table-column>
               <el-table-column
                 align="center"
                 prop="username"
                 label="姓名"
                 :show-overflow-tooltip="true"
               ></el-table-column>
-              <el-table-column width="180" align="center" prop="create_time" label="创建时间"></el-table-column>
-              <el-table-column width="180" align="center" prop="role.name" label="角色"></el-table-column>
+              <el-table-column
+                width="180"
+                align="center"
+                prop="create_time"
+                label="创建时间"
+              ></el-table-column>
+              <el-table-column
+                width="140"
+                align="center"
+                prop="role.name"
+                label="角色"
+              ></el-table-column>
               <!-- 操作 -->
               <el-table-column label="操作" align="center" width="140px">
                 <template slot-scope="scope">
@@ -100,7 +143,7 @@
           </el-col>
 
           <!-- 右边角色表格 -->
-          <el-col :span="10" :offset="1">
+          <el-col :span="10" :offset="0">
             <el-col :span="24">
               <p class="list-name">
                 <el-tag type="warning">角色列表</el-tag>
@@ -114,8 +157,18 @@
               v-loading="roleLoading"
               border
             >
-              <el-table-column align="center" label="编号" prop="id" width="100"></el-table-column>
-              <el-table-column align="center" prop="name" label="角色名" :show-overflow-tooltip="true"></el-table-column>
+              <el-table-column
+                align="center"
+                label="编号"
+                prop="id"
+                width="100"
+              ></el-table-column>
+              <el-table-column
+                align="center"
+                prop="name"
+                label="角色名"
+                :show-overflow-tooltip="true"
+              ></el-table-column>
               <el-table-column
                 :show-overflow-tooltip="true"
                 align="center"
@@ -190,10 +243,20 @@
     >
       <el-form ref="form" :rules="formRules" :model="form" label-width="80px">
         <el-form-item label="用户名" prop="username">
-          <el-input size="mini" v-model="form.username" style="width: 140px" placeholder="请输入用户名"></el-input>
+          <el-input
+            size="mini"
+            v-model="form.username"
+            style="width: 140px"
+            placeholder="请输入用户名"
+          ></el-input>
         </el-form-item>
         <el-form-item label="密码" prop="password">
-          <el-input style="width: 140px" placeholder="请输入密码" size="mini" v-model="form.password"></el-input>
+          <el-input
+            style="width: 140px"
+            placeholder="请输入密码"
+            size="mini"
+            v-model="form.password"
+          ></el-input>
         </el-form-item>
         <el-form-item label="角色" prop="role_id">
           <el-select size="mini" v-model="form.role_id" placeholder="请选择">
@@ -207,10 +270,20 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="addDialogVisible = false">取 消</el-button>
+        <el-button size="mini" @click="addDialogVisible = false"
+          >取 消</el-button
+        >
 
-        <el-button v-if="isAddManager" size="mini" type="primary" @click="addSystemManager">保 存</el-button>
-        <el-button v-else size="mini" type="primary" @click="editSaveManager">编 辑</el-button>
+        <el-button
+          v-if="isAddManager"
+          size="mini"
+          type="primary"
+          @click="addSystemManager"
+          >保 存</el-button
+        >
+        <el-button v-else size="mini" type="primary" @click="editSaveManager"
+          >编 辑</el-button
+        >
       </span>
     </el-dialog>
 
@@ -222,9 +295,19 @@
       width="450px"
       center
     >
-      <el-form ref="roleForm" :rules="roleFormRules" :model="roleForm" label-width="80px">
+      <el-form
+        ref="roleForm"
+        :rules="roleFormRules"
+        :model="roleForm"
+        label-width="80px"
+      >
         <el-form-item label="角色名" prop="name">
-          <el-input size="mini" v-model="roleForm.name" style="width: 140px" placeholder="请输入角色名"></el-input>
+          <el-input
+            size="mini"
+            v-model="roleForm.name"
+            style="width: 140px"
+            placeholder="请输入角色名"
+          ></el-input>
         </el-form-item>
         <el-form-item label="简述" prop="description">
           <el-input
@@ -236,17 +319,35 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="addRoleDialogVisible = false">取 消</el-button>
-        <el-button v-if="isAddRole" size="mini" type="primary" @click="saveRoleInfo">保 存</el-button>
-        <el-button v-else size="mini" type="primary" @click="saveEditRoleInfo">编 辑</el-button>
+        <el-button size="mini" @click="addRoleDialogVisible = false"
+          >取 消</el-button
+        >
+        <el-button
+          v-if="isAddRole"
+          size="mini"
+          type="primary"
+          @click="saveRoleInfo"
+          >保 存</el-button
+        >
+        <el-button v-else size="mini" type="primary" @click="saveEditRoleInfo"
+          >编 辑</el-button
+        >
       </span>
     </el-dialog>
 
     <!-- 查看添加权限 -->
-    <el-dialog title="权限列表" :visible.sync="powerDialogVisible" width="600px" center>
+    <el-dialog
+      title="权限列表"
+      :visible.sync="powerDialogVisible"
+      width="600px"
+      center
+    >
       <div class="power-content">
-        <div style="margin: 15px 0;"></div>
-        <el-checkbox-group v-model="checkedPowers" @change="handleCheckedPwersChange">
+        <div style="margin: 15px 0"></div>
+        <el-checkbox-group
+          v-model="checkedPowers"
+          @change="handleCheckedPwersChange"
+        >
           <el-collapse v-model="activeNames" @change="handleChange">
             <el-collapse-item
               v-for="powerItemObj in powers"
@@ -261,14 +362,19 @@
                 border
                 size="mini"
                 style="margin: 10px"
-              >{{power.name}}</el-checkbox>
+                >{{ power.name }}</el-checkbox
+              >
             </el-collapse-item>
           </el-collapse>
         </el-checkbox-group>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="powerDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="updateRolePowerInfo">保 存</el-button>
+        <el-button size="mini" @click="powerDialogVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="mini" type="primary" @click="updateRolePowerInfo"
+          >保 存</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -679,7 +785,7 @@ export default {
       return this.$store.state.screenHeight - 210 + "px";
     },
     scrollHeight() {
-      return this.$store.state.screenHeight - 340 + "px";
+      return this.$store.state.screenHeight - 310 + "px";
     },
   },
   components: {
@@ -709,7 +815,7 @@ export default {
   box-shadow: 0 0 3px 0 rgba(0, 0, 0, 0.1);
 
   /deep/.el-card__body {
-    width: 1170px;
+    // width: 1170px;
   }
 
   .el-form-item {
@@ -737,7 +843,6 @@ export default {
       }
 
       /deep/.el-table__body-wrapper {
-
         /deep/.expand-row {
           border-bottom: 1px solid #f1f1f1;
           padding: 10px 0;

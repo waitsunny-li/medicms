@@ -334,6 +334,28 @@ export function dispatchOrder(data) {
   })
 }
 
+// 查看客户的所有派出单
+export function lookTotalDispath(option) {
+  return request({
+    url: '/dispatch_order/get_all',
+    method: 'get',
+    params: {
+      customer_id: option.customer_id,
+    }
+  })
+}
+
+// 查看员工的所有派出单
+export function lookStaffTotalDispath(option) {
+  return request({
+    url: '/staff/dispatch',
+    method: 'get',
+    params: {
+      staff_id: option.staff_id,
+    }
+  })
+}
+
 // 查看换人记录
 export function lookChageStaffInfo(order_id) {
   return request({

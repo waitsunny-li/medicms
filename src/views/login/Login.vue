@@ -99,6 +99,7 @@ export default {
               // 本窗口存储用户的基本信息
               this.$store.commit("saveUserInfo", {
                 userToken: res.data.Authorization,
+                user_id: res.data.user_id,
                 username: res.data.username,
                 last_login_time: res.data.last_login_time,
                 ip: res.data.ip,

@@ -6,7 +6,7 @@
         <customer-search @searchBtn="searchBtn"></customer-search>
 
         <!-- 表单 -->
-        <el-card class="table-content" :style="{height: screenHeight}">
+        <el-card class="table-content" :style="{ height: screenHeight }">
           <!-- 表单内容 -->
           <!-- 表单 -->
           <el-table
@@ -23,7 +23,11 @@
               <template slot-scope="scope">
                 <el-tabs v-model="activeName" @tab-click="tabsClick">
                   <el-tab-pane label="对家政员的需求" name="first">
-                    <el-form label-position="center" inline class="demo-table-expand">
+                    <el-form
+                      label-position="center"
+                      inline
+                      class="demo-table-expand"
+                    >
                       <el-form-item label="年龄">
                         <span>{{ scope.row.demand_age }}岁以下</span>
                       </el-form-item>
@@ -37,17 +41,19 @@
                         <span v-if="scope.row.demand_sex == 2">男</span>
                       </el-form-item>
                       <el-form-item label="岗位要求">
-                        <span>{{ scope.row.demand_job.join('，') }}</span>
+                        <span>{{ scope.row.demand_job.join("，") }}</span>
                       </el-form-item>
 
                       <el-form-item label="学历">
                         <span>{{ scope.row.demand_education }}</span>
                       </el-form-item>
                       <el-form-item label="服务技能">
-                        <span>{{ scope.row.demand_service_skill.join(',') }}</span>
+                        <span>{{
+                          scope.row.demand_service_skill.join(",")
+                        }}</span>
                       </el-form-item>
                       <el-form-item label="厨艺">
-                        <span>{{ scope.row.demand_cooking.join('，') }}</span>
+                        <span>{{ scope.row.demand_cooking.join("，") }}</span>
                       </el-form-item>
                       <el-form-item label="家政从业经验">
                         <span>{{ scope.row.demand_experience }}</span>
@@ -67,18 +73,34 @@
                       height="350px"
                       v-loading="interviewLoading"
                     >
-                      <el-table-column align="center" label="面试日期" prop="interview_time"></el-table-column>
+                      <el-table-column
+                        align="center"
+                        label="面试日期"
+                        prop="interview_time"
+                      ></el-table-column>
 
-                      <el-table-column align="center" label="姓名" width="100" prop="staff">
+                      <el-table-column
+                        align="center"
+                        label="姓名"
+                        width="100"
+                        prop="staff"
+                      >
                         <template slot-scope="scope">
                           <el-button
                             @click="staffInfoBtn(scope.row.staff)"
                             type="text"
                             size="mini"
-                          >{{scope.row.staff ? scope.row.staff.name : seatData}}</el-button>
+                            >{{
+                              scope.row.staff ? scope.row.staff.name : seatData
+                            }}</el-button
+                          >
                         </template>
                       </el-table-column>
-                      <el-table-column align="center" label="电话" prop="staff.mobile"></el-table-column>
+                      <el-table-column
+                        align="center"
+                        label="电话"
+                        prop="staff.mobile"
+                      ></el-table-column>
                       <el-table-column align="center" label="人员状态">
                         <template slot-scope="scope">
                           <!-- <p v-if="scope.row.status == 0">面试中</p>
@@ -87,30 +109,70 @@
                           <p v-if="scope.row.status == 3">结束</p>
                           <p v-if="scope.row.status == 4">取消</p>-->
                           <p v-if="scope.row.staff.person_state == 1">培训</p>
-                          <p v-else-if="scope.row.staff.person_state == 2">考核</p>
-                          <p v-else-if="scope.row.staff.person_state == 3">待岗</p>
-                          <p v-else-if="scope.row.staff.person_state == 4">离职</p>
-                          <p v-else-if="scope.row.staff.person_state == 5">黑名单</p>
-                          <p v-else-if="scope.row.staff.person_state == 6">在岗</p>
-                          <p v-else-if="scope.row.staff.person_state == 7">离职(下单)</p>
+                          <p v-else-if="scope.row.staff.person_state == 2">
+                            考核
+                          </p>
+                          <p v-else-if="scope.row.staff.person_state == 3">
+                            待岗
+                          </p>
+                          <p v-else-if="scope.row.staff.person_state == 4">
+                            离职
+                          </p>
+                          <p v-else-if="scope.row.staff.person_state == 5">
+                            黑名单
+                          </p>
+                          <p v-else-if="scope.row.staff.person_state == 6">
+                            在岗
+                          </p>
+                          <p v-else-if="scope.row.staff.person_state == 7">
+                            离职(下单)
+                          </p>
                           <p v-else>错误</p>
                         </template>
                       </el-table-column>
-                      <el-table-column align="center" label="面试内容" prop="content"></el-table-column>
-                      <el-table-column align="center" label="是否面试完成" prop="status">
+                      <el-table-column
+                        align="center"
+                        label="面试内容"
+                        prop="content"
+                      ></el-table-column>
+                      <el-table-column
+                        align="center"
+                        label="是否面试完成"
+                        prop="status"
+                      >
                         <template slot-scope="scope">
                           <p v-if="scope.row.status == 1">
                             <i
                               class="el-icon-success"
-                              style="font-size: 18px; color: #67C23A;vertical-align: middle;"
+                              style="
+                                font-size: 18px;
+                                color: #67c23a;
+                                vertical-align: middle;
+                              "
                             ></i>
                             已通过
                           </p>
+                          <p v-else-if="scope.row.status == 0">
+                            <i
+                              style="
+                                font-size: 18px;
+                                color: #409eff;
+                                vertical-align: middle;
+                              "
+                              class="el-icon-loading"
+                            ></i>
+                            面试中
+                          </p>
                           <p v-else>
                             <i
-                              style="font-size: 18px; color: #F56C6C;vertical-align: middle;"
+                              style="
+                                font-size: 18px;
+                                color: #f56c6c;
+                                vertical-align: middle;
+                              "
                               class="el-icon-error"
-                            ></i> 未通过
+                            ></i>
+                            未通过
                           </p>
                         </template>
                       </el-table-column>
@@ -123,7 +185,10 @@
                             circle
                             @click="editInterview(scope.row.id)"
                             style="margin-right: 5px"
-                            v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
+                            v-has-power="{
+                              limitList: [1, 4, 5],
+                              role_id: $store.state.userInfo.role_id,
+                            }"
                           ></el-button>
                           <el-popconfirm
                             confirmButtonText="确定"
@@ -139,28 +204,38 @@
                               icon="el-icon-delete"
                               size="mini"
                               circle
-                              v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
+                              v-has-power="{
+                                limitList: [1, 4, 5],
+                                role_id: $store.state.userInfo.role_id,
+                              }"
                             ></el-button>
                           </el-popconfirm>
                         </template>
                       </el-table-column>
                     </el-table>
 
-                    <div class="add-wrap" style="margin-top: 20px; ">
+                    <div class="add-wrap" style="margin-top: 20px">
                       <el-row>
                         <el-col :span="2" :offset="11">
                           <el-button
                             type="primary"
                             size="mini"
                             @click="addInterviewBtn(scope.row.id)"
-                            v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
-                          >添加面试</el-button>
+                            v-has-power="{
+                              limitList: [1, 4, 5],
+                              role_id: $store.state.userInfo.role_id,
+                            }"
+                            >添加面试</el-button
+                          >
                         </el-col>
                       </el-row>
                     </div>
                   </el-tab-pane>
                   <el-tab-pane
-                    v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
+                    v-has-power="{
+                      limitList: [1, 4, 5],
+                      role_id: $store.state.userInfo.role_id,
+                    }"
                     label="跟进记录"
                     name="third"
                   >
@@ -172,17 +247,39 @@
                       height="250px"
                       v-loading="followupLoading"
                     >
-                      <el-table-column prop="create_time" align="center" label="开始时间"></el-table-column>
-                      <el-table-column align="center" label="服务人员" width="180">
+                      <el-table-column
+                        prop="create_time"
+                        align="center"
+                        label="开始时间"
+                      ></el-table-column>
+                      <el-table-column
+                        align="center"
+                        label="服务人员"
+                        width="180"
+                      >
                         <template slot-scope="scope">
                           <i class="el-icon-user-solid"></i>
-                          {{scope.row.staff ? scope.row.staff.name : seatData}}
+                          {{
+                            scope.row.staff ? scope.row.staff.name : seatData
+                          }}
                         </template>
                       </el-table-column>
-                      <el-table-column prop="total_time" align="center" label="时长" width="180">
-                        <template slot-scope="scope">{{scope.row.total_time}}h</template>
+                      <el-table-column
+                        prop="total_time"
+                        align="center"
+                        label="时长"
+                        width="180"
+                      >
+                        <template slot-scope="scope"
+                          >{{ scope.row.total_time }}h</template
+                        >
                       </el-table-column>
-                      <el-table-column prop="content" align="center" label="跟单记录情况" width="180"></el-table-column>
+                      <el-table-column
+                        prop="content"
+                        align="center"
+                        label="跟单记录情况"
+                        width="180"
+                      ></el-table-column>
 
                       <el-table-column label="操作" align="center">
                         <template slot-scope="scope">
@@ -225,7 +322,11 @@
                     >
                       <el-row>
                         <el-col :span="8">
-                          <el-form-item label="开始时间" prop="time" label-width="100px">
+                          <el-form-item
+                            label="开始时间"
+                            prop="time"
+                            label-width="100px"
+                          >
                             <el-date-picker
                               v-model="addFollowUpForm.start_time"
                               type="datetime"
@@ -239,16 +340,22 @@
                           </el-form-item>
                         </el-col>
                         <el-col :span="8">
-                          <el-form-item label-width="100px" label="当前服务人员">
+                          <el-form-item
+                            label-width="100px"
+                            label="当前服务人员"
+                          >
                             <div v-if="scope.row.staff_id == 0">
-                              <el-tag type="danger" effect="dark">暂无服务人员</el-tag>
+                              <el-tag type="danger" effect="dark"
+                                >暂无服务人员</el-tag
+                              >
                             </div>
                             <div v-else>
                               <!-- <el-input size="mini" disabled v-model="scope.row.staff"></el-input> -->
-                              <el-tag
-                                type="info"
-                                effect="dark"
-                              >{{scope.row.staff?scope.row.staff.name:'已被删除的用户'}}</el-tag>
+                              <el-tag type="info" effect="dark">{{
+                                scope.row.staff
+                                  ? scope.row.staff.name
+                                  : "已被删除的用户"
+                              }}</el-tag>
                             </div>
                           </el-form-item>
                         </el-col>
@@ -256,11 +363,18 @@
                       <el-row>
                         <el-col :span="6">
                           <el-form-item label="时长" prop="total_time">
-                            <el-input size="mini" v-model="addFollowUpForm.total_time"></el-input>
+                            <el-input
+                              size="mini"
+                              v-model="addFollowUpForm.total_time"
+                            ></el-input>
                           </el-form-item>
                         </el-col>
                         <el-col :span="17" :offset="1">
-                          <el-form-item label="跟单记录情况" label-width="110px" prop="content">
+                          <el-form-item
+                            label="跟单记录情况"
+                            label-width="110px"
+                            prop="content"
+                          >
                             <el-input
                               type="textarea"
                               style="width: 400px"
@@ -274,7 +388,9 @@
                     <el-row>
                       <el-col :span="3" :offset="21">
                         <div v-if="scope.row.staff_id == 0">
-                          <el-button disabled size="mini" type="primary" round>保 存</el-button>
+                          <el-button disabled size="mini" type="primary" round
+                            >保 存</el-button
+                          >
                         </div>
                         <div v-else>
                           <el-button
@@ -282,18 +398,38 @@
                             type="primary"
                             round
                             @click="saveFollowUp(scope.row.id)"
-                          >保 存</el-button>
+                            >保 存</el-button
+                          >
                         </div>
                       </el-col>
                     </el-row>
                   </el-tab-pane>
                   <el-tab-pane label="保险" name="four">
-                    <el-table :data="scope.row.safety" height="350px" style="width: 100%">
-                      <el-table-column align="center" prop="safety_no" label="保险单号"></el-table-column>
-                      <el-table-column width="200" align="center" prop="time" label="起止时间">
-                        <template slot-scope="scope">{{scope.row.time.join(' ~ ')}}</template>
+                    <el-table
+                      :data="scope.row.safety"
+                      height="350px"
+                      style="width: 100%"
+                    >
+                      <el-table-column
+                        align="center"
+                        prop="safety_no"
+                        label="保险单号"
+                      ></el-table-column>
+                      <el-table-column
+                        width="200"
+                        align="center"
+                        prop="time"
+                        label="起止时间"
+                      >
+                        <template slot-scope="scope">{{
+                          scope.row.time.join(" ~ ")
+                        }}</template>
                       </el-table-column>
-                      <el-table-column align="center" prop="content" label="保险内容"></el-table-column>
+                      <el-table-column
+                        align="center"
+                        prop="content"
+                        label="保险内容"
+                      ></el-table-column>
                     </el-table>
                   </el-tab-pane>
                 </el-tabs>
@@ -305,21 +441,30 @@
                   type="text"
                   size="mini"
                   @click="orderInfoBtn(scope.row.name, scope.row.id)"
-                >{{scope.row.num}}</el-button>
+                  >{{ scope.row.num }}</el-button
+                >
               </template>
             </el-table-column>
             <el-table-column align="center" label="名字">
               <template slot-scope="scope">
                 <div class="name-wrap">
-                  <span style="margin-left: 10px">{{scope.row.name}}</span>
+                  <span style="margin-left: 10px">{{ scope.row.name }}</span>
                 </div>
               </template>
             </el-table-column>
 
             <el-table-column align="center" prop="mobile" label="手机号">
               <template slot-scope="scope">
-                <el-tooltip class="item" effect="dark" :content="scope.row.mobile" placement="top">
-                  <i class="el-icon-phone" style="color: red;font-size: 20px"></i>
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="scope.row.mobile"
+                  placement="top"
+                >
+                  <i
+                    class="el-icon-phone"
+                    style="color: red; font-size: 20px"
+                  ></i>
                 </el-tooltip>
               </template>
             </el-table-column>
@@ -340,7 +485,9 @@
             >
               <template slot-scope="scope">
                 <div v-for="item in service_types" :key="item.id">
-                  <p v-if="scope.row.service_type == item.id">{{item.name}}</p>
+                  <p v-if="scope.row.service_type == item.id">
+                    {{ item.name }}
+                  </p>
                 </div>
               </template>
             </el-table-column>
@@ -350,10 +497,16 @@
               :show-overflow-tooltip="true"
               label="需要服务"
             ></el-table-column>
-            <el-table-column :show-overflow-tooltip="true" align="center" label="家庭成员">
-              <template
-                slot-scope="scope"
-              >{{scope.row.family_people.children}}小孩，{{scope.row.family_people.adlut}}成人，{{scope.row.family_people.old}}老人</template>
+            <el-table-column
+              :show-overflow-tooltip="true"
+              align="center"
+              label="家庭成员"
+            >
+              <template slot-scope="scope"
+                >{{ scope.row.family_people.children }}小孩，{{
+                  scope.row.family_people.adlut
+                }}成人，{{ scope.row.family_people.old }}老人</template
+              >
             </el-table-column>
 
             <el-table-column
@@ -371,17 +524,32 @@
               <template slot-scope="scope">
                 <div v-for="item in source" :key="item.id">
                   <div
-                    style="overflow: hidden;
+                    style="
+                      overflow: hidden;
                       text-overflow: ellipsis;
-                      white-space: nowrap; height: 30px"
+                      white-space: nowrap;
+                      height: 30px;
+                    "
                     v-if="scope.row.source_id == item.id"
-                  >{{item.name}}</div>
+                  >
+                    {{ item.name }}
+                  </div>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
+            <el-table-column
+              align="center"
+              prop="state"
+              label="状态"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="scope">
-                <div v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}">
+                <div
+                  v-has-power="{
+                    limitList: [1, 4, 5],
+                    role_id: $store.state.userInfo.role_id,
+                  }"
+                >
                   <p v-if="scope.row.state == 0">审核中</p>
                   <p v-if="scope.row.state == 1">待进行</p>
                   <p v-if="scope.row.state == 2">跟进中</p>
@@ -390,7 +558,9 @@
                   <p v-if="scope.row.state == 5">暂停中</p>
                   <p v-if="scope.row.state == 6">重新恢复</p>
                 </div>
-                <span v-if="![1, 4, 5].includes($store.state.userInfo.role_id)">无权限查看</span>
+                <span v-if="![1, 4, 5].includes($store.state.userInfo.role_id)"
+                  >无权限查看</span
+                >
               </template>
             </el-table-column>
             <el-table-column
@@ -408,13 +578,20 @@
                     :content="scope.row.staff ? scope.row.staff.name : seatData"
                     placement="top"
                   >
-                    <i style="color:#67C23A; font-size: 28px" class="el-icon-success"></i>
+                    <i
+                      style="color: #67c23a; font-size: 28px"
+                      class="el-icon-success"
+                    ></i>
                   </el-tooltip>
                 </div>
                 <div v-else>未完成</div>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="保险购买" :show-overflow-tooltip="true">
+            <el-table-column
+              align="center"
+              label="保险购买"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="scope">
                 <span v-if="scope.row.safety.length == 0">无</span>
                 <span v-else>有</span>
@@ -422,51 +599,82 @@
             </el-table-column>
             <el-table-column align="center" label="当前服务人员">
               <template slot-scope="scope">
-                {{scope.row.staff ? scope.row.staff.name : seatData}}
+                {{ scope.row.staff ? scope.row.staff.name : seatData }}
                 <div v-if="scope.row.staff_id != 0">
-                  <el-popover placement="right" style="width: 80px !import" trigger="hover">
+                  <el-popover
+                    placement="right"
+                    style="width: 80px !import"
+                    trigger="hover"
+                  >
                     <el-button
-                      @click="lookInsuranceBtn(scope.row.staff_id, scope.row.staff.name)"
+                      @click="
+                        lookInsuranceBtn(
+                          scope.row.staff_id,
+                          scope.row.staff.name
+                        )
+                      "
                       type="success"
                       size="mini"
-                    >查看</el-button>
+                      >查看</el-button
+                    >
                     <el-button
                       type="primary"
                       size="mini"
                       @click="buyInsuranceBtn(scope.row.id)"
-                      v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
-                    >购买保险</el-button>
-                    <el-button type="text" size="mini" slot="reference">保 险</el-button>
+                      v-has-power="{
+                        limitList: [1, 4, 5],
+                        role_id: $store.state.userInfo.role_id,
+                      }"
+                      >购买保险</el-button
+                    >
+                    <el-button type="text" size="mini" slot="reference"
+                      >保 险</el-button
+                    >
                   </el-popover>
                 </div>
                 <span v-else></span>
               </template>
             </el-table-column>
-            <el-table-column align="center" label="跟单老师" :show-overflow-tooltip="true">
-              <template slot-scope="scope">{{scope.row.match ? scope.row.match.username : '无'}}</template>
+            <el-table-column
+              align="center"
+              label="跟单老师"
+              :show-overflow-tooltip="true"
+            >
+              <template slot-scope="scope">{{
+                scope.row.match ? scope.row.match.username : "无"
+              }}</template>
             </el-table-column>
 
             <!-- 操作 -->
             <el-table-column label="操作" width="110px" align="center">
               <template slot-scope="scope">
-                <el-popover v-if="scope.row.state != 4" placement="left" trigger="click">
+                <el-popover
+                  v-if="scope.row.state != 4"
+                  placement="left"
+                  trigger="click"
+                >
                   <div class="click-content">
                     <el-tooltip
                       class="item"
                       effect="dark"
                       :enterable="false"
-                      content="编辑员工"
+                      content="指定员工"
                       placement="top"
-                      v-if="[1,2,6].includes(scope.row.state)"
+                      v-if="[1, 2, 6].includes(scope.row.state)"
                     >
                       <el-button
-                        @click="addSuccessOrder(scope.row.staff_id, scope.row.id)"
+                        @click="
+                          addSuccessOrder(scope.row.staff_id, scope.row.id)
+                        "
                         size="mini"
                         type="primary"
                         class="el-icon-user"
                         circle
                         style="margin-left: 5px"
-                        v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
+                        v-has-power="{
+                          limitList: [1, 4, 5],
+                          role_id: $store.state.userInfo.role_id,
+                        }"
                       ></el-button>
                     </el-tooltip>
 
@@ -476,27 +684,41 @@
                       :enterable="false"
                       content="编辑合同"
                       placement="top"
-                      v-if="[1,2,6].includes(scope.row.state)"
+                      v-if="[1, 2, 6].includes(scope.row.state)"
                     >
                       <el-button
-                        @click="editBtn(scope.row.name, scope.row.id, scope.row.contract)"
+                        @click="
+                          editBtn(
+                            scope.row.name,
+                            scope.row.id,
+                            scope.row.contract
+                          )
+                        "
                         size="mini"
                         type="info"
                         class="el-icon-edit"
                         circle
                         style="margin-right: 5px"
-                        v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
+                        v-has-power="{
+                          limitList: [1, 4, 5],
+                          role_id: $store.state.userInfo.role_id,
+                        }"
                       ></el-button>
                     </el-tooltip>
 
-                    <span v-has-power="{limitList: [1, 4], role_id: $store.state.userInfo.role_id}">
+                    <span
+                      v-has-power="{
+                        limitList: [1, 4],
+                        role_id: $store.state.userInfo.role_id,
+                      }"
+                    >
                       <el-tooltip
                         class="item"
                         effect="dark"
                         :enterable="false"
                         content="取消订单"
                         placement="top"
-                        v-if="[0,1,2,5,6].includes(scope.row.state)"
+                        v-if="[0, 1, 2, 5, 6].includes(scope.row.state)"
                       >
                         <el-popconfirm
                           confirmButtonText="好的"
@@ -516,8 +738,17 @@
                         </el-popconfirm>
                       </el-tooltip>
 
-                      <el-popover placement="bottom" trigger="hover" style="min-width:60px" class="prople">
-                        <el-form ref="pauseOrderForm" :model="pauseOrderForm" label-width="80px">
+                      <el-popover
+                        placement="bottom"
+                        trigger="hover"
+                        style="min-width: 60px"
+                        class="prople"
+                      >
+                        <el-form
+                          ref="pauseOrderForm"
+                          :model="pauseOrderForm"
+                          label-width="80px"
+                        >
                           <el-row>
                             <el-col :span="18">
                               <el-form-item label="暂停日期">
@@ -532,8 +763,17 @@
                                 ></el-date-picker>
                               </el-form-item>
                             </el-col>
-                            <el-col :span="5" :offset="1" style=" margin-top: 8px;">
-                              <el-button @click="savePauseOrderInfo" type="primary" size="mini">保 存</el-button>
+                            <el-col
+                              :span="5"
+                              :offset="1"
+                              style="margin-top: 8px"
+                            >
+                              <el-button
+                                @click="savePauseOrderInfo"
+                                type="primary"
+                                size="mini"
+                                >保 存</el-button
+                              >
                             </el-col>
                           </el-row>
                         </el-form>
@@ -544,7 +784,7 @@
                           content="暂停"
                           placement="top"
                           slot="reference"
-                          v-if="[1,2,6].includes(scope.row.state)"
+                          v-if="[1, 2, 6].includes(scope.row.state)"
                         >
                           <el-button
                             @click="stopBtn(scope.row.id)"
@@ -599,7 +839,7 @@
                         :enterable="false"
                         content="完成"
                         placement="top"
-                        v-if="[1,2,6].includes(scope.row.state)"
+                        v-if="[1, 2, 6].includes(scope.row.state)"
                       >
                         <el-button
                           @click="completeBtn(scope.row.id)"
@@ -637,7 +877,8 @@
                     type="primary"
                     icon="el-icon-s-operation"
                     plain
-                  >功能</el-button>
+                    >功能</el-button
+                  >
                 </el-popover>
               </template>
             </el-table-column>
@@ -662,11 +903,26 @@
       center
     >
       <el-table :data="insuracneFormData" height="350px" style="width: 100%">
-        <el-table-column align="center" prop="safety_no" label="保险单号"></el-table-column>
-        <el-table-column width="180" align="center" prop="time" label="起止时间">
-          <template slot-scope="scope">{{scope.row.time.join(' ~ ')}}</template>
+        <el-table-column
+          align="center"
+          prop="safety_no"
+          label="保险单号"
+        ></el-table-column>
+        <el-table-column
+          width="180"
+          align="center"
+          prop="time"
+          label="起止时间"
+        >
+          <template slot-scope="scope">{{
+            scope.row.time.join(" ~ ")
+          }}</template>
         </el-table-column>
-        <el-table-column align="center" prop="content" label="保险内容"></el-table-column>
+        <el-table-column
+          align="center"
+          prop="content"
+          label="保险内容"
+        ></el-table-column>
         <el-table-column align="center" label="操作">
           <template slot-scope="scope">
             <el-button
@@ -676,7 +932,10 @@
               @click="editInsuranceBtn(scope.row.id)"
               circle
               style="margin-right: 10px"
-              v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
+              v-has-power="{
+                limitList: [1, 4, 5],
+                role_id: $store.state.userInfo.role_id,
+              }"
             ></el-button>
             <el-popconfirm
               confirmButtonText="好的"
@@ -685,9 +944,18 @@
               iconColor="red"
               title="您确定要删除该保险吗？"
               @onConfirm="deleteInsuranceBtn(scope.row.id, scope.row.staff_id)"
-              v-has-power="{limitList: [1, 4, 5], role_id: $store.state.userInfo.role_id}"
+              v-has-power="{
+                limitList: [1, 4, 5],
+                role_id: $store.state.userInfo.role_id,
+              }"
             >
-              <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete" circle></el-button>
+              <el-button
+                slot="reference"
+                type="danger"
+                size="mini"
+                icon="el-icon-delete"
+                circle
+              ></el-button>
             </el-popconfirm>
           </template>
         </el-table-column>
@@ -712,7 +980,10 @@
         <el-row>
           <el-col :span="14">
             <el-form-item label="保险单号" prop="safety_no">
-              <el-input size="mini" v-model="insuracneForm.safety_no"></el-input>
+              <el-input
+                size="mini"
+                v-model="insuracneForm.safety_no"
+              ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -728,29 +999,59 @@
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="合同内容" prop="content">
-          <el-input size="mini" type="textarea" v-model="insuracneForm.content"></el-input>
+          <el-input
+            size="mini"
+            type="textarea"
+            v-model="insuracneForm.content"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="buyInsurDialogVisible = false">取 消</el-button>
-        <el-button v-if="isaddIns" size="mini" type="primary" @click="saveInsurance">保 存</el-button>
-        <el-button v-else size="mini" type="primary" @click="saveEditInsurance">编 辑</el-button>
+        <el-button size="mini" @click="buyInsurDialogVisible = false"
+          >取 消</el-button
+        >
+        <el-button
+          v-if="isaddIns"
+          size="mini"
+          type="primary"
+          @click="saveInsurance"
+          >保 存</el-button
+        >
+        <el-button v-else size="mini" type="primary" @click="saveEditInsurance"
+          >编 辑</el-button
+        >
       </span>
     </el-dialog>
 
     <!-- 调出家政员的基本信息 -->
-    <el-dialog :title="staffInfoTitle" :visible.sync="staffInfoDialogVisible" width="1000px" center>
-      <staff-info :staffInfo="staffInfo" :staffInfoLoading="staffInfoLoading"></staff-info>
+    <el-dialog
+      :title="staffInfoTitle"
+      :visible.sync="staffInfoDialogVisible"
+      width="1000px"
+      center
+    >
+      <staff-info
+        :staffInfo="staffInfo"
+        :staffInfoLoading="staffInfoLoading"
+      ></staff-info>
     </el-dialog>
 
     <!-- 调出订单的基本详情 -->
-    <el-dialog :title="orderInfoTitle" :visible.sync="orderInfoDialogVisible" width="870px" center>
-      <order-info :orderInfo="orderInfo" :orderInfoLoading="orderInfoLoading"></order-info>
+    <el-dialog
+      :title="orderInfoTitle"
+      :visible.sync="orderInfoDialogVisible"
+      width="870px"
+      center
+    >
+      <order-info
+        :orderInfo="orderInfo"
+        :orderInfoLoading="orderInfoLoading"
+      ></order-info>
     </el-dialog>
 
     <!-- 完成订单时添加员工姓名和编号 -->
     <el-dialog
-      title="编辑服务员工"
+      title="指定服务员工"
       :visible.sync="addFirstDialogVisible"
       width="500px"
       @close="addFirstDialogClose"
@@ -788,14 +1089,21 @@
           </el-row>
           <el-row>
             <el-form-item label="更换原因" label-width="80px" prop="content">
-              <el-input type="textarea" v-model="orderSuccessForm.content"></el-input>
+              <el-input
+                type="textarea"
+                v-model="orderSuccessForm.content"
+              ></el-input>
             </el-form-item>
           </el-row>
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="addFirstDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="saveFirstStaff">保 存</el-button>
+        <el-button size="mini" @click="addFirstDialogVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="mini" type="primary" @click="saveFirstStaff"
+          >保 存</el-button
+        >
       </span>
     </el-dialog>
 
@@ -821,16 +1129,28 @@
             <el-row>
               <el-col :span="6" :offset="1">
                 <el-form-item label="身份证" prop="identity">
-                  <el-input size="mini" v-model="editForm.identity" placeholder="请输入"></el-input>
+                  <el-input
+                    size="mini"
+                    v-model="editForm.identity"
+                    placeholder="请输入"
+                  ></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="6">
                 <el-form-item label="合同号" prop="num">
-                  <el-input size="mini" v-model="editForm.num" placeholder="请输入"></el-input>
+                  <el-input
+                    size="mini"
+                    v-model="editForm.num"
+                    placeholder="请输入"
+                  ></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="9">
-                <el-form-item label="合同起止" class="registration_address" prop="start_time">
+                <el-form-item
+                  label="合同起止"
+                  class="registration_address"
+                  prop="start_time"
+                >
                   <el-date-picker
                     style="width: 290px"
                     size="mini"
@@ -861,13 +1181,23 @@
               </el-col>
               <el-col :span="6">
                 <el-form-item label="现在工资" prop="now_salary">
-                  <el-input size="mini" v-model="editForm.now_salary"></el-input>
+                  <el-input
+                    size="mini"
+                    v-model="editForm.now_salary"
+                  ></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="7">
                 <el-col :span="24">
-                  <el-form-item label="家政员提成" prop="commission" style="width: 170px">
-                    <el-input size="mini" v-model="editForm.commission"></el-input>
+                  <el-form-item
+                    label="家政员提成"
+                    prop="commission"
+                    style="width: 170px"
+                  >
+                    <el-input
+                      size="mini"
+                      v-model="editForm.commission"
+                    ></el-input>
                   </el-form-item>
                 </el-col>
               </el-col>
@@ -876,17 +1206,29 @@
             <el-row>
               <el-col :span="6" :offset="1">
                 <el-form-item label="上班地址" prop="work_address">
-                  <el-input size="mini" v-model="editForm.work_address" placeholder="请输入上班地址"></el-input>
+                  <el-input
+                    size="mini"
+                    v-model="editForm.work_address"
+                    placeholder="请输入上班地址"
+                  ></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="9">
                 <el-col :span="12">
                   <el-form-item label="第二联系人" prop="name">
-                    <el-input size="mini" v-model="editForm.name" placeholder="请输入姓名"></el-input>
+                    <el-input
+                      size="mini"
+                      v-model="editForm.name"
+                      placeholder="请输入姓名"
+                    ></el-input>
                   </el-form-item>
                 </el-col>
                 <el-col :span="12">
-                  <el-form-item label="第二联系人电话" prop="phone" class="contract_wages">
+                  <el-form-item
+                    label="第二联系人电话"
+                    prop="phone"
+                    class="contract_wages"
+                  >
                     <el-input size="mini" v-model="editForm.phone"></el-input>
                   </el-form-item>
                 </el-col>
@@ -898,20 +1240,31 @@
                   style="width: 190px"
                   class="contract_wages"
                 >
-                  <el-input size="mini" v-model="editForm.sign_salary"></el-input>
+                  <el-input
+                    size="mini"
+                    v-model="editForm.sign_salary"
+                  ></el-input>
                 </el-form-item>
               </el-col>
             </el-row>
 
             <el-row>
               <el-col :span="6" :offset="1">
-                <el-form-item label="工作时间" class="registration_address" prop="work_time">
+                <el-form-item
+                  label="工作时间"
+                  class="registration_address"
+                  prop="work_time"
+                >
                   <el-input size="mini" v-model="editForm.work_time"></el-input>
                 </el-form-item>
               </el-col>
 
               <el-col :span="11">
-                <el-form-item label="家庭情况备注" class="registration_address" prop="remark">
+                <el-form-item
+                  label="家庭情况备注"
+                  class="registration_address"
+                  prop="remark"
+                >
                   <el-input
                     style="width: 512px"
                     size="mini"
@@ -925,8 +1278,12 @@
         </el-form>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="editDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="saveEditContractInfo">保 存</el-button>
+        <el-button size="mini" @click="editDialogVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="mini" type="primary" @click="saveEditContractInfo"
+          >保 存</el-button
+        >
       </span>
     </el-dialog>
 
@@ -987,26 +1344,42 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="手机号" prop="mobile">
-              <el-input disabled v-model="interviewForm.mobile" size="mini"></el-input>
+              <el-input
+                disabled
+                v-model="interviewForm.mobile"
+                size="mini"
+              ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
             <el-form-item label="面试记录" prop="content">
-              <el-input v-model="interviewForm.content" type="textarea"></el-input>
+              <el-input
+                v-model="interviewForm.content"
+                type="textarea"
+              ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="addInterviewDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="saveInterviewInfo">保 存</el-button>
+        <el-button size="mini" @click="addInterviewDialogVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="mini" type="primary" @click="saveInterviewInfo"
+          >保 存</el-button
+        >
       </span>
     </el-dialog>
 
     <!-- 编辑状态 -->
-    <el-dialog title="面试结果" :visible.sync="editInterviewDialogVisible" width="30%" center>
+    <el-dialog
+      title="面试结果"
+      :visible.sync="editInterviewDialogVisible"
+      width="30%"
+      center
+    >
       <el-form ref="editInterviewState" :model="editInterviewState">
         <el-form-item label="是否通过" prop="status">
           <el-radio-group v-model="editInterviewState.status">
@@ -1016,12 +1389,19 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="面试记录" prop="content">
-          <el-input v-model="editInterviewState.content" type="textarea"></el-input>
+          <el-input
+            v-model="editInterviewState.content"
+            type="textarea"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button size="mini" @click="editInterviewDialogVisible = false">取 消</el-button>
-        <el-button size="mini" type="primary" @click="saveEditInterview">确 定</el-button>
+        <el-button size="mini" @click="editInterviewDialogVisible = false"
+          >取 消</el-button
+        >
+        <el-button size="mini" type="primary" @click="saveEditInterview"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -1367,7 +1747,7 @@ export default {
         if (res.code === 200) {
           // 获取客户数据
           this.customers = res.data.data;
-          console.log(this.customers)
+          console.log(this.customers);
           // 页数赋值
           this.currentPage = res.data.current_page;
           // 总数据条数
@@ -1564,8 +1944,7 @@ export default {
     },
 
     // 搜索选中
-    handleSelect(item) {
-    },
+    handleSelect(item) {},
 
     // 编辑订单弹框的关闭回调
     editDialogClose() {
@@ -1606,7 +1985,7 @@ export default {
       getInterviewInfo({ customer_id: order_id }).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
-          console.log(data)
+          console.log(data);
           if (data) {
             this.orderInterviewer = data;
           } else {
@@ -1658,7 +2037,7 @@ export default {
         let { code, data, msg } = res;
         if (code === 200) {
           this.interviewFormData = data;
-          console.log(this.interviewFormData)
+          console.log(this.interviewFormData);
           this.interviewLoading = false;
         } else {
           this.$message.error(msg);
@@ -1712,7 +2091,24 @@ export default {
     querySearchAsync(queryString, cb) {
       // 先清空
       this.searchRults = [];
-      if (!queryString.trim()) return;
+      // if (!queryString.trim()) {
+      //   getInterviewInfo({ customer_id: this.addFollowUpForm.customer_id }).then((res) => {
+      //     let { code, data, msg } = res;
+      //     if (code === 200) {
+      //       if (!data) return;
+      //       data.forEach((item) => {
+      //         let obj = {};
+      //         obj.value = item.name;
+      //         obj.mobile = item.mobile;
+      //         obj.id = item.id;
+      //         this.searchRults.push(obj);
+      //       });
+      //       cb(this.searchRults);
+      //     } else {
+      //       this.$message.error(msg);
+      //     }
+      //   });
+      // }
       searchStaffNmae(queryString).then((res) => {
         let { code, data, msg } = res;
         if (code === 200) {
@@ -1724,7 +2120,7 @@ export default {
             obj.id = item.id;
             this.searchRults.push(obj);
           });
-          cb(this.searchRults);
+          cb(this.searchRults.slice(0,10));
         } else {
           this.$message.error(msg);
         }

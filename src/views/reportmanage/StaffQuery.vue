@@ -6,7 +6,7 @@
         <search @searchbtn="searchBtn"></search>
 
         <!-- 表单 -->
-        <el-card class="user-table-card" :style="{height: screenHeight}">
+        <el-card class="user-table-card" :style="{ height: screenHeight }">
           <!-- 表格 -->
           <el-table
             :data="userList"
@@ -22,147 +22,203 @@
                 <el-row class="expand-row">
                   <el-col :span="4">
                     <span class="label-text">手机号</span>
-                    <span class="content-text">{{scope.row.mobile}}</span>
+                    <span class="content-text">{{ scope.row.mobile }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">工资要求</span>
-                    <span class="content-text">{{scope.row.salary}}</span>
+                    <span class="content-text">{{ scope.row.salary }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">英语水平</span>
-                    <span class="content-text">{{scope.row.english}}</span>
+                    <span class="content-text">{{ scope.row.english }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">计算机水平</span>
-                    <span class="content-text">{{scope.row.computer}}</span>
+                    <span class="content-text">{{ scope.row.computer }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">政治面貌</span>
-                    <span class="content-text">{{scope.row.political_status}}</span>
+                    <span class="content-text">{{
+                      scope.row.political_status
+                    }}</span>
                   </el-col>
                 </el-row>
 
                 <el-row class="expand-row">
                   <el-col :span="4">
                     <span class="label-text">生肖</span>
-                    <span class="content-text">{{scope.row.zodiac}}</span>
+                    <span class="content-text">{{ scope.row.zodiac }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">休假要求</span>
-                    <span class="content-text">{{scope.row.salary}}</span>
+                    <span class="content-text">{{ scope.row.salary }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">户口地址</span>
-                    <span
-                      class="content-text"
-                    >{{scope.row.census_p_text}}{{scope.row.cnnsus_c_text}}{{scope.row.cnnsus_d_text}}{{scope.row.census_address_desc}}</span>
+                    <span class="content-text"
+                      >{{ scope.row.census_p_text }}{{ scope.row.cnnsus_c_text
+                      }}{{ scope.row.cnnsus_d_text
+                      }}{{ scope.row.census_address_desc }}</span
+                    >
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">户口类型</span>
-                    <span class="content-text">{{scope.row.census_type}}</span>
+                    <span class="content-text">{{
+                      scope.row.census_type
+                    }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">入职时间</span>
-                    <span class="content-text">{{scope.row.in_time}}</span>
+                    <span class="content-text">{{ scope.row.in_time }}</span>
                   </el-col>
                 </el-row>
 
                 <el-row class="expand-row">
                   <el-col :span="4">
                     <span class="label-text">学历</span>
-                    <span class="content-text">{{scope.row.education}}</span>
+                    <span class="content-text">{{ scope.row.education }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">现居住地</span>
-                    <span
-                      class="content-text"
-                    >{{scope.row.now_p_text}}{{scope.row.now_c_text}}{{scope.row.now_d_text}}{{scope.row.now_address_desc}}</span>
+                    <span class="content-text"
+                      >{{ scope.row.now_p_text }}{{ scope.row.now_c_text
+                      }}{{ scope.row.now_d_text
+                      }}{{ scope.row.now_address_desc }}</span
+                    >
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">服务技能</span>
-                    <span class="content-text">{{scope.row.service_skills.join('，')}}</span>
+                    <span class="content-text">{{
+                      scope.row.service_skills.join("，")
+                    }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">家用电器</span>
-                    <span class="content-text">{{scope.row.device.join('，')}}</span>
+                    <span class="content-text">{{
+                      scope.row.device.join("，")
+                    }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">入职来源</span>
-                    <span
-                      class="content-text"
-                    >{{scope.row.recruiters_name}}：{{scope.row.recruiters_mobile}}</span>
+                    <span class="content-text"
+                      >{{ scope.row.recruiters_name }}：{{
+                        scope.row.recruiters_mobile
+                      }}</span
+                    >
                   </el-col>
                 </el-row>
 
                 <el-row class="expand-row">
                   <el-col :span="4">
                     <span class="label-text">血型</span>
-                    <span class="content-text">{{scope.row.blood}}</span>
+                    <span class="content-text">{{ scope.row.blood }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">健康状况</span>
-                    <span class="content-text">{{scope.row.health}}</span>
+                    <span class="content-text">{{ scope.row.health }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">婚姻状况</span>
-                    <span class="content-text">{{scope.row.marital_status}}</span>
+                    <span class="content-text">{{
+                      scope.row.marital_status
+                    }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">员工状态</span>
-                    <span class="content-text" v-if="scope.row.person_state == 1">培训</span>
-                    <span class="content-text" v-else-if="scope.row.person_state == 2">考核</span>
-                    <span class="content-text" v-else-if="scope.row.person_state == 3">待岗</span>
-                    <span class="content-text" v-else-if="scope.row.person_state == 4">离职</span>
-                    <span class="content-text" v-else-if="scope.row.person_state == 5">黑名单</span>
-                    <span class="content-text" v-else-if="scope.row.person_state == 6">在岗</span>
-                    <span class="content-text" v-else-if="scope.row.person_state == 7">离职(下单)</span>
+                    <span
+                      class="content-text"
+                      v-if="scope.row.person_state == 1"
+                      >培训</span
+                    >
+                    <span
+                      class="content-text"
+                      v-else-if="scope.row.person_state == 2"
+                      >考核</span
+                    >
+                    <span
+                      class="content-text"
+                      v-else-if="scope.row.person_state == 3"
+                      >待岗</span
+                    >
+                    <span
+                      class="content-text"
+                      v-else-if="scope.row.person_state == 4"
+                      >离职</span
+                    >
+                    <span
+                      class="content-text"
+                      v-else-if="scope.row.person_state == 5"
+                      >黑名单</span
+                    >
+                    <span
+                      class="content-text"
+                      v-else-if="scope.row.person_state == 6"
+                      >在岗</span
+                    >
+                    <span
+                      class="content-text"
+                      v-else-if="scope.row.person_state == 7"
+                      >离职(下单)</span
+                    >
                     <span class="content-text" v-else>错误</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">保险</span>
-                    <span class="content-text">{{scope.row.agreement_amount}}</span>
+                    <span class="content-text">{{
+                      scope.row.agreement_amount
+                    }}</span>
                   </el-col>
                 </el-row>
 
                 <el-row class="expand-row">
                   <el-col :span="4">
                     <span class="label-text">身高</span>
-                    <span class="content-text">{{scope.row.height}}</span>
+                    <span class="content-text">{{ scope.row.height }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">体重</span>
-                    <span class="content-text">{{scope.row.weight}}</span>
+                    <span class="content-text">{{ scope.row.weight }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">籍贯</span>
-                    <span class="content-text">{{scope.row.census}}</span>
+                    <span class="content-text">{{ scope.row.census }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">生日</span>
-                    <span class="content-text">{{scope.row.birthday}}</span>
+                    <span class="content-text">{{ scope.row.birthday }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">语言能力</span>
-                    <span class="content-text">{{scope.row.language.join('，')}}</span>
+                    <span class="content-text">{{
+                      scope.row.language.join("，")
+                    }}</span>
                   </el-col>
                 </el-row>
 
                 <el-row class="expand-row">
                   <el-col :span="4">
                     <span class="label-text">录入人</span>
-                    <span class="content-text">{{scope.row.salary}}</span>
+                    <span class="content-text">{{ scope.row.salary }}</span>
                   </el-col>
                   <el-col :span="5">
                     <span class="label-text">家庭紧急联系</span>
-                    <span class="content-text">{{scope.row.urgent_name}}：{{scope.row.urgent_mobile}}</span>
+                    <span class="content-text"
+                      >{{ scope.row.urgent_name }}：{{
+                        scope.row.urgent_mobile
+                      }}</span
+                    >
                   </el-col>
                   <el-col :span="8">
                     <span class="label-text">安置协议</span>
-                    <span class="content-text">{{scope.row.agreement_amount}}</span>
+                    <span class="content-text">{{
+                      scope.row.agreement_amount
+                    }}</span>
                   </el-col>
                   <el-col :span="7">
                     <span class="label-text">自我评价</span>
-                    <span class="content-text">{{scope.row.self_evaluation}}</span>
+                    <span class="content-text">{{
+                      scope.row.self_evaluation
+                    }}</span>
                   </el-col>
                 </el-row>
 
@@ -174,10 +230,10 @@
                       v-for="(item, index) in scope.row.work_experience"
                       :key="index"
                     >
-                      <el-col :span="24">{{item.job}}</el-col>
-                      <el-col :span="24">{{item.time.join('~')}}</el-col>
-                      <el-col :span="24">{{item.address}}</el-col>
-                      <el-col :span="24">{{item.content}}</el-col>
+                      <el-col :span="24">{{ item.job }}</el-col>
+                      <el-col :span="24">{{ item.time.join("~") }}</el-col>
+                      <el-col :span="24">{{ item.address }}</el-col>
+                      <el-col :span="24">{{ item.content }}</el-col>
                     </div>
                   </el-col>
                   <el-col :span="12" style="display: flex">
@@ -187,9 +243,9 @@
                       v-for="(item, index) in scope.row.family_member"
                       :key="index"
                     >
-                      <el-col :span="24">{{item.name}}</el-col>
-                      <el-col :span="24">{{item.relation}}</el-col>
-                      <el-col :span="24">{{item.current_situation}}</el-col>
+                      <el-col :span="24">{{ item.name }}</el-col>
+                      <el-col :span="24">{{ item.relation }}</el-col>
+                      <el-col :span="24">{{ item.current_situation }}</el-col>
                     </div>
                   </el-col>
                 </el-row>
@@ -197,36 +253,55 @@
                 <el-row class="expand-row">
                   <el-col :span="12" style="display: flex">
                     <span class="label-text">培训经历</span>
-                    <div class="content-text" v-for="(item, index) in scope.row.train" :key="index">
-                      <el-col :span="24">{{item.project}}</el-col>
-                      <el-col
-                        :span="24"
-                      >{{timestampToTime(item.start_time)}}~{{timestampToTime(item.end_time)}}</el-col>
-                      <el-col :span="24">{{item.address}}</el-col>
-                      <el-col :span="24">{{item.content}}</el-col>
+                    <div
+                      class="content-text"
+                      v-for="(item, index) in scope.row.train"
+                      :key="index"
+                    >
+                      <el-col :span="24">{{ item.project }}</el-col>
+                      <el-col :span="24"
+                        >{{ timestampToTime(item.start_time) }}~{{
+                          timestampToTime(item.end_time)
+                        }}</el-col
+                      >
+                      <el-col :span="24">{{ item.address }}</el-col>
+                      <el-col :span="24">{{ item.content }}</el-col>
                     </div>
                   </el-col>
                   <el-col :span="12" style="display: flex">
                     <span class="label-text">考核评价</span>
-                    <div class="content-text" v-for="(item, index) in scope.row.train" :key="index">
-                      <el-col :span="24">{{item.project}}</el-col>
-                      <el-col
-                        :span="24"
-                      >{{timestampToTime(item.start_time)}}~{{timestampToTime(item.end_time)}}</el-col>
+                    <div
+                      class="content-text"
+                      v-for="(item, index) in scope.row.train"
+                      :key="index"
+                    >
+                      <el-col :span="24">{{ item.project }}</el-col>
+                      <el-col :span="24"
+                        >{{ timestampToTime(item.start_time) }}~{{
+                          timestampToTime(item.end_time)
+                        }}</el-col
+                      >
                       <el-col :span="24">
-                        <span v-if="item.is_by==1" style="color:#67C23A">
-                          <i class="el-icon-check" style="color:#67C23A"></i> 通过
+                        <span v-if="item.is_by == 1" style="color: #67c23a">
+                          <i class="el-icon-check" style="color: #67c23a"></i>
+                          通过
                         </span>
-                        <span v-else-if="item.is_by==0" style="color:#E6A23C">
-                          <i class="el-icon-loading" style="color:#E6A23C"></i> 审核中
+                        <span
+                          v-else-if="item.is_by == 0"
+                          style="color: #e6a23c"
+                        >
+                          <i class="el-icon-loading" style="color: #e6a23c"></i>
+                          审核中
                         </span>
-                        <span v-else style="color:#F56C6C">
-                          <i class="el-icon-close" style="color:#F56C6C"></i>
+                        <span v-else style="color: #f56c6c">
+                          <i class="el-icon-close" style="color: #f56c6c"></i>
                           没有通过
                         </span>
                       </el-col>
                       <el-col :span="24">
-                        <span v-if="item.assess_content">{{item.assess_content}}</span>
+                        <span v-if="item.assess_content">{{
+                          item.assess_content
+                        }}</span>
                         <span v-else>
                           <i class="el-icon-loading"></i> 审核中
                         </span>
@@ -236,8 +311,18 @@
                 </el-row>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="num" label="编号" width="100"></el-table-column>
-            <el-table-column align="center" prop="name" label="姓名" width="100"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="num"
+              label="编号"
+              width="100"
+            ></el-table-column>
+            <el-table-column
+              align="center"
+              prop="name"
+              label="姓名"
+              width="100"
+            ></el-table-column>
             <el-table-column align="center" prop="sex" label="性别" width="80">
               <template slot-scope="scope">
                 <span v-if="scope.row.sex == 1">男</span>
@@ -251,11 +336,21 @@
               label="身份证"
               :show-overflow-tooltip="true"
             ></el-table-column>
-            <el-table-column width="80" align="center" prop="age" label="年龄"></el-table-column>
-            <el-table-column align="center" prop="mobile" width="160px" label="手机号">
+            <el-table-column
+              width="80"
+              align="center"
+              prop="age"
+              label="年龄"
+            ></el-table-column>
+            <el-table-column
+              align="center"
+              prop="mobile"
+              width="160px"
+              label="手机号"
+            >
               <template slot-scope="scope">
                 <i class="el-icon-phone" style="color: red"></i>
-                {{scope.row.mobile}}
+                {{ scope.row.mobile }}
               </template>
             </el-table-column>
             <el-table-column
@@ -265,11 +360,18 @@
               min-width="180"
               :show-overflow-tooltip="true"
             >
-              <template
-                slot-scope="scope"
-              >{{scope.row.now_p_text}}{{scope.row.now_c_text}}{{scope.row.now_d_text}}{{scope.row.now_address_desc}}</template>
+              <template slot-scope="scope"
+                >{{ scope.row.now_p_text }}{{ scope.row.now_c_text
+                }}{{ scope.row.now_d_text
+                }}{{ scope.row.now_address_desc }}</template
+              >
             </el-table-column>
-            <el-table-column width="80" align="center" prop="person_state" label="人员状态">
+            <el-table-column
+              width="80"
+              align="center"
+              prop="person_state"
+              label="人员状态"
+            >
               <template slot-scope="scope">
                 <p v-if="scope.row.person_state == 1">培训</p>
                 <p v-else-if="scope.row.person_state == 2">考核</p>
@@ -281,7 +383,12 @@
                 <p v-else>错误</p>
               </template>
             </el-table-column>
-            <el-table-column width="180" align="center" prop="in_time" label="入职时间"></el-table-column>
+            <el-table-column
+              width="180"
+              align="center"
+              prop="in_time"
+              label="入职时间"
+            ></el-table-column>
             <!-- 操作 -->
             <el-table-column label="操作" align="center" width="140px">
               <template slot-scope="scope">
@@ -299,7 +406,25 @@
                     circle
                     @click="orderDisplayBtn(scope.row.name, scope.row.id)"
                   ></el-button>
+                  
                 </el-tooltip>
+                 <el-tooltip
+                  class="item"
+                  effect="dark"
+                  content="查看派出单"
+                  :enterable="false"
+                  placement="top"
+                >
+                <el-button
+                    icon="el-icon-tickets"
+                    type="primary"
+                    size="mini"
+                    circle
+                    @click="dispatchBtn(scope.row.id, scope.row.name)"
+                    ></el-button
+                  >
+                </el-tooltip>
+                
               </template>
             </el-table-column>
           </el-table>
@@ -331,31 +456,57 @@
             height="400px"
             v-loading="interviewedLoading"
           >
-            <el-table-column align="center" label="面试日期" prop="interview_time" width="150px"></el-table-column>
+            <el-table-column
+              align="center"
+              label="面试日期"
+              prop="interview_time"
+              width="150px"
+            ></el-table-column>
             <el-table-column align="center" label="编号" prop="customer_id">
               <template slot-scope="scope">
                 <el-button
                   @click="showOrderInfo(scope.row.customer_id)"
                   type="text"
-                >{{scope.row.cust_num}}</el-button>
+                  >{{ scope.row.cust_num }}</el-button
+                >
               </template>
             </el-table-column>
-            <el-table-column align="center" label="客户名" prop="cust_name"></el-table-column>
-            <el-table-column align="center" label="面试内容" prop="content"></el-table-column>
+            <el-table-column
+              align="center"
+              label="客户名"
+              prop="cust_name"
+            ></el-table-column>
+            <el-table-column
+              align="center"
+              label="面试内容"
+              prop="content"
+            ></el-table-column>
             <el-table-column align="center" label="是否面试完成">
               <template slot-scope="scope">
                 <p v-if="scope.row.status == 0">面试中</p>
                 <p v-if="scope.row.status == 1">
                   <i
                     class="el-icon-success"
-                    style="font-size: 18px; color: #67C23A;vertical-align: middle; margin-right: 5px"
-                  ></i>通过
+                    style="
+                      font-size: 18px;
+                      color: #67c23a;
+                      vertical-align: middle;
+                      margin-right: 5px;
+                    "
+                  ></i
+                  >通过
                 </p>
                 <p v-if="scope.row.status == 2">
                   <i
-                    style="font-size: 18px; color: #F56C6C;vertical-align: middle;margin-right: 5px"
+                    style="
+                      font-size: 18px;
+                      color: #f56c6c;
+                      vertical-align: middle;
+                      margin-right: 5px;
+                    "
                     class="el-icon-error"
-                  ></i>不通过
+                  ></i
+                  >不通过
                 </p>
               </template>
             </el-table-column>
@@ -398,8 +549,90 @@
     </el-dialog>
 
     <!-- 显示点击的订单详情 -->
-    <el-dialog :title="orderInfoTitle" :visible.sync="orderInfoDialogVisible" width="870px" center>
-      <order-info :orderInfo="orderInfo" :orderInfoLoading="orderInfoLoading"></order-info>
+    <el-dialog
+      :title="orderInfoTitle"
+      :visible.sync="orderInfoDialogVisible"
+      width="870px"
+      center
+    >
+      <order-info
+        :orderInfo="orderInfo"
+        :orderInfoLoading="orderInfoLoading"
+      ></order-info>
+    </el-dialog>
+
+    <!-- 查看员工的所有派出单 -->
+    <el-dialog
+      :title="dispathTitle"
+      :visible.sync="lookDispathDialogVisible"
+      width="900px"
+      center
+      class="dispathDialog"
+    >
+      <div class="interview-content">
+        <el-table
+          stripe
+          :data="lookDispathFormData"
+          style="width: 100%"
+          height="400px"
+          v-loading="lookDispathLoading"
+        >
+          <el-table-column
+            align="center"
+            label="客户姓名"
+            prop="c_name"
+            width="100"
+          >
+          </el-table-column>
+          <el-table-column
+            prop="c_mobile"
+            align="center"
+            label="客户联系电话"
+            width="120"
+          ></el-table-column>
+          <el-table-column
+            prop="time"
+            align="center"
+            label="上单日期"
+            width="150px"
+          ></el-table-column>
+          <el-table-column
+            align="center"
+            label="服务内容"
+            prop="service_content"
+            :show-overflow-tooltip="true"
+          ></el-table-column>
+          <el-table-column
+            align="center"
+            label="地址"
+            prop="c_address"
+            :show-overflow-tooltip="true"
+          ></el-table-column>
+          <el-table-column
+            align="center"
+            label="注意事项"
+            prop="desc"
+            :show-overflow-tooltip="true"
+          ></el-table-column>
+          <el-table-column
+            align="center"
+            label="指派老师"
+            prop="username"
+            :show-overflow-tooltip="true"
+          ></el-table-column>
+          <el-table-column label="操作" align="center">
+            <template slot-scope="scope">
+              <el-button
+                size="mini"
+                type="primary"
+                @click="lookOldDispath(scope.row.url)"
+              >
+                查看派出单
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -413,7 +646,11 @@ import {
   requestUserListDate,
   searchAppointStaff,
 } from "network/humanageRequest";
-import { getInterviewInfo, getOneCustomerInfo } from "network/orderRequest";
+import {
+  getInterviewInfo,
+  getOneCustomerInfo,
+  lookStaffTotalDispath,
+} from "network/orderRequest";
 export default {
   name: "StaffQuery",
   data() {
@@ -507,6 +744,12 @@ export default {
         // 订单是否完成
         is_success: true,
       },
+
+      // 查看派出单
+      dispathTitle: "",
+      lookDispathDialogVisible: false,
+      lookDispathFormData: [{}],
+      lookDispathLoading: false,
     };
   },
   computed: {
@@ -519,6 +762,30 @@ export default {
   },
   watch: {},
   methods: {
+    // 查看派出单
+    // 派出
+    dispatchBtn(staff_id, name) {
+      this.dispathTitle = name;
+      this.lookDispathDialogVisible = true;
+      lookStaffTotalDispath({ staff_id: staff_id }).then((res) => {
+        let datas = res.data.data;
+        this.lookDispathFormData = datas;
+      });
+    },
+    // 当前客户获取指定员工的派出单
+    lookOldDispath(url) {
+      var a = document.createElement("a");
+      a.setAttribute("href", url);
+      a.setAttribute("target", "_blank");
+      a.setAttribute("download", "");
+      a.setAttribute("id", "js_a");
+      //防止反复添加
+      if (document.getElementById("js_a")) {
+        document.body.removeChild(document.getElementById("js_a"));
+      }
+      document.body.appendChild(a);
+      a.click();
+    },
     timestampToTime(times) {
       let date = new Date(parseInt(times) * 1000);
       let Y = date.getFullYear() + "-";

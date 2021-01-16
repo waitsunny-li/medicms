@@ -298,7 +298,7 @@ export default {
 <style lang='less' scoped>
 /deep/.expand-row {
   border-bottom: 1px solid #f1f1f1;
-  padding: 10px 0;
+  padding: 8px 0;
 
   .label-text {
     color: #585656;
@@ -316,7 +316,7 @@ export default {
   .train_content_wrap {
     flex-wrap: wrap;
     display: flex;
-    height: 220px;
+    height: 120px;
     overflow-y: auto;
     width: 500px;
   }

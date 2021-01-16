@@ -2,7 +2,7 @@
   <div class="welcome">
     <div class="header">
       <el-row>
-        <el-col :span="4">
+        <el-col :span="5">
           <div class="logo-wrap">
             <div class="headlogo">
               <img src="~assets/img/logohead.png" alt />
@@ -19,29 +19,36 @@
               v-for="(item, index) in navList"
               :key="index"
               @click="navClick(item.path, index)"
-            >{{item.navname}}</span>
+              >{{ item.navname }}</span
+            >
           </div>
         </el-col>
-        <el-col :span="8" :offset="4">
+        <el-col :span="8" :offset="3">
           <el-col :span="18">
             <!-- 时间-ip -->
             <div class="time-ip-wrap">
-              <div class="username">{{$store.state.userInfo.username}}</div>
-              <div class="time"><i class="el-icon-time" style="margin-right: 5px"></i>{{currentDate}}</div>
-              <div class="ip">IP：{{$store.state.userInfo.ip}}</div>
+              <div class="username">{{ $store.state.userInfo.username }}</div>
+              <div class="time">
+                <i class="el-icon-time" style="margin-right: 5px"></i
+                >{{ currentDate }}
+              </div>
+              <div class="ip">IP：{{ $store.state.userInfo.ip }}</div>
             </div>
           </el-col>
           <el-col :span="4">
             <!-- 主页退出 -->
             <div class="home-logout">
-              <el-button type="text" icon="el-icon-monitor" class="home">主页</el-button>
+              <el-button type="text" icon="el-icon-monitor" class="home"
+                >主页</el-button
+              >
 
               <el-button
                 type="text"
                 icon="el-icon-switch-button"
                 class="logout-btn"
                 @click="logoutBtn"
-              >退出</el-button>
+                >退出</el-button
+              >
             </div>
           </el-col>
         </el-col>
@@ -49,34 +56,40 @@
     </div>
 
     <div class="welcome-body">
-      <div class="content-wrap">
+      <div
+        class="content-wrap"
+        v-has-power="{
+          limitList: [1],
+          role_id: $store.state.userInfo.role_id,
+        }"
+      >
         <!-- 欢迎来到家政管理系统 -->
-        <div class="circle-wrpa" style="background-color: #67c23a;">
+        <div class="circle-wrpa" style="background-color: #67c23a">
           <i class="el-icon-s-custom" style="font-size: 45px"></i>
           <div class="right-wrap">
             <p class="title">家政员</p>
-            <p class="number">{{companyData.staff}}</p>
+            <p class="number">{{ companyData.staff }}</p>
           </div>
         </div>
-        <div class="circle-wrpa" style="background-color: #E6A23C;">
+        <div class="circle-wrpa" style="background-color: #e6a23c">
           <i class="el-icon-s-order" style="font-size: 45px"></i>
           <div class="right-wrap">
             <p class="title">订单数</p>
-            <p class="number">{{companyData.customer}}</p>
+            <p class="number">{{ companyData.customer }}</p>
           </div>
         </div>
-        <div class="circle-wrpa" style="background-color: #F56C6C;">
+        <div class="circle-wrpa" style="background-color: #f56c6c">
           <i class="el-icon-s-comment" style="font-size: 45px"></i>
           <div class="right-wrap">
             <p class="title">投诉数</p>
-            <p class="number">{{companyData.complaint}}</p>
+            <p class="number">{{ companyData.complaint }}</p>
           </div>
         </div>
-        <div class="circle-wrpa" style="background-color: #909399;">
+        <div class="circle-wrpa" style="background-color: #909399">
           <i class="el-icon-user-solid" style="font-size: 45px"></i>
           <div class="right-wrap">
             <p class="title">员工数</p>
-            <p class="number">{{companyData.user}}</p>
+            <p class="number">{{ companyData.user }}</p>
           </div>
         </div>
       </div>

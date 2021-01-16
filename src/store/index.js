@@ -1,3 +1,7 @@
+/*
+ * @Author: liweilong
+ * @Date: 2020-08-24 08:59:40
+ */
 import Vue from 'vue'
 import Vuex from 'vuex'
 import {
@@ -37,6 +41,7 @@ const state = {
     last_login_time: getItem('userInfo')['last_login_time'] ? getItem('userInfo')['last_login_time'] : '',
     ip: getItem('userInfo')['ip'] ? getItem('userInfo')['ip'] : '',
     role_id: getItem('userInfo')['role_id'] ? getItem('userInfo')['role_id'] : '',
+    user_id: getItem('userInfo')['user_id'] ? getItem('userInfo')['user_id'] : '',
   }
 }
 

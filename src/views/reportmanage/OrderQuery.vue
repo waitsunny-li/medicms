@@ -6,7 +6,7 @@
         <customer-search @searchBtn="searchBtn"></customer-search>
 
         <!-- 表单 -->
-        <el-card class="table-content" :style="{height: screenHeight}">
+        <el-card class="table-content" :style="{ height: screenHeight }">
           <!-- 表单内容 -->
           <!-- 表单 -->
           <el-table
@@ -26,7 +26,11 @@
                     <i class="el-icon-bottom"></i>
                   </el-button>
                 </p>
-                <el-form label-position="center" inline class="demo-table-expand">
+                <el-form
+                  label-position="center"
+                  inline
+                  class="demo-table-expand"
+                >
                   <el-form-item label="年龄">
                     <span>{{ scope.row.demand_age }}</span>
                   </el-form-item>
@@ -40,14 +44,14 @@
                     <span v-if="scope.row.demand_sex == 2">男</span>
                   </el-form-item>
                   <el-form-item label="岗位要求">
-                    <span>{{ scope.row.demand_job.join('，') }}</span>
+                    <span>{{ scope.row.demand_job.join("，") }}</span>
                   </el-form-item>
 
                   <el-form-item label="学历">
                     <span>{{ scope.row.demand_education }}</span>
                   </el-form-item>
                   <el-form-item label="服务技能">
-                    <span>{{ scope.row.demand_service_skill.join(',') }}</span>
+                    <span>{{ scope.row.demand_service_skill.join(",") }}</span>
                   </el-form-item>
                   <el-form-item label="厨艺">
                     <span>{{ scope.row.demand_cooking }}</span>
@@ -67,11 +71,22 @@
                 <el-button
                   type="text"
                   @click="orderInfoBtn(scope.row.name, scope.row.id)"
-                >{{scope.row.num}}</el-button>
+                  >{{ scope.row.num }}</el-button
+                >
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="name" label="名字" width="100"></el-table-column>
-            <el-table-column align="center" prop="family_hometown" min-width="120" label="家庭成员籍贯"></el-table-column>
+            <el-table-column
+              align="center"
+              prop="name"
+              label="名字"
+              width="100"
+            ></el-table-column>
+            <el-table-column
+              align="center"
+              prop="family_hometown"
+              min-width="120"
+              label="家庭成员籍贯"
+            ></el-table-column>
             <el-table-column
               class="identify"
               align="center"
@@ -82,7 +97,9 @@
             >
               <template slot-scope="scope">
                 <div v-for="item in service_types" :key="item.id">
-                  <p v-if="scope.row.service_type == item.id">{{item.name}}</p>
+                  <p v-if="scope.row.service_type == item.id">
+                    {{ item.name }}
+                  </p>
                 </div>
               </template>
             </el-table-column>
@@ -93,14 +110,29 @@
               label="需要服务"
             ></el-table-column>
             <el-table-column width="180" align="center" label="家庭成员">
-              <template
-                slot-scope="scope"
-              >{{scope.row.family_people.children}}小孩，{{scope.row.family_people.adlut}}成人，{{scope.row.family_people.old}}老人</template>
+              <template slot-scope="scope"
+                >{{ scope.row.family_people.children }}小孩，{{
+                  scope.row.family_people.adlut
+                }}成人，{{ scope.row.family_people.old }}老人</template
+              >
             </el-table-column>
-            <el-table-column align="center" prop="mobile" width="100px" label="手机号">
+            <el-table-column
+              align="center"
+              prop="mobile"
+              width="100px"
+              label="手机号"
+            >
               <template slot-scope="scope">
-                <el-tooltip class="item" effect="dark" :content="scope.row.mobile" placement="top">
-                  <i class="el-icon-phone" style="color: red; font-size: 20px"></i>
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="scope.row.mobile"
+                  placement="top"
+                >
+                  <i
+                    class="el-icon-phone"
+                    style="color: red; font-size: 20px"
+                  ></i>
                 </el-tooltip>
               </template>
             </el-table-column>
@@ -120,15 +152,25 @@
               <template slot-scope="scope">
                 <div v-for="item in source" :key="item.id">
                   <div
-                    style="overflow: hidden;
+                    style="
+                      overflow: hidden;
                       text-overflow: ellipsis;
-                      white-space: nowrap; height: 30px"
+                      white-space: nowrap;
+                      height: 30px;
+                    "
                     v-if="scope.row.source_id == item.id"
-                  >{{item.name}}</div>
+                  >
+                    {{ item.name }}
+                  </div>
                 </div>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="state" label="状态" :show-overflow-tooltip="true">
+            <el-table-column
+              align="center"
+              prop="state"
+              label="状态"
+              :show-overflow-tooltip="true"
+            >
               <template slot-scope="scope">
                 <p v-if="scope.row.state == 0">审核中</p>
                 <p v-if="scope.row.state == 1">待进行</p>
@@ -140,7 +182,12 @@
               </template>
             </el-table-column>
             <!-- 操作 -->
-            <el-table-column fixed="right" label="操作" align="center" width="170px">
+            <el-table-column
+              fixed="right"
+              label="操作"
+              align="center"
+              width="210px"
+            >
               <template slot-scope="scope">
                 <el-tooltip
                   class="item"
@@ -204,6 +251,22 @@
                     type="warning"
                   ></el-button>
                 </el-tooltip>
+                <!-- 查看投诉记录 -->
+                <el-tooltip
+                  class="item"
+                  :enterable="false"
+                  effect="dark"
+                  content="投诉记录"
+                  placement="top"
+                >
+                  <el-button
+                    @click="lookComplaints(scope.row.id, scope.row.name)"
+                    circle
+                    size="mini"
+                    icon="el-icon-document-copy"
+                    type="primary"
+                  ></el-button>
+                </el-tooltip>
               </template>
             </el-table-column>
           </el-table>
@@ -227,32 +290,66 @@
       center
     >
       <div class="interview-content">
-        <el-table stripe :data="interviewFormData" style="width: 100%" height="400px" v-loading="interviewedLoading">
-          <el-table-column prop="interview_time" align="center" label="面试时间" width="150px"></el-table-column>
-          <el-table-column prop="staff.num" align="center" label="面试人员编号" width="120"></el-table-column>
+        <el-table
+          stripe
+          :data="interviewFormData"
+          style="width: 100%"
+          height="400px"
+          v-loading="interviewedLoading"
+        >
+          <el-table-column
+            prop="interview_time"
+            align="center"
+            label="面试时间"
+            width="150px"
+          ></el-table-column>
+          <el-table-column
+            prop="staff.num"
+            align="center"
+            label="面试人员编号"
+            width="120"
+          ></el-table-column>
           <el-table-column align="center" label="姓名" width="100">
             <template slot-scope="scope">
-              <el-button @click="staffInfoBtn(scope.row.staff)" type="text">{{scope.row.staff.name}}</el-button>
+              <el-button @click="staffInfoBtn(scope.row.staff)" type="text">{{
+                scope.row.staff.name
+              }}</el-button>
             </template>
           </el-table-column>
           <el-table-column align="center" label="手机号" prop="tel">
-            <template slot-scope="scope">{{scope.row.staff.mobile}}</template>
+            <template slot-scope="scope">{{ scope.row.staff.mobile }}</template>
           </el-table-column>
-          <el-table-column align="center" label="面试内容" prop="content"></el-table-column>
+          <el-table-column
+            align="center"
+            label="面试内容"
+            prop="content"
+          ></el-table-column>
           <el-table-column align="center" label="是否面试完成" prop="status">
             <template slot-scope="scope">
               <p v-if="scope.row.status == 0">面试中</p>
               <p v-if="scope.row.status == 1">
                 <i
                   class="el-icon-success"
-                  style="font-size: 18px; color: #67C23A;vertical-align: middle; margin-right: 5px"
-                ></i>通过
+                  style="
+                    font-size: 18px;
+                    color: #67c23a;
+                    vertical-align: middle;
+                    margin-right: 5px;
+                  "
+                ></i
+                >通过
               </p>
               <p v-if="scope.row.status == 2">
                 <i
-                  style="font-size: 18px; color: #F56C6C;vertical-align: middle;margin-right: 5px"
+                  style="
+                    font-size: 18px;
+                    color: #f56c6c;
+                    vertical-align: middle;
+                    margin-right: 5px;
+                  "
                   class="el-icon-error"
-                ></i>不通过
+                ></i
+                >不通过
               </p>
             </template>
           </el-table-column>
@@ -268,13 +365,36 @@
       center
     >
       <div class="followup-content">
-        <el-table :data="followUpFormData" stripe style="width: 100%" height="400px" v-loading="followupLoading">
-          <el-table-column prop="start_time" align="center" label="日期" width="150"></el-table-column>
-          <el-table-column prop="total_time" align="center" label="时长" width="180"></el-table-column>
+        <el-table
+          :data="followUpFormData"
+          stripe
+          style="width: 100%"
+          height="400px"
+          v-loading="followupLoading"
+        >
+          <el-table-column
+            prop="start_time"
+            align="center"
+            label="日期"
+            width="150"
+          ></el-table-column>
+          <el-table-column
+            prop="total_time"
+            align="center"
+            label="时长"
+            width="180"
+          ></el-table-column>
 
-          <el-table-column prop="recommend" align="center" label="当前服务人员" width="110">
+          <el-table-column
+            prop="recommend"
+            align="center"
+            label="当前服务人员"
+            width="110"
+          >
             <template slot-scope="scope">
-              <el-button @click="staffInfoBtn(scope.row.staff)" type="text">{{scope.row.staff.name}}</el-button>
+              <el-button @click="staffInfoBtn(scope.row.staff)" type="text">{{
+                scope.row.staff.name
+              }}</el-button>
             </template>
           </el-table-column>
           <el-table-column
@@ -295,7 +415,10 @@
       center
       append-to-body
     >
-      <staff-info :staffInfo="staffInfo" :staffInfoLoading="staffInfoLoading"></staff-info>
+      <staff-info
+        :staffInfo="staffInfo"
+        :staffInfoLoading="staffInfoLoading"
+      ></staff-info>
     </el-dialog>
 
     <!-- 订单详情 -->
@@ -306,39 +429,106 @@
       center
       append-to-body
     >
-      <order-info :orderInfo="orderInfo" :orderInfoLoading="orderInfoLoading"></order-info>
+      <order-info
+        :orderInfo="orderInfo"
+        :orderInfoLoading="orderInfoLoading"
+      ></order-info>
     </el-dialog>
 
     <!-- 查看当前保险 -->
-    <el-dialog title="该订单全部保险记录" :visible.sync="lookInsuranceDialogVisible" width="600px" center>
+    <el-dialog
+      title="该订单全部保险记录"
+      :visible.sync="lookInsuranceDialogVisible"
+      width="600px"
+      center
+    >
       <el-table :data="insuracneFormData" height="350px" style="width: 100%">
-        <el-table-column align="center" prop="safety_no" label="保险单号"></el-table-column>
-        <el-table-column width="180" align="center" prop="time" label="起止时间">
-          <template slot-scope="scope">{{scope.row.time.join(' ~ ')}}</template>
+        <el-table-column
+          align="center"
+          prop="safety_no"
+          label="保险单号"
+        ></el-table-column>
+        <el-table-column
+          width="180"
+          align="center"
+          prop="time"
+          label="起止时间"
+        >
+          <template slot-scope="scope">{{
+            scope.row.time.join(" ~ ")
+          }}</template>
         </el-table-column>
-        <el-table-column align="center" prop="content" label="保险内容"></el-table-column>
+        <el-table-column
+          align="center"
+          prop="content"
+          label="保险内容"
+        ></el-table-column>
       </el-table>
     </el-dialog>
 
     <!-- 查看换人记录 -->
-    <el-dialog :title="changeTitle" :visible.sync="lookChangeDialogVisible" width="600px" center>
+    <el-dialog
+      :title="changeTitle"
+      :visible.sync="lookChangeDialogVisible"
+      width="600px"
+      center
+    >
       <el-table :data="changeStaffData" height="350px" style="width: 100%">
-        <el-table-column align="center" prop="create_time" label="时间" width="160"></el-table-column>
-        <el-table-column align="center" prop="staff.id" label="员工编号"></el-table-column>
+        <el-table-column
+          align="center"
+          prop="create_time"
+          label="时间"
+          width="160"
+        ></el-table-column>
+        <el-table-column
+          align="center"
+          prop="staff.id"
+          label="员工编号"
+        ></el-table-column>
         <el-table-column align="center" label="姓名">
-          <template slot-scope="scope">{{scope.row.staff?scope.row.staff.name: '无'}}</template>
+          <template slot-scope="scope">{{
+            scope.row.staff ? scope.row.staff.name : "无"
+          }}</template>
         </el-table-column>
         <el-table-column align="center" label="员工状态">
           <template slot-scope="scope">
             <!-- {{scope.row.staff}} -->
             <div v-if="scope.row.staff">
-              <span class="content-text" v-if="scope.row.staff.person_state == 1">培训</span>
-              <span class="content-text" v-else-if="scope.row.staff.person_state == 2">考核</span>
-              <span class="content-text" v-else-if="scope.row.staff.person_state == 3">待岗</span>
-              <span class="content-text" v-else-if="scope.row.staff.person_state == 4">离职</span>
-              <span class="content-text" v-else-if="scope.row.staff.person_state == 5">黑名单</span>
-              <span class="content-text" v-else-if="scope.row.staff.person_state == 6">在岗</span>
-              <span class="content-text" v-else-if="scope.row.staff.person_state == 7">离职(下单)</span>
+              <span
+                class="content-text"
+                v-if="scope.row.staff.person_state == 1"
+                >培训</span
+              >
+              <span
+                class="content-text"
+                v-else-if="scope.row.staff.person_state == 2"
+                >考核</span
+              >
+              <span
+                class="content-text"
+                v-else-if="scope.row.staff.person_state == 3"
+                >待岗</span
+              >
+              <span
+                class="content-text"
+                v-else-if="scope.row.staff.person_state == 4"
+                >离职</span
+              >
+              <span
+                class="content-text"
+                v-else-if="scope.row.staff.person_state == 5"
+                >黑名单</span
+              >
+              <span
+                class="content-text"
+                v-else-if="scope.row.staff.person_state == 6"
+                >在岗</span
+              >
+              <span
+                class="content-text"
+                v-else-if="scope.row.staff.person_state == 7"
+                >离职(下单)</span
+              >
             </div>
             <div v-else></div>
           </template>
@@ -346,10 +536,112 @@
         <el-table-column align="center" prop="content" label="换人原因">
           <template slot-scope="scope">
             <div v-if="scope.row.content == ''">首位服务人员</div>
-            <div v-else>{{scope.row.content}}</div>
+            <div v-else>{{ scope.row.content }}</div>
           </template>
         </el-table-column>
       </el-table>
+    </el-dialog>
+
+    <!-- 投诉记录 -->
+    <el-dialog
+      :title="complaintTitle"
+      :visible.sync="complaintDialogVisible"
+      width="870px"
+      center
+    >
+      <div class="interview-content">
+        <el-table
+          :data="feedFormData"
+          style="width: 100%"
+          border
+          class="user-table-wrap"
+          :height="scrollHeight"
+          v-loading="complaintLoading"
+        >
+          <el-table-column
+            prop="name"
+            align="center"
+            label="客户姓名"
+            width="100"
+          ></el-table-column>
+          <el-table-column
+            align="center"
+            prop="mobile"
+            label="联络电话"
+            width="180"
+          >
+            <template slot-scope="scope">
+              <i class="el-icon-phone" style="color: red"></i>
+              {{ scope.row.mobile }}
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="complaint_time"
+            label="时间"
+            width="180"
+          ></el-table-column>
+          <el-table-column
+            align="center"
+            prop="content"
+            label="投诉事件"
+            :show-overflow-tooltip="true"
+          ></el-table-column>
+          <el-table-column
+            align="center"
+            prop="status"
+            label="是否解决"
+            width="100"
+          >
+            <template slot-scope="scope">
+              <div v-if="scope.row.status">
+                <el-tooltip
+                  class="item"
+                  effect="dark"
+                  :content="scope.row.evaluation"
+                  placement="top"
+                >
+                  <i
+                    style="color: #67c23a; font-size: 28px"
+                    class="el-icon-success"
+                  ></i>
+                </el-tooltip>
+              </div>
+              <div v-else>
+                <i
+                  style="color: #f56c6c; font-size: 28px"
+                  class="el-icon-circle-close"
+                ></i>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column
+            align="center"
+            prop="is_assign"
+            label="是否分配"
+            width="100"
+          >
+            <template slot-scope="scope">
+              <div v-if="scope.row.is_assign">已分配</div>
+              <div v-else>未分配</div>
+            </template>
+          </el-table-column>
+          <el-table-column align="center" prop="star" width label="客户满意度">
+            <template slot-scope="scope">
+              <p v-if="scope.row.status">
+                <el-rate
+                  :disabled="true"
+                  :value="scope.row.star"
+                  :texts="texts"
+                  :colors="colors"
+                  show-text
+                ></el-rate>
+              </p>
+              <p v-else>处理中</p>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -359,6 +651,7 @@ import CustomerSearch from "components/common/search/CustomerSearch";
 import StaffInfo from "components/common/table/StaffInfo";
 import Pagination from "components/common/pagination/Pagination";
 import OrderInfo from "components/common/table/OrderInfo";
+import { getComplaint } from "network/feedbackRequest";
 import {
   getInterviewInfo,
   getOneCustomerInfo,
@@ -398,6 +691,15 @@ export default {
       interviewTitle: "",
       interviewFormData: [],
 
+      // 投诉记录
+      complaintDialogVisible: true,
+      complaintLoading: false,
+      complaintTitle: "",
+      feedFormData: [],
+      // 评分颜色和辅助文字
+      texts: ["极差", "失望", "一般", "满意", "非常满意"],
+      colors: ["#99A9BF", "#F7BA2A", "#FF9900"],
+
       // 员工信息显示
       staffInfoDialogVisible: false,
       staffInfoLoading: false,
@@ -419,7 +721,7 @@ export default {
       service_types: [],
     };
   },
-  
+
   created() {
     this.getAllCustomerInfo();
 
@@ -443,6 +745,24 @@ export default {
     });
   },
   methods: {
+    // 查看投诉记录
+    lookComplaints(lookComplaints, name) {
+      this.complaintTitle = `${name}的投诉记录`;
+      this.complaintLoading = true
+      getComplaint(option).then((res) => {
+        let { code, data, msg } = res;
+        console.log(data);
+        if (code === 200) {
+          // 获取客户数据
+          this.feedFormData = data.data;
+          console.log(this.feedFormData);
+          this.complaintLoading = false;
+        } else {
+          this.$message.error(msg);
+          this.complaintLoading = false;
+        }
+      });
+    },
     // 查看换人记录
     lookChangeStaff(order_id, name) {
       this.changeTitle = `${name}的换人记录`;
@@ -609,7 +929,6 @@ export default {
       margin-top: 20px;
 
       /deep/.el-table__body-wrapper {
-
         /deep/.expand-row {
           border-bottom: 1px solid #f1f1f1;
           padding: 10px 0;

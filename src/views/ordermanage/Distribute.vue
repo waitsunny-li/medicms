@@ -60,7 +60,7 @@
                 </el-form>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="num" label="编号" width="100"></el-table-column>
+            <el-table-column align="center" prop="num" label="编号" width="140"></el-table-column>
             <el-table-column align="center" prop="name" label="姓名" width="100"></el-table-column>
             <el-table-column align="center" prop="family_hometown" min-width="110" label="家庭成员籍贯"></el-table-column>
             <el-table-column

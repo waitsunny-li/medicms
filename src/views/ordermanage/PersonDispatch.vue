@@ -19,7 +19,7 @@
               align="center"
               prop="num"
               label="编号"
-              width="100"
+              width="140"
             ></el-table-column>
             <el-table-column
               prop="name"

@@ -50,7 +50,7 @@
               :show-overflow-tooltip="false"
               width="35"
             ></el-table-column>
-            <el-table-column align="center" prop="num" label="编号" width="100"></el-table-column>
+            <el-table-column align="center" prop="num" label="编号" width="140"></el-table-column>
             <el-table-column align="center" prop="name" label="姓名" width="80"></el-table-column>
             <el-table-column align="center" prop="family_hometown" label="家庭成员籍贯" min-width="110"></el-table-column>
             <el-table-column
@@ -513,11 +513,17 @@
           </el-col>
         </el-row>
         <el-row>
+           <el-col :span="6">
+             <el-form-item label="所需时长" prop="service_other_content">
+              <el-input size="mini" type="text" v-model="form.service_time"></el-input>
+            </el-form-item>
+          </el-col>
           <el-col :span="9">
             <el-form-item label="其他要求" prop="service_other_content">
               <el-input size="mini" type="textarea" v-model="form.service_other_content"></el-input>
             </el-form-item>
           </el-col>
+         
         </el-row>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -622,6 +628,7 @@ export default {
         },
         service_content: "",
         service_other_content: "",
+        service_time: "",
         demand_age: "",
         demand_sex: "",
         demand_education: "",

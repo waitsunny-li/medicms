@@ -435,7 +435,7 @@
                 </el-tabs>
               </template>
             </el-table-column>
-            <el-table-column align="center" prop="num" label="编号" width="100">
+            <el-table-column align="center" prop="num" label="编号" width="140">
               <template slot-scope="scope">
                 <el-button
                   type="text"
@@ -1874,16 +1874,16 @@ export default {
           });
         })
         .catch((action) => {
-          deleteOrderInfo(order_id).then((res) => {
-            let { code, msg } = res;
-            if (code === 200) {
-              this.$message.success(msg);
-              // 重新获取所有订单
-              this.getAllOrderInfo();
-            } else {
-              this.$message.error(msg);
-            }
-          });
+          // deleteOrderInfo(order_id).then((res) => {
+          //   let { code, msg } = res;
+          //   if (code === 200) {
+          //     this.$message.success(msg);
+          //     // 重新获取所有订单
+          //     this.getAllOrderInfo();
+          //   } else {
+          //     this.$message.error(msg);
+          //   }
+          // });
         });
     },
 
